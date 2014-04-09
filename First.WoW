@@ -1,0 +1,4 @@
+Workflow sandwitch {
+Resources { amol 1x; final amol2 1x;}
+}
+
