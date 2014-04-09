@@ -9,7 +9,7 @@ JAVAC  = javac
 all: clean Parser.class run
 
 run: Parser.class
-	java Parser xt
+	java Parser First.WoW
 
 build: clean Parser.class
 

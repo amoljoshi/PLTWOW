@@ -17,28 +17,29 @@ NL  = \n | \r | \r\n
 STRING	=	[a-zA-Z_][a-zA-Z0-9]+
 %%
 
-"Workflow"	{//System.out.println("workflow found!"); 
+"Workflow"	{if(Parser.interactive){System.out.println("workflow found!");} 
 			return Parser.WORKFLOW;}
-"Resources"	{//System.out.println("Resources found!"); 
+"Resources"	{if(Parser.interactive){System.out.println("Resources found!"); }
 			return Parser.RESOURCES; }
-"Node"	{//System.out.println("Node found!"); 
+"Node"	{if(Parser.interactive){System.out.println("Node found!");}
 		return Parser.NODE;}
-"input"	{//System.out.println("input found!"); 
+"input"	{if(Parser.interactive){System.out.println("input found!"); }
 		return Parser.INPUT;}
-"output"	{//System.out.println("output found!"); 
+"output"	{if(Parser.interactive){System.out.println("output found!"); }
 			return Parser.OUTPUT;}
-"final"		{//System.out.println("final found!" + yytext()); 
+"final"		{if(Parser.interactive){System.out.println("final found!" + yytext()); }
 			return Parser.FINAL;}
-"x"	{//System.out.println("x found"); 
+"x"	{if(Parser.interactive){System.out.println("x found"); }
 			return Parser.TIMES;}
-{STRING}	{//System.out.println("String found!"); 
+{STRING}	{if(Parser.interactive){System.out.println("String found!"); }
 			yyparser.yylval = new ParserVal(yytext()); return Parser.STRING;}
-{DIGITS}	{System.out.println("digits found! with = " + yytext()); 
+{DIGITS}	{if(Parser.interactive){System.out.println("digits found! with = " + yytext()); }
 			yyparser.yylval = new ParserVal(Integer.parseInt(yytext()));	return Parser.DIGITS;}
 ";"	|
 ","	|
 "{" | 
-"}"    { return yycharat(0);}
+"}"    { 	if(Parser.interactive){System.out.println(yytext());}
+			return yycharat(0);}
 
 /* newline */
 {NL}   { }
