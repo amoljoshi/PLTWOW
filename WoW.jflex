@@ -29,8 +29,12 @@ STRING	=	[a-zA-Z_][a-zA-Z0-9]+
 			return Parser.OUTPUT;}
 "final"		{if(Parser.interactive){System.out.println("final found!" + yytext()); }
 			return Parser.FINAL;}
+"Connection" {if(Parser.interactive){System.out.println("Connection block found!" + yytext()); }
+			return Parser.CONNECTION;}
 "x"	{if(Parser.interactive){System.out.println("x found"); }
 			return Parser.TIMES;}
+"->"	{ if(Parser.interactive) {System.out.println("Connector found");}
+		return Parser.CONNECTOR;}
 {STRING}	{if(Parser.interactive){System.out.println("String found!"); }
 			yyparser.yylval = new ParserVal(yytext()); return Parser.STRING;}
 {DIGITS}	{if(Parser.interactive){System.out.println("digits found! with = " + yytext()); }
