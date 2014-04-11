@@ -20,10 +20,7 @@
 
 Program : WORKFLOW STRING '{' resources nodes connections '}' {
                                                     if(Parser.interactive){System.out.println("Inside workflow program");}
-                                            }  
-/* programstructure : resources {  System.out.println("System structure");
-                                symbolTable.put(new String("Resources"), new HashMap<String, Integer>());}
-                                */
+                                            }
 resources : RESOURCES '{' resourcelines FINAL STRING DIGITS TIMES ';' '}' {
                                                   if(Parser.interactive) {System.out.println("Adding final resource");}
                                                   addNewResource($5.sval, new Integer($6.ival));  }
