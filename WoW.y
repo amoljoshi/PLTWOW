@@ -64,19 +64,6 @@ connectionlines:
 connectionline:
           NODE STRING CONNECTOR NODE STRING {addNewConnection($2.sval, $5.sval);}
 
-/*
-resources : RESOURCES '{' STRING DIGITS TIMES ';' '}' { 
-                                                System.out.println("Inside Resources");
-                                                symbolTable.put(new String("Resources"), new HashMap<String, Integer>());
-                                                if(symbolTable != null && symbolTable.containsKey(new String("Resources"))){
-                                                  System.out.println("inside");
-                                                  HashMap<String, Integer> r = symbolTable.get("Resources");
-                                                  System.out.println("Smething = " + $3.sval + new Integer($4.ival).toString());
-                                                  r.put($3.sval, $4.ival);
-                                                  symbolTable.put("Resources", r);
-                                                }                
-                                                }
-*/
 %%
   //  Data structures used in actions of the grammar
   //  You MUST create these objects in the constructor of the Parser class
@@ -173,7 +160,3 @@ resources : RESOURCES '{' STRING DIGITS TIMES ';' '}' {
     yyparser.printNodesTable();
     System.out.println(yyparser.connection.toString());
   }
-
-/* Trying some git 
-also trying to push after this change
-does this work ?*/
