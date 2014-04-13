@@ -1,5 +1,5 @@
 Workflow sandwitch {
-	Resources { amol 1x; amol2 2x; final amol3 1x;}
+	Resources { bread 1x; butter 2x; final sandwich 1x;}
 	Node Amol
 	{
 		input bread 4;
@@ -10,7 +10,7 @@ Workflow sandwitch {
 	{
 		input bread2 5;
 	    input butter2 3;
-		output sandwich2 3;
+		final output sandwich2 3;
 	}
 	Connection{
 		Node Amol -> Node Amol2;

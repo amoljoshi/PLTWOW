@@ -19,35 +19,38 @@
 %%
 
 Program : WORKFLOW STRING '{' resources nodes connections '}' {
-                                                    if(Parser.interactive){System.out.println("Inside workflow program");}
+                                                    if(Parser.interactive_yacc){System.out.println("Inside workflow program");}
                                             }
 resources : RESOURCES '{' resourcelines FINAL STRING DIGITS TIMES ';' '}' {
-                                                  if(Parser.interactive) {System.out.println("Adding final resource");}
+                                                  if(Parser.interactive_yacc) {System.out.println("Adding final resource");}
                                                   addNewResource($5.sval, new Integer($6.ival));  }
 resourcelines : resourceline resourcelines {  }
-              | STRING DIGITS TIMES ';'     { if(Parser.interactive) {System.out.println("adding resource = " + $1.sval);}
+              | STRING DIGITS TIMES ';'     { if(Parser.interactive_yacc) {System.out.println("adding resource = " + $1.sval);}
                                                addNewResource($1.sval, new Integer($2.ival));}
-resourceline : STRING DIGITS TIMES ';'      { if(Parser.interactive) {System.out.println("Adding resource = " + $1.sval); }
+resourceline : STRING DIGITS TIMES ';'      { if(Parser.interactive_yacc) {System.out.println("Adding resource = " + $1.sval); }
                                               addNewResource($1.sval, new Integer($2.ival));}
 
 nodes : node nodes  {}
         |           {}
 
-node : NODE STRING '{' nodeline '}'      { addNewNode($2.sval, entries);
-                                          entries = new HashMap<String, ArrayList<Integer>> ();}
+node : NODE STRING '{' nodeline '}'      {
+                                          if(Parser.interactive_yacc){ System.out.println("Parsing Node " + $2.sval);} 
+                                          addNewNode($2.sval);}
 
-nodeline: inputline ';' inputlines outputline ';' outputlines finaloutputline {}
+nodeline: inputline ';' inputlines outputlines finaloutputline {}
  
 finaloutputline:
-          FINAL OUTPUT STRING DIGITS ';'  {addNewNodeEntry($3.sval, NodeEntryType.FINAL.getValue(), $4.ival);}
+          FINAL OUTPUT STRING DIGITS ';'  {
+                                          generatesFinalOutput = true;
+                                          addNewNodeOutputResource($3.sval, $4.ival);}
           |                                {}
-inputline:  INPUT STRING DIGITS           {addNewNodeEntry($2.sval, NodeEntryType.INPUT.getValue(), $3.ival);}
+inputline:  INPUT STRING DIGITS           {addNewNodeInputResource($2.sval, $3.ival);}
 inputlines:
           inputline ';' inputlines        {}
           |                               {}
  
 outputline:
-           OUTPUT STRING DIGITS           {addNewNodeEntry($2.sval, NodeEntryType.OUTPUT.getValue(), $3.ival);}
+           OUTPUT STRING DIGITS           {addNewNodeOutputResource($2.sval, $3.ival);}
 
 outputlines:
           outputline ';' outputlines      {}
@@ -59,33 +62,48 @@ connectionlines:
           |                                   {}
 
 connectionline:
-          NODE STRING CONNECTOR NODE STRING {addNewConnection($2.sval, $5.sval);}
+          NODE STRING CONNECTOR NODE STRING {
+                                            if(Parser.interactive_yacc){ System.out.println("Parsing Connection between " + $2.sval + " to "+ $5.sval);}
+                                            addNewConnection($2.sval, $5.sval);}
 
 %%
   //  Data structures used in actions of the grammar
   //  You MUST create these objects in the constructor of the Parser class
-  private Map<String, HashMap<String, Integer>> symbolTable;
   private Map<String, Integer> resourcesTable;
-  private HashMap<String, ArrayList<Integer>> entries;
+  private HashMap<String, Integer> rawInputResources;
+  private HashMap<String, Integer> intermediateInputResources;
+  private HashMap<String, Integer> outputResources;
+  private boolean generatesFinalOutput;
   private HashMap<String, Node> nodeTable;
   private Connection connection;
   private Yylex lexer;
-  private void addNewNode(String name, HashMap<String, ArrayList<Integer>> entries){
+  private void addNewNode(String name){
       assert nodeTable != null;
-      Node n = new Node(name);
-      assert entries != null && !entries.isEmpty();
-      n.setEntries(entries);
-      //  Resetting the entries HashMap
-      entries = new HashMap<String, ArrayList<Integer>>();
+      Node n = new Node(name, generatesFinalOutput);
+      assert rawInputResources != null && !rawInputResources.isEmpty() && intermediateInputResources!=null && !intermediateInputResources.isEmpty();
+      assert outputResources!= null && !outputResources.isEmpty();      
+      n.setRawInputResources(rawInputResources);
+      n.setIntermediateInputResources(intermediateInputResources);
+      n.setOutputResources(outputResources);
+      //  Resetting the node related resources tables
+      rawInputResources = new HashMap<String, Integer>();
+      intermediateInputResources = new HashMap<String, Integer>();
+      outputResources = new HashMap<String, Integer>(); 
+      generatesFinalOutput = false;
       //  Adding a new node to the node table
       nodeTable.put(n.getName(), n);    
   }
-  private void addNewNodeEntry(String name, Integer type, Integer quantity){
-    ArrayList<Integer> attributes = new ArrayList<Integer>();
-    attributes.add(type);
-    attributes.add(quantity);
-    entries.put(name, attributes);
+  private void addNewNodeInputResource(String name, Integer quantity){
+    //  Checking if resource's entry is present in the user-input resources
+    if(resourcesTable.containsKey(name)){
+        rawInputResources.put(name, quantity);
+        return;
+    }
+    intermediateInputResources.put(name, quantity);
   }
+  private void addNewNodeOutputResource(String name, Integer quantity){
+    outputResources.put(name, quantity);
+  }  
   private void addNewResource(String resourceName, Integer times){
     assert resourcesTable!=null;
     // System.out.println("Adding resource = " + resourceName + " of quantity = " + times.toString());
@@ -133,23 +151,27 @@ connectionline:
   public Parser(Reader r) {
     lexer = new Yylex(r, this);
     resourcesTable = new HashMap<String, Integer>();
-    entries = new HashMap<String, ArrayList<Integer>>();
+    rawInputResources = new HashMap<String, Integer>();
+    intermediateInputResources = new HashMap<String, Integer>();
+    outputResources = new HashMap<String, Integer>(); 
+    generatesFinalOutput = false;  
     nodeTable = new HashMap<String, Node> ();
     connection = new Connection();
   }
-  static boolean interactive;
+  static boolean interactive_yacc, interactive_lex;
 
   public static void main(String args[]) throws IOException {
     System.out.println("WoW program starter");
-    interactive = false;
+    interactive_yacc = false;
+    interactive_lex = false;
     Parser yyparser;
     if ( args.length > 0 ) {
       // parse a file
       yyparser = new Parser(new FileReader(args[0]));
     }
     else {
-      // interactive mode
-      System.out.println("I am compiler. I need a file to compiler. Now which part is difficult to understand in this?");
+      // interactive_yacc mode
+      System.out.println("I am compiler. I need a file to compile. Now which part is difficult to understand in this?");
 	    yyparser = new Parser(new InputStreamReader(System.in));
     }
     yyparser.yyparse();

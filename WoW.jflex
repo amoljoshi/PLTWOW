@@ -17,32 +17,32 @@ NL  = \n | \r | \r\n
 STRING	=	[a-zA-Z_][a-zA-Z0-9]+
 %%
 
-"Workflow"	{if(Parser.interactive){System.out.println("workflow found!");} 
+"Workflow"	{if(Parser.interactive_lex){System.out.println("workflow found!");} 
 			return Parser.WORKFLOW;}
-"Resources"	{if(Parser.interactive){System.out.println("Resources found!"); }
+"Resources"	{if(Parser.interactive_lex){System.out.println("Resources found!"); }
 			return Parser.RESOURCES; }
-"Node"	{if(Parser.interactive){System.out.println("Node found!");}
+"Node"	{if(Parser.interactive_lex){System.out.println("Node found!");}
 		return Parser.NODE;}
-"input"	{if(Parser.interactive){System.out.println("input found!"); }
+"input"	{if(Parser.interactive_lex){System.out.println("input found!"); }
 		return Parser.INPUT;}
-"output"	{if(Parser.interactive){System.out.println("output found!"); }
+"output"	{if(Parser.interactive_lex){System.out.println("output found!"); }
 			return Parser.OUTPUT;}
-"final"		{if(Parser.interactive){System.out.println("final found!" + yytext()); }
+"final"		{if(Parser.interactive_lex){System.out.println("final found!" + yytext()); }
 			return Parser.FINAL;}
-"Connection" {if(Parser.interactive){System.out.println("Connection block found!" + yytext()); }
+"Connection" {if(Parser.interactive_lex){System.out.println("Connection block found!" + yytext()); }
 			return Parser.CONNECTION;}
-"x"	{if(Parser.interactive){System.out.println("x found"); }
+"x"	{if(Parser.interactive_lex){System.out.println("x found"); }
 			return Parser.TIMES;}
-"->"	{ if(Parser.interactive) {System.out.println("Connector found");}
+"->"	{ if(Parser.interactive_lex) {System.out.println("Connector found");}
 		return Parser.CONNECTOR;}
-{STRING}	{if(Parser.interactive){System.out.println("String found!"); }
+{STRING}	{if(Parser.interactive_lex){System.out.println("String found!"); }
 			yyparser.yylval = new ParserVal(yytext()); return Parser.STRING;}
-{DIGITS}	{if(Parser.interactive){System.out.println("digits found! with = " + yytext()); }
+{DIGITS}	{if(Parser.interactive_lex){System.out.println("digits found! with = " + yytext()); }
 			yyparser.yylval = new ParserVal(Integer.parseInt(yytext()));	return Parser.DIGITS;}
 ";"	|
 ","	|
 "{" | 
-"}"    { 	if(Parser.interactive){System.out.println(yytext());}
+"}"    { 	if(Parser.interactive_lex){System.out.println(yytext());}
 			return yycharat(0);}
 
 /* newline */
