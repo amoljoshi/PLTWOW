@@ -13,7 +13,7 @@ Workflow sandwitch {
 		final output sandwich2 3;
 	}
 	Connection{
-		Node Amol -> Node Amol2;
+		Node Amol -> Node Amol3 {bread2 5; butter2 3;};
 	}
 }
 

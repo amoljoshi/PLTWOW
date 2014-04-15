@@ -62,10 +62,21 @@ connectionlines:
           |                                   {}
 
 connectionline:
-          NODE STRING CONNECTOR NODE STRING {
+          NODE STRING CONNECTOR NODE STRING '{' STRING DIGITS ';' otherconnectionstrings'}' {
                                             if(Parser.interactive_yacc){ System.out.println("Parsing Connection between " + $2.sval + " to "+ $5.sval);}
-                                            addNewConnection($2.sval, $5.sval);}
-
+                                            addNewConnectionResource($7.sval, $8.ival);
+                                            addNodeInResources($5.sval, connectionResources);
+                                            addNodeOutResources($2.sval, connectionResources);
+                                            addNewConnection($2.sval, $5.sval);
+                                            //  Refreshing resources defined in the connection line
+                                            connectionResources = new HashMap<String, Integer> ();}
+otherconnectionstrings: 
+          connectionstring otherconnectionstrings {}
+          |                                       {}
+connectionstring:
+          STRING DIGITS ';'               {if(Parser.interactive_yacc) { System.out.println("Connection String found");}
+                                            addNewConnectionResource($1.sval, $2.ival);
+                                          }
 %%
   //  Data structures used in actions of the grammar
   //  You MUST create these objects in the constructor of the Parser class
@@ -73,6 +84,7 @@ connectionline:
   private HashMap<String, Integer> rawInputResources;
   private HashMap<String, Integer> intermediateInputResources;
   private HashMap<String, Integer> outputResources;
+  private HashMap<String, Integer> connectionResources;  
   private boolean generatesFinalOutput;
   private HashMap<String, Node> nodeTable;
   private Connection connection;
@@ -92,6 +104,43 @@ connectionline:
       generatesFinalOutput = false;
       //  Adding a new node to the node table
       nodeTable.put(n.getName(), n);    
+  }
+  private void addNewConnectionResource(String name, Integer quantity){
+    connectionResources.put(name, quantity);
+  }
+  //  Method to set inResources and inNodes of a node
+  private void addNodeInResources(String nodeName, HashMap<String, Integer> resources){
+    System.out.println("Adding in resources for node = " + nodeName);
+    if(nodeTable.containsKey(nodeName)){
+      Node n = nodeTable.get(nodeName);
+      Iterator it = resources.entrySet().iterator();
+      while (it.hasNext()) {
+          Map.Entry pair = (Map.Entry)it.next();
+          // System.out.println(pair.getKey() + " = " + pair.getValue());
+          n.addNewInResource((String)pair.getKey(), nodeName, (Integer)pair.getValue());
+      }
+    }
+    else{
+      yyerror("Definition of node " + nodeName + " not found!");
+      System.out.println("Invalid node!"); // CHANGE THIS! The program shouldn't compile
+    }
+  }
+  //  Method to set outResources and outNodes of a node
+  private void addNodeOutResources(String nodeName, HashMap<String, Integer> resources){
+    System.out.println("Adding out resources for node = " + nodeName);
+    if(nodeTable.containsKey(nodeName)){
+      Node n = nodeTable.get(nodeName);
+      Iterator it = resources.entrySet().iterator();
+      while (it.hasNext()) {
+          Map.Entry pair = (Map.Entry)it.next();
+          // System.out.println(pair.getKey() + " = " + pair.getValue());
+          n.addNewOutResource((String)pair.getKey(), nodeName, (Integer)pair.getValue());
+      }
+    }
+    else{
+      yyerror("Definition of node " + nodeName + " not found!");
+      System.out.println("Invalid node!"); // CHANGE THIS! The program shouldn't compile
+    }
   }
   private void addNewNodeInputResource(String name, Integer quantity){
     //  Checking if resource's entry is present in the user-input resources
@@ -145,6 +194,7 @@ connectionline:
 
   public void yyerror (String error) {
     System.err.println ("Error: " + error);
+    System.exit(0);
   }
 
 
@@ -157,6 +207,7 @@ connectionline:
     generatesFinalOutput = false;  
     nodeTable = new HashMap<String, Node> ();
     connection = new Connection();
+    connectionResources = new HashMap<String, Integer> ();
   }
   static boolean interactive_yacc, interactive_lex;
 

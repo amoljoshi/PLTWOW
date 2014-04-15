@@ -8,13 +8,84 @@ public class Node{
     HashMap<String, Integer> intermediateInputResources = new HashMap <String, Integer>();
     HashMap<String, Integer> outputResources = new HashMap <String, Integer>();
     boolean generatesFinalOutput;
-
+    /*
+        the following map has the resource name as a key and a hashmap of node-name to quantity list of initial and 
+        current values as value→ [ <Resource_name , < Node_name, qtylist > >] 
+        -- one each for input & output--
+    */
+    HashMap <String , HashMap <String , ArrayList<Integer>>> inResources = new HashMap <String, HashMap<String, ArrayList<Integer>>>();
+    HashMap <String , HashMap <String , ArrayList<Integer>>> outResources = new HashMap <String, HashMap<String, ArrayList<Integer>>>();
+    /*
+        the following map has the resource name as a key and a hashmap of node-name to quantity list of initial and 
+        current values as value→ [ <Node_name , < Resource_name, qtylist > >] 
+        -- one each for input & output--
+    */
+	HashMap <String , HashMap <String , ArrayList<Integer>>> inNodes = new HashMap <String, HashMap<String, ArrayList<Integer>>>();
+	HashMap <String , HashMap <String , ArrayList<Integer>>> outNodes = new HashMap <String, HashMap<String, ArrayList<Integer>>>();
     public Node(String name, boolean generatesFinalOutput){
     	this.name = name;
     	this.rawInputResources = new HashMap<String, Integer> ();
         this.outputResources = new HashMap<String, Integer> ();
         this.intermediateInputResources = new HashMap<String, Integer> ();
         this.generatesFinalOutput = generatesFinalOutput;            
+    }
+    public void addNewInResource(String resourceName, String nodeName, Integer quantity){
+        //  Updating inResources map
+        //  [ <Resource_name , < Node_name, qtylist > >]
+        HashMap<String, ArrayList<Integer>> value;
+        ArrayList<Integer> quantities = new ArrayList<Integer> ();
+        quantities.add(quantity);
+        quantities.add(quantity);
+        if(this.inResources.containsKey(resourceName)){
+            //  Entry for this resource is already added
+            value = this.inResources.get(resourceName);
+        }
+        else{
+            //  Adding new entry for this resource
+            value = new HashMap<String, ArrayList<Integer>> ();
+        }
+        value.put(nodeName, quantities);
+        this.inResources.put(resourceName, value);        
+        //  Updating inNodes map
+        //  [ <Node_name , < Resource_name, qtylist > >] 
+        value = null;
+        if(this.inNodes.containsKey(nodeName)){
+            value = this.inNodes.get(nodeName);
+        }
+        else{
+            value = new HashMap<String, ArrayList<Integer>> ();
+        }
+        value.put(resourceName, quantities);
+        this.inNodes.put(nodeName, value);
+    }
+    public void addNewOutResource(String resourceName, String nodeName, Integer quantity){
+        //  Updating outResources map
+        //  [ <Resource_name , < Node_name, qtylist > >]
+        HashMap<String, ArrayList<Integer>> value;
+        ArrayList<Integer> quantities = new ArrayList<Integer> ();
+        quantities.add(quantity);
+        quantities.add(quantity);
+        if(this.outResources.containsKey(resourceName)){
+            //  Entry for this resource is already added
+            value = this.outResources.get(resourceName);
+        }
+        else{
+            //  Adding new entry for this resource
+            value = new HashMap<String, ArrayList<Integer>> ();
+        }
+        value.put(nodeName, quantities);
+        this.outResources.put(resourceName, value);        
+        //  Updating outNodes map
+        //  [ <Node_name , < Resource_name, qtylist > >] 
+        value = null;
+        if(this.outNodes.containsKey(nodeName)){
+            value = this.outNodes.get(nodeName);
+        }
+        else{
+            value = new HashMap<String, ArrayList<Integer>> ();
+        }
+        value.put(resourceName, quantities);
+        this.outNodes.put(nodeName, value);        
     }
     //	Method to add a new input resource
     public void addInputResource(String resourceName, Integer quantity, boolean intemediate){
@@ -40,6 +111,7 @@ public class Node{
     }
     //  Method to get all intermediate input resources for this node
     public HashMap<String, Integer> getAllIntermediateInputResources(){
+
         return this.intermediateInputResources;
     }
     //  Method to get all output resources for this node
@@ -113,7 +185,7 @@ public class Node{
         }
         if(this.generatesFinalOutput){
             s+= "\tThis node generates final Output!";
-        }
+        }        
         return s;
     }
   }
