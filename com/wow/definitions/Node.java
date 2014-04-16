@@ -3,52 +3,104 @@ import java.util.*;
 import java.lang.*;
 import java.util.Date;
 //	Class representing each Node in the Workflow
-public class Node{
+public class Node extends Thread{
     private String name;
-    private HashMap<String, ArrayList<Integer>> rawInputResources = new HashMap <String, ArrayList<Integer>>();
-    private HashMap<String, Integer> intermediateInputResources = new HashMap <String, Integer>();
-    private HashMap<String, Integer> outputResources = new HashMap <String, Integer>();
-    private Date firstResourceReceived = new Date();
-    private Date allResourceReceived = new Date();
-    private Date allOutputGenerated = new Date();
+    private HashMap<String, ArrayList<Integer>> UnsyncRawInputResources = new HashMap <String, ArrayList<Integer>>();
+    private HashMap<String, Integer> UnsyncIntermediateInputResources = new HashMap <String, Integer>();
+    private HashMap<String, Integer> UnsyncOutputResources = new HashMap <String, Integer>();
+    private Date firstResourceReceived ;
+    private Date allResourceReceived ;
+    private Date allOutputGenerated ;
     private boolean generatesFinalOutput;
+    private MainClass mc = null;
+    
+    //making the maps synchronized now --
+    Map<String, ArrayList<Integer>> rawInputResources = Collections.synchronizedMap(UnsyncRawInputResources);
+    Map<String, Integer> intermediateInputResources = Collections.synchronizedMap(UnsyncIntermediateInputResources);
+    Map<String, Integer> outputResources = Collections.synchronizedMap(UnsyncOutputResources);
+    
+    
+    
     /*
         the following map has the resource name as a key and a hashmap of node-name to quantity list of initial and 
-        current values as value→ [ <Resource_name , < Node_name, qtylist > >] 
+        current values as value --> [ <Resource_name , < Node_name, qtylist > >] 
         -- one each for input & output--
     */
-    private HashMap <String , HashMap <String , ArrayList<Integer>>> inResources = new HashMap <String, HashMap<String, ArrayList<Integer>>>();
-    private HashMap <String , HashMap <String , ArrayList<Integer>>> outResources = new HashMap <String, HashMap<String, ArrayList<Integer>>>();
+    private HashMap <String , HashMap <String , ArrayList<Integer>>> UnsyncInResources = new HashMap <String, HashMap<String, ArrayList<Integer>>>();
+    private HashMap <String , HashMap <String , ArrayList<Integer>>> UnsyncOutResources = new HashMap <String, HashMap<String, ArrayList<Integer>>>();
+    //synchronized versions below
+    Map<String, HashMap <String , ArrayList<Integer>>> inResources = Collections.synchronizedMap(UnsyncInResources);
+    Map<String, HashMap <String , ArrayList<Integer>>> outResources = Collections.synchronizedMap(UnsyncOutResources);
+    
     /*
         the following map has the node name as a key and a hashmap of resource name to quantity list of initial and 
-        current values as value→ [ <Node_name , < Resource_name, qtylist > >] 
+        current values as value --> [ <Node_name , < Resource_name, qtylist > >] 
         -- one each for input & output--
     */
-	private HashMap <String , HashMap <String , ArrayList<Integer>>> inNodes = new HashMap <String, HashMap<String, ArrayList<Integer>>>();
-	private HashMap <String , HashMap <String , ArrayList<Integer>>> outNodes = new HashMap <String, HashMap<String, ArrayList<Integer>>>();
+	private HashMap <String , HashMap <String , ArrayList<Integer>>> UnsyncInNodes = new HashMap <String, HashMap<String, ArrayList<Integer>>>();
+	private HashMap <String , HashMap <String , ArrayList<Integer>>> UnsyncOutNodes = new HashMap <String, HashMap<String, ArrayList<Integer>>>();
+	//synchronized versions below
+    Map<String, HashMap <String , ArrayList<Integer>>> inNodes = Collections.synchronizedMap(UnsyncInNodes);
+    Map<String, HashMap <String , ArrayList<Integer>>> outNodes = Collections.synchronizedMap(UnsyncOutNodes);
+	
     public Node(String name, boolean generatesFinalOutput){
     	this.name = name;
-    	this.rawInputResources = new HashMap<String, ArrayList<Integer>> ();
+    	/*this.rawInputResources = new HashMap<String, ArrayList<Integer>> ();
         this.outputResources = new HashMap<String, Integer> ();
-        this.intermediateInputResources = new HashMap<String, Integer> ();
+        this.intermediateInputResources = new HashMap<String, Integer> ();*/
         this.generatesFinalOutput = generatesFinalOutput;            
     }
-    public void setFirstResourceReceived(Date date){
-        this.firstResourceReceived = date;
+//#############################################################################################################################//
+    public void setMainClass(MainClass m){
+    	this.mc = m;
     }
-    public void setAllResourceReceived(Date date){
-        this.allResourceReceived = date;
+    
+    public void run() {
+    	setFirstResourceReceived(); 		// sets the timestamp for start of node --- node now waits for all inputs to be received
+    	while (true){
+    		if (canExecute()){
+    			System.out.println("ALL INPUTS RECEIVED. CALLING THE EXECUTION CODE.");
+    			setAllResourceReceived();	// sets the timestamp for the moment when all input resources are received
+    			// ############ call method to start executing combine convert
+    			break;
+    		}
+    	}
     }
-    public void setAllOutputGenerated(Date date){
-        this.allOutputGenerated = date;
+    
+    public boolean canExecute(){
+    	// following checks if all raw inputs are recieved from the hashmap - rawInputResources
+    	for (String s : rawInputResources.keySet()){
+    		if (rawInputResources.get(s).get(0) != rawInputResources.get(s).get(1))
+    			return false;   		
+    	}
+    	
+    	// and following checks if all intermediate resources are received from the hashmap - inResources
+    	for (String s : inResources.keySet()){
+    		for (String t : inResources.get(s).keySet()){
+    			if (inResources.get(s).get(t).get(0) != inResources.get(s).get(t).get(1))
+    				return false;
+    		}
+    	}
+    	return true;
+    }
+//#############################################################################################################################//    
+
+    public void setFirstResourceReceived(){
+        this.firstResourceReceived = new Date();
+    }
+    public void setAllResourceReceived(){
+        this.allResourceReceived = new Date();
+    }
+    public void setAllOutputGenerated(){
+        this.allOutputGenerated = new Date();
     }
     public Date getFirstResourceReceived(){
         return this.firstResourceReceived;
     }
-    public Date setAllResourceReceived(){
+    public Date getAllResourceReceived(){
         return this.allResourceReceived;
     }
-    public Date setAllOutputGenerated(){
+    public Date getAllOutputGenerated(){
         return this.allOutputGenerated;
     }
     //  Method which checks if resource name passed as method argument is defined as output resource in this node
@@ -79,7 +131,7 @@ public class Node{
         HashMap<String, ArrayList<Integer>> value;
         ArrayList<Integer> quantities = new ArrayList<Integer> ();
         quantities.add(quantity);
-        quantities.add(quantity);
+        quantities.add(0);
         if(this.inResources.containsKey(resourceName)){
             //  Entry for this resource is already added
             value = this.inResources.get(resourceName);
@@ -108,7 +160,7 @@ public class Node{
         HashMap<String, ArrayList<Integer>> value;
         ArrayList<Integer> quantities = new ArrayList<Integer> ();
         quantities.add(quantity);
-        quantities.add(quantity);
+        quantities.add(0);
         if(this.outResources.containsKey(resourceName)){
             //  Entry for this resource is already added
             value = this.outResources.get(resourceName);
@@ -142,37 +194,59 @@ public class Node{
         }
         ArrayList<Integer> quantities = new ArrayList<Integer> ();
         quantities.add(quantity);
-        quantities.add(quantity);
+        quantities.add(0);
         this.rawInputResources.put(resourceName, quantities);
     }
     //  Method to add a new input resource
     public void addOutputResource(String resourceName, Integer quantity){
         this.outputResources.put(resourceName, quantity);
     }
-    public String getName(){
+//#############################################################################################################################//    
+    public synchronized void receiveRawInput (String resourceName , int quantity){
+		quantity = Math.min(quantity, this.rawInputResources.get(resourceName).get(0) - this.rawInputResources.get(resourceName).get(1));
+		Integer current = this.rawInputResources.get(resourceName).get(1);
+		this.rawInputResources.get(resourceName).set(1, current + quantity); 
+	}
+    
+    public synchronized void receiveIntermediate (String nodeName , String resourceName , int quantity ){
+    	// first check if quantity is more than the expected quantity #parseCheck ?
+    	Integer current = this.inResources.get(resourceName).get(nodeName).get(1);
+    	quantity = Math.min(quantity, this.inResources.get(resourceName).get(nodeName).get(0) - this.inResources.get(resourceName).get(nodeName).get(1));
+    	//updating tables now
+    	this.inResources.get(resourceName).get(nodeName).set(1, current + quantity);
+    	this.inNodes.get(nodeName).get(resourceName).set(1, current + quantity);
+    }
+	
+	public boolean isFirstInput (){
+		for (String resource : rawInputResources.keySet())
+			if (rawInputResources.get(resource).get(1) != 0) return false;
+		return true;
+	}
+//#############################################################################################################################//    
+    public String getNodeName(){
         return this.name;
     }
     //	Method to get all raw input resources for this node
-    public HashMap<String, ArrayList<Integer>> getAllRawInputResources(){
+    public Map<String, ArrayList<Integer>> getAllRawInputResources(){
     	return this.rawInputResources;
     }
     //  Method to get all intermediate input resources for this node
-    public HashMap<String, Integer> getAllIntermediateInputResources(){
+    public Map<String, Integer> getAllIntermediateInputResources(){
 
         return this.intermediateInputResources;
     }
     //  Method to get all output resources for this node
-    public HashMap<String, Integer> getAllOutputResources(){
+    public Map<String, Integer> getAllOutputResources(){
         return this.outputResources;
     }
     public void setRawInputResources(HashMap<String, ArrayList<Integer>> resources){
-        this.rawInputResources = resources;
+        this.rawInputResources = new HashMap<String, ArrayList <Integer>>(resources);
     }
     public void setIntermediateInputResources(HashMap<String, Integer> resources){
-        this.intermediateInputResources = resources;
+        this.intermediateInputResources = new HashMap<String, Integer>(resources);
     }
     public void setOutputResources(HashMap<String, Integer> resources){
-        this.outputResources = resources;
+        this.outputResources = new HashMap<String , Integer>(resources);
     }
     /* dead code! 
     public HashMap <String, ArrayList<Integer>> setUpRuntimeInputResources(){

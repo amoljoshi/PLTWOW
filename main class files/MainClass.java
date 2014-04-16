@@ -4,6 +4,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.w3c.dom.Node;
+
 public class MainClass {
 	HashMap<String, Node> nodeSet = new HashMap<String, Node>();
 
@@ -29,6 +31,9 @@ public class MainClass {
 	}
 
 	private void start() throws IOException {
+		for (String s : nodeSet.keySet()){
+			nodeSet.get(s).setMainClass(this);
+		}
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String line;
 		while (currentOutputQuantity < totalOutputQuantity) {
@@ -55,15 +60,18 @@ public class MainClass {
 					Integer qty = Integer.parseInt(arguments[2]);
 					if (nodeSet.get(nodeName).rawInputResources
 							.containsKey(resourceName)) {
-						if (nodeSet.get(nodeName).rawInputResources.get(resourceName).get(1) == 0)
+						if (nodeSet.get(nodeName).rawInputResources.get(
+								resourceName).get(1) == nodeSet.get(nodeName).rawInputResources.get(
+										resourceName).get(0))
 							continue;
 						else {
 							boolean isFirstInput = nodeSet.get(nodeName).isFirstInput();
-							if (isFirstInput)
+							if (isFirstInput && !nodeSet.get(nodeName).isAlive())
 								{
+								nodeSet.get(nodeName).start();
 								// add code to start thread
 							}
-							nodeSet.get(nodeName).receive(resourceName, qty);
+							nodeSet.get(nodeName).receiveRawInput(resourceName, qty);
 						}
 					}
 					else System.out.println("Node " + nodeName + " does not require " + resourceName + ".");
@@ -74,8 +82,21 @@ public class MainClass {
 		}
 
 	}
+	
+	public synchronized void send (String senderNode, String nodeName , String resourceName , int quantity){
+		// add any checks if required - discuss with teammates
+		// add check for final output generation
+		
+		boolean isFirstInput = nodeSet.get(nodeName).isFirstInput();
+		if (isFirstInput && !nodeSet.get(nodeName).isAlive())
+			{
+			nodeSet.get(nodeName).start();
+			// code to start thread
+		}
+		nodeSet.get(nodeName).receiveIntermediate (senderNode,resourceName,quantity);
+	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// bullshit
 		String name1 = "a";
 		String name2 = "b";
