@@ -1,14 +1,16 @@
 package com.wow.definitions;
 import java.util.*;
 import java.lang.*;
-import java.sql.Timestamp;
+import java.util.Date;
 //	Class representing each Node in the Workflow
 public class Node{
     private String name;
     private HashMap<String, ArrayList<Integer>> rawInputResources = new HashMap <String, ArrayList<Integer>>();
     private HashMap<String, Integer> intermediateInputResources = new HashMap <String, Integer>();
     private HashMap<String, Integer> outputResources = new HashMap <String, Integer>();
-
+    private Date firstResourceReceived = new Date();
+    private Date allResourceReceived = new Date();
+    private Date allOutputGenerated = new Date();
     private boolean generatesFinalOutput;
     /*
         the following map has the resource name as a key and a hashmap of node-name to quantity list of initial and 
@@ -30,6 +32,24 @@ public class Node{
         this.outputResources = new HashMap<String, Integer> ();
         this.intermediateInputResources = new HashMap<String, Integer> ();
         this.generatesFinalOutput = generatesFinalOutput;            
+    }
+    public void setFirstResourceReceived(Date date){
+        this.firstResourceReceived = date;
+    }
+    public void setAllResourceReceived(Date date){
+        this.allResourceReceived = date;
+    }
+    public void setAllOutputGenerated(Date date){
+        this.allOutputGenerated = date;
+    }
+    public Date getFirstResourceReceived(){
+        return this.firstResourceReceived;
+    }
+    public Date setAllResourceReceived(){
+        return this.allResourceReceived;
+    }
+    public Date setAllOutputGenerated(){
+        return this.allOutputGenerated;
     }
     //  Method which checks if resource name passed as method argument is defined as output resource in this node
     public boolean checkIfOutputResource(String resourceName){
