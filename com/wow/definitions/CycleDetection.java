@@ -12,6 +12,10 @@ public class CycleDetection
 
 		String startNode = connections.connection.get(0).get(0);
 
+		// System.out.println("********************************");
+		// System.out.println(connections);
+		// System.out.println("Start Node: "+startNode);
+
 		//use the code below to deep copy in case the constructor doesnt work
 		/*connectionsList = new ArrayList<ArrayList<String>>(connections.connection);
 		for(ArrayList<String> connection: connections.connection)
@@ -58,6 +62,8 @@ public class CycleDetection
 			}
 		}
 
+		// printList(adjacencyList);
+
 		Set<String> visitedSet = new HashSet<String>();
 		LinkedList<String> frontierList = new LinkedList<String>();
 
@@ -72,6 +78,7 @@ public class CycleDetection
 			// System.out.println(n);
 			//for each connected node of the current node, check if it is there in the visited set
 			if(adjacencyList.containsKey(n))
+			{
 				for(String node: adjacencyList.get(n))
 				{
 					//if it is already contained in the visited set, then the workflow has a cycle
@@ -82,8 +89,25 @@ public class CycleDetection
 					//if it is not visited yet, add it to the frontier list
 					frontierList.add(node);
 				}
+			}
 		}
+			// System.out.println("*******************************");
 		//successful exit from the loop indicates no cycle
 		return false;
+	}
+
+	//prints the adjacencty list formed - used for debugging
+	static void printList(Map<String,ArrayList<String>> adjacencyList)
+	{
+		for (Map.Entry entry : adjacencyList.entrySet()) {
+			System.out.print("key,val: ");
+			System.out.print(entry.getKey());
+			ArrayList<String> values = (ArrayList<String>)entry.getValue();
+			for(int i=0;i<values.size();i++)
+			{
+				System.out.print(", "+values.get(i));
+			}
+			System.out.println();
+		}
 	}
 }
