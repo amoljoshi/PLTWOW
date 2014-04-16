@@ -16,7 +16,7 @@ public class Node{
     HashMap <String , HashMap <String , ArrayList<Integer>>> inResources = new HashMap <String, HashMap<String, ArrayList<Integer>>>();
     HashMap <String , HashMap <String , ArrayList<Integer>>> outResources = new HashMap <String, HashMap<String, ArrayList<Integer>>>();
     /*
-        the following map has the resource name as a key and a hashmap of node-name to quantity list of initial and 
+        the following map has the node name as a key and a hashmap of resource name to quantity list of initial and 
         current values as value→ [ <Node_name , < Resource_name, qtylist > >] 
         -- one each for input & output--
     */
