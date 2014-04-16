@@ -31,6 +31,18 @@ STRING	=	[a-zA-Z_][_a-zA-Z0-9]+
 			return Parser.FINAL;}
 "Connection" {if(Parser.interactive_lex){System.out.println("Connection block found!" + yytext()); }
 			return Parser.CONNECTION;}
+"func"		{if(Parser.interactive_lex) {System.out.println("compute functon found!");}
+			return Parser.FUNC;}
+"convert"		{if(Parser.interactive_lex) {System.out.println("Convert found!");}
+			return Parser.CONVERT;}
+"combine"		{if(Parser.interactive_lex) {System.out.println("Combine found!");}
+			return Parser.COMBINE;}
+"rate"		{if(Parser.interactive_lex) {System.out.println("rate found!");}
+			return Parser.RATE;}
+"quantity"	{if(Parser.interactive_lex) {System.out.println("quantity found!");}
+			return Parser.QUANTITY;}
+"print"	{if(Parser.interactive_lex) {System.out.println("print found!");}
+			return Parser.PRINT;}			
 "x"	{if(Parser.interactive_lex){System.out.println("x found"); }
 			return Parser.TIMES;}
 "->"	{ if(Parser.interactive_lex) {System.out.println("Connector found");}

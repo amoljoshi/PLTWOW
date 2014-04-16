@@ -16,6 +16,12 @@
 %token TIMES
 %token CONNECTOR
 %token CONNECTION
+%token FUNC
+%token CONVERT
+%token COMBINE
+%token RATE
+%token QUANTITY
+%token PRINT
 %%
 
 Program : WORKFLOW STRING '{' resources nodes connections '}' {
@@ -93,6 +99,33 @@ connectionstring:
           STRING DIGITS ';'               {if(Parser.interactive_yacc) { System.out.println("Connection String found");}
                                             addNewConnectionResource($1.sval, $2.ival);
                                           }
+
+computefunction:
+             FUNC STRING '{' computelines '}'       {}
+
+computelines:
+             computeline computelines      {}
+            |                               {}
+ 
+computeline:
+            mapline                         {}
+            reduceline                      {}
+mapline:
+        CONVERT STRING '(' DIGITS ')' STRING DIGITS ')' '{' computeblock '}' ';'  {}
+reduceline:
+             COMBINE STRING '(' DIGITS ')' STRING '(' DIGITS ')' STRING moreids '{' computeblock '}' ';'  {}
+moreids:
+            '(' DIGITS ')' STRING moreids      {}
+            |                               {}
+
+computeblock:
+             RATE DIGITS ';' QUANTITY DIGITS ';' printlines {}
+printlines:
+             printline printlines           {}
+            |
+ 
+printline:
+            PRINT '"' STRING  '"' ';'       {}
 %%
   //  Data structures used in actions of the grammar
   //  You MUST create these objects in the constructor of the Parser class
@@ -282,4 +315,10 @@ connectionstring:
     yyparser.printResourcesTable();
     yyparser.printNodesTable();
     System.out.println(yyparser.connection.toString());
+    if(CycleDetection.detectCycles(yyparser.connection)){
+        System.out.println("Dont you try to trick me.. I can detect cycles..");      
+    }
+    else{
+      System.out.println("Your WoW program doesn't contain any cycle.. WOW!");
+    }
   }
