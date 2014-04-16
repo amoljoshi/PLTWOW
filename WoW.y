@@ -64,7 +64,23 @@ connectionlines:
 connectionline:
           NODE STRING CONNECTOR NODE STRING '{' STRING DIGITS ';' otherconnectionstrings'}' {
                                             if(Parser.interactive_yacc){ System.out.println("Parsing Connection between " + $2.sval + " to "+ $5.sval);}
+                                            if(!checkNode($2.sval)){
+                                              yyerror("Node " + $2.sval + " used in connection line not found!");
+                                            }
+                                            if(!checkNode($5.sval)){
+                                              yyerror("Node " + $5.sval + " used in connection line not found!");
+                                            }                                                                          
                                             addNewConnectionResource($7.sval, $8.ival);
+                                            String errorString = checkIfOutputResources($2.sval, connectionResources);
+                                            if(!(errorString == null || errorString.isEmpty()))
+                                            {
+                                              yyerror(errorString);
+                                            }
+                                            errorString = checkIfInputResources($5.sval, connectionResources);
+                                            if(!(errorString == null || errorString.isEmpty()))
+                                            {
+                                              yyerror(errorString);
+                                            }                                            
                                             addNodeInResources($5.sval, connectionResources);
                                             addNodeOutResources($2.sval, connectionResources);
                                             addNewConnection($2.sval, $5.sval);
@@ -81,7 +97,7 @@ connectionstring:
   //  Data structures used in actions of the grammar
   //  You MUST create these objects in the constructor of the Parser class
   private Map<String, Integer> resourcesTable;
-  private HashMap<String, Integer> rawInputResources;
+  private HashMap<String, ArrayList<Integer>> rawInputResources;
   private HashMap<String, Integer> intermediateInputResources;
   private HashMap<String, Integer> outputResources;
   private HashMap<String, Integer> connectionResources;  
@@ -89,16 +105,50 @@ connectionstring:
   private HashMap<String, Node> nodeTable;
   private Connection connection;
   private Yylex lexer;
+  private boolean checkNode(String name){
+    if(nodeTable.containsKey(name)){
+      return true;
+    }
+    return false;
+  }
+  private String checkIfOutputResources(String nodeName, HashMap<String, Integer> connectionResources){
+      String errorString = "";
+      Iterator it = connectionResources.entrySet().iterator();
+      Node n = this.nodeTable.get(nodeName);
+      assert n!=null;
+      while (it.hasNext()) {
+          Map.Entry pair = (Map.Entry)it.next();
+          String resourceName = (String)pair.getKey();
+          if(!n.checkIfOutputResource(resourceName)){
+              errorString += "Resource " + resourceName + " not defined as output resource in node " + nodeName + "\n";
+          }
+      }
+      return errorString;
+  }
+  private String checkIfInputResources(String nodeName, HashMap<String, Integer> connectionResources){
+      String errorString = "";
+      Iterator it = connectionResources.entrySet().iterator();
+      Node n = this.nodeTable.get(nodeName);
+      assert n!=null : "node " + nodeName + "not found";
+      while (it.hasNext()) {
+          Map.Entry pair = (Map.Entry)it.next();
+          String resourceName = (String)pair.getKey();
+          if(!n.checkIfIntermediateInputResource(resourceName)){
+              errorString += "Resource " + resourceName + " not defined as input resource in node " + nodeName + "\n";
+          }
+      }
+      return errorString;
+  }
   private void addNewNode(String name){
       assert nodeTable != null;
       Node n = new Node(name, generatesFinalOutput);
-      assert rawInputResources != null && !rawInputResources.isEmpty() && intermediateInputResources!=null && !intermediateInputResources.isEmpty();
+      assert (rawInputResources != null && !rawInputResources.isEmpty()) || (intermediateInputResources!=null && !intermediateInputResources.isEmpty());
       assert outputResources!= null && !outputResources.isEmpty();      
       n.setRawInputResources(rawInputResources);
       n.setIntermediateInputResources(intermediateInputResources);
       n.setOutputResources(outputResources);
       //  Resetting the node related resources tables
-      rawInputResources = new HashMap<String, Integer>();
+      rawInputResources = new HashMap<String, ArrayList<Integer>>();
       intermediateInputResources = new HashMap<String, Integer>();
       outputResources = new HashMap<String, Integer>(); 
       generatesFinalOutput = false;
@@ -110,7 +160,7 @@ connectionstring:
   }
   //  Method to set inResources and inNodes of a node
   private void addNodeInResources(String nodeName, HashMap<String, Integer> resources){
-    System.out.println("Adding in resources for node = " + nodeName);
+    // System.out.println("Adding in resources for node = " + nodeName);
     if(nodeTable.containsKey(nodeName)){
       Node n = nodeTable.get(nodeName);
       Iterator it = resources.entrySet().iterator();
@@ -127,7 +177,7 @@ connectionstring:
   }
   //  Method to set outResources and outNodes of a node
   private void addNodeOutResources(String nodeName, HashMap<String, Integer> resources){
-    System.out.println("Adding out resources for node = " + nodeName);
+    // System.out.println("Adding out resources for node = " + nodeName);
     if(nodeTable.containsKey(nodeName)){
       Node n = nodeTable.get(nodeName);
       Iterator it = resources.entrySet().iterator();
@@ -144,8 +194,11 @@ connectionstring:
   }
   private void addNewNodeInputResource(String name, Integer quantity){
     //  Checking if resource's entry is present in the user-input resources
+    ArrayList<Integer> quantities = new ArrayList<Integer> ();
+    quantities.add(quantity);
+    quantities.add(quantity);
     if(resourcesTable.containsKey(name)){
-        rawInputResources.put(name, quantity);
+        rawInputResources.put(name, quantities);
         return;
     }
     intermediateInputResources.put(name, quantity);
@@ -163,7 +216,7 @@ connectionstring:
   }
   private void printResourcesTable(){
       assert this.resourcesTable != null;
-      System.out.println("\nShowing Resources Table \n");
+      System.out.println("\n---------------------Showing Resources Table---------------------\n");
       List<String> keys = new ArrayList<String> (this.resourcesTable.keySet());
       for (String key : keys){
         System.out.println("\tResource = " + key + " times = " + this.resourcesTable.get(key));
@@ -171,7 +224,7 @@ connectionstring:
   }
   private void printNodesTable(){
     assert this.nodeTable!=null;
-    System.out.println("\nShowing Nodes Table \n");
+      System.out.println("\n---------------------Showing Nodes Table--------------------------\n");
     ArrayList<String> nodes = new ArrayList<String> (this.nodeTable.keySet());
     for(String node : nodes){
         Node n = this.nodeTable.get(node);
@@ -194,14 +247,14 @@ connectionstring:
 
   public void yyerror (String error) {
     System.err.println ("Error: " + error);
-    System.exit(0);
+    // System.exit(0); 
   }
 
 
   public Parser(Reader r) {
     lexer = new Yylex(r, this);
     resourcesTable = new HashMap<String, Integer>();
-    rawInputResources = new HashMap<String, Integer>();
+    rawInputResources = new HashMap<String, ArrayList<Integer>>();
     intermediateInputResources = new HashMap<String, Integer>();
     outputResources = new HashMap<String, Integer>(); 
     generatesFinalOutput = false;  

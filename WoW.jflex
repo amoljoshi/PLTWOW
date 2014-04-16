@@ -14,7 +14,7 @@
 
 DIGITS = [0-9]+
 NL  = \n | \r | \r\n
-STRING	=	[a-zA-Z_][a-zA-Z0-9]+
+STRING	=	[a-zA-Z_][_a-zA-Z0-9]+
 %%
 
 "Workflow"	{if(Parser.interactive_lex){System.out.println("workflow found!");} 
