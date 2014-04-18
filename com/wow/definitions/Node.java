@@ -384,4 +384,134 @@ public class Node{
         }        
         return s;
     }
-  }
+  
+    /**
+     * @author chaitanya
+     * @param
+     * @return
+     * Method to translate the target
+     */
+    
+	public String translateTarget() {
+		
+		String targetCode = "";
+		
+		Iterator rawIter;
+		Iterator outIter;
+		Iterator interIter;
+		Iterator inResIter;
+		Iterator outResIter;
+		Iterator tempIter;
+		
+		
+		//copying all rawInputResources for this node
+		targetCode = "HashMap<String, ArrayList<Integer>> rawInputResources = new HashMap <String, ArrayList<Integer>>();"
+				+ "\n";
+		targetCode += "ArrayList<Integer> quantities = new ArrayList<Integer> ();"
+				+ "\n";
+		rawIter = this.rawInputResources.entrySet().iterator();
+		while (rawIter.hasNext()) {
+			Map.Entry pair = (Map.Entry) rawIter.next();
+			
+			for (Integer i : (ArrayList<Integer>) pair.getValue()) {
+				targetCode += "quantities.add(" + i + ");" + "\n";
+			}
+
+			targetCode += "rawInputResources.put(" + (String) pair.getKey()
+					+ ", " + "quantities);" + "\n";
+			targetCode += "quantities = new ArrayList<Integer> ();" + "\n";
+		}
+		
+		//copying all outputResources for this node
+		targetCode += "HashMap<String, Integer> outputResources = new HashMap <String, Integer>();"
+				+ "\n";
+		outIter = this.outputResources.entrySet().iterator();
+		while (outIter.hasNext()) {
+			Map.Entry pair = (Map.Entry) outIter.next();
+
+			targetCode += "outputResources.put(" + (String) pair.getKey()
+					+ ", " + (Integer) pair.getValue() + ");" + "\n";
+		}
+		
+		//copying all intermediateInputResources for this node
+		targetCode += "HashMap<String, Integer> intermediateInputResources = new HashMap <String, Integer>();"
+				+ "\n";
+		interIter = this.intermediateInputResources.entrySet()
+				.iterator();
+		while (interIter.hasNext()) {
+			Map.Entry pair = (Map.Entry) interIter.next();
+
+			targetCode += "intermediateInputResources.put("
+					+ (String) pair.getKey() + ", " + (Integer) pair.getValue()
+					+ ");" + "\n";
+		}
+
+		//copying all inResources for this node
+		
+		targetCode += "HashMap <String , HashMap <String , ArrayList<Integer>>> inResources = new HashMap <String, HashMap<String, ArrayList<Integer>>>();"
+				+ "\n";
+		
+		inResIter = this.inResources.entrySet().iterator();
+		while (inResIter.hasNext()) {
+			Map.Entry pair = (Map.Entry) inResIter.next();
+			
+			HashMap<String, ArrayList<Integer>> value = (HashMap<String, ArrayList<Integer>>) pair.getValue();
+			targetCode += "HashMap<String, ArrayList<Integer>> value = new HashMap <String, ArrayList<Integer>>()"+"\n";
+			
+			tempIter = value.entrySet().iterator();
+			
+			targetCode += "ArrayList<Integer> quantities = new ArrayList<Integer> ();"+"\n"; 
+			
+			while(tempIter.hasNext()){
+				Map.Entry tempPair = (Map.Entry) tempIter.next();
+				
+				for (Integer i : (ArrayList<Integer>) tempPair.getValue()) {
+					targetCode += "quantities.add(" + i + ");" + "\n";
+				}
+				
+				targetCode += "value.put("+(String) tempPair.getKey()+", quantities);";
+				targetCode += "quantities = new ArrayList<Integer> ();" + "\n";
+			}
+			
+			
+			targetCode += "inResources.put(" + (String) pair.getKey() + ", value);" + "\n";
+		}
+		
+		//copying all outResources for this node
+		targetCode += "HashMap <String , HashMap <String , ArrayList<Integer>>> outResources = new HashMap <String, HashMap<String, ArrayList<Integer>>>();"
+				+ "\n";
+		
+		outResIter = this.outResources.entrySet().iterator();
+		while (inResIter.hasNext()) {
+			Map.Entry pair = (Map.Entry) outResIter.next();
+			
+			HashMap<String, ArrayList<Integer>> value = (HashMap<String, ArrayList<Integer>>) pair.getValue();
+			targetCode += "HashMap<String, ArrayList<Integer>> value = new HashMap <String, ArrayList<Integer>>()"+"\n";
+			
+			tempIter = value.entrySet().iterator();
+			
+			targetCode += "ArrayList<Integer> quantities = new ArrayList<Integer> ();"+"\n"; 
+			
+			while(tempIter.hasNext()){
+				Map.Entry tempPair = (Map.Entry) tempIter.next();
+				
+				for (Integer i : (ArrayList<Integer>) tempPair.getValue()) {
+					targetCode += "quantities.add(" + i + ");" + "\n";
+				}
+				
+				targetCode += "value.put("+(String) tempPair.getKey()+", quantities);";
+				targetCode += "quantities = new ArrayList<Integer> ();" + "\n";
+			}
+			
+			
+			targetCode += "outResources.put(" + (String) pair.getKey() + ", value);" + "\n";
+		}
+		
+		
+		return targetCode;
+
+	}
+
+    
+
+}
