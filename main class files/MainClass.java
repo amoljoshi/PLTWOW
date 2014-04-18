@@ -8,7 +8,8 @@ import org.w3c.dom.Node;
 
 public class MainClass {
 	HashMap<String, Node> nodeSet = new HashMap<String, Node>();
-
+	HashMap <String, NodeThread> nodeThreadSet = new HashMap <String , NodeThread>();
+	
 	public MainClass() {
 
 	}
@@ -31,8 +32,8 @@ public class MainClass {
 	}
 
 	private void start() throws IOException {
-		for (String s : nodeSet.keySet()){
-			nodeSet.get(s).setMainClass(this);
+		for (String s : nodeSet.keySet()) {
+			nodeThreadSet.get(s).setMainClass(this);
 		}
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String line;
@@ -68,10 +69,10 @@ public class MainClass {
 							boolean isFirstInput = nodeSet.get(nodeName).isFirstInput();
 							if (isFirstInput && !nodeSet.get(nodeName).isAlive())
 								{
-								nodeSet.get(nodeName).start();
+								nodeThreadSet.get(nodeName).start();
 								// add code to start thread
 							}
-							nodeSet.get(nodeName).receiveRawInput(resourceName, qty);
+							nodeThreadSet.get(nodeName).receiveRawInput(resourceName, qty);
 						}
 					}
 					else System.out.println("Node " + nodeName + " does not require " + resourceName + ".");
@@ -88,12 +89,12 @@ public class MainClass {
 		// add check for final output generation
 		
 		boolean isFirstInput = nodeSet.get(nodeName).isFirstInput();
-		if (isFirstInput && !nodeSet.get(nodeName).isAlive())
+		if (isFirstInput && !nodeThreadSet.get(nodeName).isAlive())
 			{
-			nodeSet.get(nodeName).start();
+			nodeThreadSet.get(nodeName).start();
 			// code to start thread
 		}
-		nodeSet.get(nodeName).receiveIntermediate (senderNode,resourceName,quantity);
+		nodeThreadSet.get(nodeName).receiveIntermediate (senderNode,resourceName,quantity);
 	}
 
 	public static void main(String[] args) throws IOException {
@@ -111,6 +112,7 @@ public class MainClass {
 		// for each node do the following
 		// ////////////////////////////////////////////////////////////////////////////////////////////////
 		Node A = new Node(name1, false);
+		NodeThread A_thread = new NodeThread(A);
 
 		// initialize data structures of nodes
 
@@ -136,6 +138,8 @@ public class MainClass {
 								// if intermediate or not
 
 		mc.nodeSet.put(name1, A);
+		mc.nodeThreadSet.put(name1, A_thread);
+		
 		// /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		// /////////////////////////////////////////////////////////////////////////////////////////////////////////////

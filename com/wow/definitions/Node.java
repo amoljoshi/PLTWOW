@@ -3,8 +3,8 @@ import java.util.*;
 import java.lang.*;
 import java.util.Date;
 //	Class representing each Node in the Workflow
-public class Node extends Thread{
-    private String name;
+public class Node{
+    String name;
     private HashMap<String, ArrayList<Integer>> UnsyncRawInputResources = new HashMap <String, ArrayList<Integer>>();
     private HashMap<String, Integer> UnsyncIntermediateInputResources = new HashMap <String, Integer>();
     private HashMap<String, Integer> UnsyncOutputResources = new HashMap <String, Integer>();
@@ -12,7 +12,7 @@ public class Node extends Thread{
     private Date allResourceReceived ;
     private Date allOutputGenerated ;
     private boolean generatesFinalOutput;
-    private MainClass mc = null;
+    
     
     //making the maps synchronized now --
     Map<String, ArrayList<Integer>> rawInputResources = Collections.synchronizedMap(UnsyncRawInputResources);
@@ -51,21 +51,6 @@ public class Node extends Thread{
         this.generatesFinalOutput = generatesFinalOutput;            
     }
 //#############################################################################################################################//
-    public void setMainClass(MainClass m){
-    	this.mc = m;
-    }
-    
-    public void run() {
-    	setFirstResourceReceived(); 		// sets the timestamp for start of node --- node now waits for all inputs to be received
-    	while (true){
-    		if (canExecute()){
-    			System.out.println("ALL INPUTS RECEIVED. CALLING THE EXECUTION CODE.");
-    			setAllResourceReceived();	// sets the timestamp for the moment when all input resources are received
-    			// ############ call method to start executing combine convert
-    			break;
-    		}
-    	}
-    }
     
     public boolean canExecute(){
     	// following checks if all raw inputs are recieved from the hashmap - rawInputResources
@@ -202,20 +187,7 @@ public class Node extends Thread{
         this.outputResources.put(resourceName, quantity);
     }
 //#############################################################################################################################//    
-    public synchronized void receiveRawInput (String resourceName , int quantity){
-		quantity = Math.min(quantity, this.rawInputResources.get(resourceName).get(0) - this.rawInputResources.get(resourceName).get(1));
-		Integer current = this.rawInputResources.get(resourceName).get(1);
-		this.rawInputResources.get(resourceName).set(1, current + quantity); 
-	}
     
-    public synchronized void receiveIntermediate (String nodeName , String resourceName , int quantity ){
-    	// first check if quantity is more than the expected quantity #parseCheck ?
-    	Integer current = this.inResources.get(resourceName).get(nodeName).get(1);
-    	quantity = Math.min(quantity, this.inResources.get(resourceName).get(nodeName).get(0) - this.inResources.get(resourceName).get(nodeName).get(1));
-    	//updating tables now
-    	this.inResources.get(resourceName).get(nodeName).set(1, current + quantity);
-    	this.inNodes.get(nodeName).get(resourceName).set(1, current + quantity);
-    }
 	
 	public boolean isFirstInput (){
 		for (String resource : rawInputResources.keySet())
