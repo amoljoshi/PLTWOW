@@ -10,6 +10,9 @@ public class CycleDetection
 		//initialization
 		ArrayList<ArrayList<String>> connectionsList = new ArrayList<ArrayList<String>>(connections.connection);
 
+		if(connections.connection.size() == 0)
+			return false;
+
 		String startNode = connections.connection.get(0).get(0);
 
 		// System.out.println("********************************");
