@@ -15,7 +15,7 @@ build: clean Parser.class
 
 clean:
 	rm -f *~ *.class *.java
-	rm -f com/wow/definitions/*~ com/wow/definitions/*.class
+	rm -f com/wow/definitions/*~ com/wow/definitions/*.class com/wow/compute/*~ com/wow/compute/*.class
 
 Parser.class: Yylex.java Parser.java
 	$(JAVAC) Parser.java

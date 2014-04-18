@@ -2,6 +2,7 @@
   import java.io.*;
   import java.util.*;
   import com.wow.definitions.*;
+  import com.wow.compute.*;
 %}
       
 %token NL
@@ -111,38 +112,92 @@ computeline:
             mapline                         {}
             reduceline                      {}
 mapline:
-        CONVERT STRING '(' DIGITS ')' STRING DIGITS ')' '{' computeblock '}' ';'  {}
+        CONVERT STRING '(' DIGITS ')' STRING '(' DIGITS ')' '{' computeblock '}' ';'  {
+                                                  originalResource = $2.sval;
+                                                  ratioOriginalResource = $4.ival;
+                                                  convertedResource = $6.sval;
+                                                  ratioConvertedResource = $8.ival;
+                                                  convert = new Convert(originalResource, ratioOriginalResource, convertedResource, 
+                                                    ratioConvertedResource, quantity, rate, print_string);
+                                                  refreshConvertVariables();
+                                                  computeArray.add(convert);
+                                                  convert = null;
+                                            }
 reduceline:
-             COMBINE STRING '(' DIGITS ')' STRING '(' DIGITS ')' STRING moreids '{' computeblock '}' ';'  {}
+             COMBINE STRING '(' DIGITS ')' STRING '(' DIGITS ')' STRING moreids '{' computeblock '}' ';'  {
+                                                inputResourcesRatio.put($2.sval, $4.ival);
+                                                inputResourcesRatio.put($6.sval, $8.ival);
+                                                if(lastResourceInCombine){
+                                                  convertedResource = new String($4.sval);
+                                                }
+                                                else{
+                                                  inputResourcesRatio.put($6.sval, lastRatio);
+                                                }
+                                                combine = new Combine(convertedResource, quantity, inputResourcesRatio, rate, print_string);
+                                                refreshConvertVariables();
+                                            }
 moreids:
-            '(' DIGITS ')' STRING moreids      {}
-            |                               {}
+            '(' DIGITS ')' STRING moreids      {
+                                                  if(lastResourceInCombine){
+                                                      convertedResource = new String($4.sval);
+                                                  }
+                                                  else{
+                                                    inputResourcesRatio.put($4.sval, lastRatio);
+                                                  }
+                                                  lastRatio = Integer.parseInt($2.sval);
+                                                }
+            |                                 { lastResourceInCombine = true;}
 
 computeblock:
-             RATE DIGITS ';' QUANTITY DIGITS ';' printlines {}
+             RATE DIGITS ';' QUANTITY DIGITS ';' printlines { rate = $2.ival; quantity = $5.ival;}
 printlines:
              printline printlines           {}
-            |
+            |                               {}
  
 printline:
-            PRINT '"' STRING  '"' ';'       {}
+            PRINT '"' STRING  '"' ';'       { print_string = $3.sval;}
 %%
   //  Data structures used in actions of the grammar
   //  You MUST create these objects in the constructor of the Parser class
   private Map<String, Integer> resourcesTable;
   private HashMap<String, ArrayList<Integer>> rawInputResources;
-  private HashMap<String, Integer> intermediateInputResources;
-  private HashMap<String, Integer> outputResources;
+  private HashMap<String, ArrayList<Integer>> intermediateInputResources;
+  private HashMap<String, ArrayList<Integer>> outputResources;
   private HashMap<String, Integer> connectionResources;  
   private boolean generatesFinalOutput;
   private HashMap<String, Node> nodeTable;
+  private ArrayList<ComputeFunction> computeArray;
   private Connection connection;
+  private String print_string;
+  private int rate;
+  private int quantity;
+  private String originalResource;
+  private int ratioOriginalResource;
+  private String convertedResource;
+  private int ratioConvertedResource;
+  private int lastRatio;
+  private Convert convert;
+  private Combine combine;
+  private boolean lastResourceInCombine;
+  private HashMap<String, Integer> inputResourcesRatio;
   private Yylex lexer;
   private boolean checkNode(String name){
     if(nodeTable.containsKey(name)){
       return true;
     }
     return false;
+  }
+  private void refreshConvertVariables(){
+    this.print_string = new String();
+    this.rate = 0;
+    this.quantity = 0;
+    this.originalResource = new String();
+    this.ratioOriginalResource = 0;
+    this.convertedResource = new String();
+    this.ratioConvertedResource = 0;
+    lastResourceInCombine = false;
+    lastRatio = 0;
+    inputResourcesRatio = new HashMap<String, Integer> ();
   }
   private String checkIfOutputResources(String nodeName, HashMap<String, Integer> connectionResources){
       String errorString = "";
@@ -182,11 +237,11 @@ printline:
       n.setOutputResources(outputResources);
       //  Resetting the node related resources tables
       rawInputResources = new HashMap<String, ArrayList<Integer>>();
-      intermediateInputResources = new HashMap<String, Integer>();
-      outputResources = new HashMap<String, Integer>(); 
+      intermediateInputResources = new HashMap<String, ArrayList<Integer>>();
+      outputResources = new HashMap<String, ArrayList<Integer>>(); 
       generatesFinalOutput = false;
       //  Adding a new node to the node table
-      nodeTable.put(n.getName(), n);    
+      nodeTable.put(n.getNodeName(), n);    
   }
   private void addNewConnectionResource(String name, Integer quantity){
     connectionResources.put(name, quantity);
@@ -234,10 +289,13 @@ printline:
         rawInputResources.put(name, quantities);
         return;
     }
-    intermediateInputResources.put(name, quantity);
+    intermediateInputResources.put(name, quantities);
   }
   private void addNewNodeOutputResource(String name, Integer quantity){
-    outputResources.put(name, quantity);
+    ArrayList<Integer> quantities = new ArrayList<Integer> ();
+    quantities.add(quantity);
+    quantities.add(0);    
+    outputResources.put(name, quantities);
   }  
   private void addNewResource(String resourceName, Integer times){
     assert resourcesTable!=null;
@@ -288,12 +346,25 @@ printline:
     lexer = new Yylex(r, this);
     resourcesTable = new HashMap<String, Integer>();
     rawInputResources = new HashMap<String, ArrayList<Integer>>();
-    intermediateInputResources = new HashMap<String, Integer>();
-    outputResources = new HashMap<String, Integer>(); 
+    intermediateInputResources = new HashMap<String, ArrayList<Integer>>();
+    outputResources = new HashMap<String, ArrayList<Integer>>(); 
     generatesFinalOutput = false;  
     nodeTable = new HashMap<String, Node> ();
     connection = new Connection();
     connectionResources = new HashMap<String, Integer> ();
+    computeArray = new ArrayList<ComputeFunction> ();
+    print_string = new String();;
+    rate = 0;
+    quantity = 0;
+    originalResource = new String();
+    ratioOriginalResource = 0;
+    convertedResource = new String();
+    ratioConvertedResource = 0;
+    lastRatio = 0;
+    convert = null;
+    combine = null;
+    lastResourceInCombine = false;
+    inputResourcesRatio = new HashMap<String, Integer> ();
   }
   static boolean interactive_yacc, interactive_lex;
 
