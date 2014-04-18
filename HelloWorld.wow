@@ -1,0 +1,15 @@
+Workflow sandwitch {
+	Resources { bread 1x; final bread_temp 1x;}
+	Node Amol
+	{
+		input bread 4;
+		final output bread_temp 4;
+	}
+	Connection{
+	}
+	func Amol{
+		map bread(1) bread_temp(1) {rate 2; quantity 4; print “edges cut”;};
+	}
+	
+}
+
