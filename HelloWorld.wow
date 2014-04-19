@@ -1,15 +1,15 @@
 Workflow sandwitch {
-	Resources { bread 1x; final bread_temp 1x;}
+	Resources { bread 1x; butter 1x; final sandwich 1x;}
 	Node Amol
 	{
 		input bread 4;
-		final output bread_temp 4;
+		input butter 4;
+		final output sandwich 4;
 	}
 	Connection{
 	}
 	func Amol{
-		map bread(1) bread_temp(1) {rate 2; quantity 4; print “edges cut”;};
+		convert bread(1) bread_temp(1) { rate 4; quantity 5; print "amol";};
+		combine bread_temp(2) butter(1) sandwich { rate 4; quantity 5; print "amol";};
 	}
-	
 }
-

@@ -2,6 +2,7 @@ package com.wow.definitions;
 import java.util.*;
 import java.lang.*;
 import java.util.Date;
+import com.wow.compute.*;
 //	Class representing each Node in the Workflow
 public class Node{
     String name;
@@ -49,6 +50,9 @@ public class Node{
 	//synchronized versions below
     Map<String, HashMap <String , ArrayList<Integer>>> inNodes = Collections.synchronizedMap(UnsyncInNodes);
     Map<String, HashMap <String , ArrayList<Integer>>> outNodes = Collections.synchronizedMap(UnsyncOutNodes);
+
+    //  ArrayList of computations
+    private ArrayList<ComputeFunction> computeArray = new ArrayList<ComputeFunction> ();
 	
     public Node(String name, boolean generatesFinalOutput){
     	this.name = name;
@@ -233,7 +237,9 @@ public class Node{
     public void setOutputResources(HashMap<String, ArrayList<Integer>> resources){
         this.outputResources = new HashMap<String , ArrayList<Integer>>(resources);
     }
-
+    public void setAllComputations(ArrayList<ComputeFunction> computeArray){
+        this.computeArray = new ArrayList<ComputeFunction> (computeArray);
+    }
     public void combine(String target_resource, int target_qty, HashMap<String,Integer> input_resources_ratio,int rate, String print_statement){
        for (int i = 1; i <= target_qty; i++)
        {
@@ -380,8 +386,13 @@ public class Node{
             s+= "\t\t ID = " + pair.getKey() + " quantity = " + (ArrayList<Integer>)pair.getValue() + "\n";
         }
         if(this.generatesFinalOutput){
-            s+= "\tThis node generates final Output!";
-        }        
+            s+= "\tThis node generates final Output!\n";
+        }
+        s += "\t\nShowing computations = \n";
+        for(ComputeFunction c : computeArray){
+            s += c.toString();
+            // System.out.println(c.toString());
+        }
         return s;
     }
   

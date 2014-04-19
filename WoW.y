@@ -23,9 +23,10 @@
 %token RATE
 %token QUANTITY
 %token PRINT
+%token PRINT_STRING
 %%
 
-Program : WORKFLOW STRING '{' resources nodes connections '}' {
+Program : WORKFLOW STRING '{' resources nodes connections computefunctions '}' {
                                                     if(Parser.interactive_yacc){System.out.println("Inside workflow program");}
                                             }
 resources : RESOURCES '{' resourcelines FINAL STRING DIGITS TIMES ';' '}' {
@@ -63,7 +64,7 @@ outputlines:
           outputline ';' outputlines      {}
           |                               {}
 connections:
-           CONNECTION '{' connectionlines '}' {}
+           CONNECTION '{' connectionlines '}' {if(Parser.interactive_yacc) {System.out.println("Connection block parsing");}}
 connectionlines:
            connectionline ';' connectionlines {}
           |                                   {}
@@ -101,8 +102,22 @@ connectionstring:
                                             addNewConnectionResource($1.sval, $2.ival);
                                           }
 
+computefunctions:  computefunction computefunctions {}
+            |                                        {}
+
 computefunction:
-             FUNC STRING '{' computelines '}'       {}
+             FUNC STRING '{' computelines '}'       {
+                                                  if(Parser.interactive_yacc) { System.out.println("Computation of " + $2.sval);}
+                                                  if(!checkNode($2.sval)){
+                                                    yyerror("Node " + $2.sval + " used to define compute function is not found!");
+                                                  }
+                                                  // System.out.println("Size = " + computeArray.size());
+                                                  if(nodeTable.containsKey($2.sval)){
+                                                    Node n = nodeTable.get($2.sval);
+                                                    n.setAllComputations(computeArray);
+                                                  } 
+                                                  computeArray = new ArrayList<ComputeFunction> ();                                             
+                                                  }
 
 computelines:
              computeline computelines      {}
@@ -110,9 +125,10 @@ computelines:
  
 computeline:
             mapline                         {}
-            reduceline                      {}
+            | reduceline                    {}
 mapline:
-        CONVERT STRING '(' DIGITS ')' STRING '(' DIGITS ')' '{' computeblock '}' ';'  {
+        CONVERT STRING '(' DIGITS ')' STRING '(' DIGITS ')' computeblock ';'  {
+                                                  if(Parser.interactive_yacc) { System.out.println("Convert from " + $2.sval);}
                                                   originalResource = $2.sval;
                                                   ratioOriginalResource = $4.ival;
                                                   convertedResource = $6.sval;
@@ -122,19 +138,24 @@ mapline:
                                                   refreshConvertVariables();
                                                   computeArray.add(convert);
                                                   convert = null;
+                                                  
                                             }
 reduceline:
-             COMBINE STRING '(' DIGITS ')' STRING '(' DIGITS ')' STRING moreids '{' computeblock '}' ';'  {
+             COMBINE STRING '(' DIGITS ')' STRING '(' DIGITS ')' STRING moreids computeblock ';'  {
+                                                if(Parser.interactive_yacc) { System.out.println("Combine into " + $10.sval);}
                                                 inputResourcesRatio.put($2.sval, $4.ival);
                                                 inputResourcesRatio.put($6.sval, $8.ival);
                                                 if(lastResourceInCombine){
-                                                  convertedResource = new String($4.sval);
+                                                  convertedResource = new String($10.sval);
                                                 }
                                                 else{
                                                   inputResourcesRatio.put($6.sval, lastRatio);
                                                 }
                                                 combine = new Combine(convertedResource, quantity, inputResourcesRatio, rate, print_string);
+                                                // System.out.println(combine.toString());
                                                 refreshConvertVariables();
+                                                computeArray.add(combine);
+                                                combine = null;
                                             }
 moreids:
             '(' DIGITS ')' STRING moreids      {
@@ -149,13 +170,13 @@ moreids:
             |                                 { lastResourceInCombine = true;}
 
 computeblock:
-             RATE DIGITS ';' QUANTITY DIGITS ';' printlines { rate = $2.ival; quantity = $5.ival;}
+             '{' RATE DIGITS ';' QUANTITY DIGITS ';' printline '}' { rate = $3.ival; quantity = $6.ival;}
 printlines:
              printline printlines           {}
             |                               {}
  
 printline:
-            PRINT '"' STRING  '"' ';'       { print_string = $3.sval;}
+            PRINT '"' STRING '"' ';'       { print_string = $3.sval;}
 %%
   //  Data structures used in actions of the grammar
   //  You MUST create these objects in the constructor of the Parser class
@@ -337,7 +358,7 @@ printline:
 
 
   public void yyerror (String error) {
-    System.err.println ("Error: " + error);
+    System.err.println ("Error: " + error + " at line: " + lexer.getLineNum() + " at column - " + lexer.getColNum() + "\n");
     // System.exit(0); 
   }
 

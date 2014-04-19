@@ -3,6 +3,9 @@
 
 %byaccj
 
+%line
+%column
+
 %{
   private Parser yyparser;
   private ParserVal parserVal;
@@ -10,11 +13,18 @@
     this(r);
     this.yyparser = yyparser;
   }
+	int getLineNum () {
+    	return (yyline+1);
+  	}
+  	int getColNum () {
+    	return (yycolumn+1);
+  	}  
 %}
 
 DIGITS = [0-9]+
 NL  = \n | \r | \r\n
 STRING	=	[a-zA-Z_][_a-zA-Z0-9]+
+PRINTSTRING	=	[a-zA-Z_][_a-zA-Z0-9 ]+
 %%
 
 "Workflow"	{if(Parser.interactive_lex){System.out.println("workflow found!");} 
@@ -31,7 +41,7 @@ STRING	=	[a-zA-Z_][_a-zA-Z0-9]+
 			return Parser.FINAL;}
 "Connection" {if(Parser.interactive_lex){System.out.println("Connection block found!" + yytext()); }
 			return Parser.CONNECTION;}
-"func"		{if(Parser.interactive_lex) {System.out.println("compute functon found!");}
+"func"		{if(Parser.interactive_lex) {System.out.println("compute function found!");}
 			return Parser.FUNC;}
 "convert"		{if(Parser.interactive_lex) {System.out.println("Convert found!");}
 			return Parser.CONVERT;}
@@ -51,10 +61,15 @@ STRING	=	[a-zA-Z_][_a-zA-Z0-9]+
 			yyparser.yylval = new ParserVal(yytext()); return Parser.STRING;}
 {DIGITS}	{if(Parser.interactive_lex){System.out.println("digits found! with = " + yytext()); }
 			yyparser.yylval = new ParserVal(Integer.parseInt(yytext()));	return Parser.DIGITS;}
+
 ";"	|
 ","	|
 "{" | 
-"}"    { 	if(Parser.interactive_lex){System.out.println(yytext());}
+"}" |
+"(" |
+")" |
+"\""	
+  { 	if(Parser.interactive_lex){System.out.println(yytext());}
 			return yycharat(0);}
 
 /* newline */

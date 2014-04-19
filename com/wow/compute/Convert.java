@@ -18,4 +18,11 @@ public class Convert extends ComputeFunction{
 		this.rate = rate;
 		this.print_statement = print_statement;
 	}
+	public String toString(){
+		StringBuffer sbuf = new StringBuffer();
+		sbuf.append("\n Converting resource " + original_resource + " with ratio " + ratio_original_resource + " to resource " + converted_resource
+			+ " with ratio " + ratio_converted_resource + "\n");
+		sbuf.append("\t rate = " + rate + " quantity = " + quantity + " printing = " + print_statement + "\n");
+		return sbuf.toString();
+	}
 }

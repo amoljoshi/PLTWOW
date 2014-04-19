@@ -16,12 +16,15 @@ public class Combine extends ComputeFunction{
 		this.print_statement = print_statement;
 	}
 	public String toString(){
-		String s = "Combining \n";
+		StringBuffer sbuf = new StringBuffer();
+		sbuf.append("Combining \n");
 		Iterator it = input_resources_ratio.entrySet().iterator();
       	while (it.hasNext()) {
         	Map.Entry pair = (Map.Entry)it.next();
-
+        	sbuf.append("\t\t Resource = " + (String)pair.getKey() + " with ratio = " + (Integer)pair.getValue() + "\n"); 
         }
-        return s;
+        sbuf.append("\t Target Resource = " + target_resource + " with quantity = " + target_qty + " at rate " + rate + "\n");
+        sbuf.append("\t Printing " + print_statement);
+        return sbuf.toString();
 	}
 }
