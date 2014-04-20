@@ -413,4 +413,10 @@ printline:
     else{
       System.out.println("Your WoW program doesn't contain any cycle.. WOW!");
     }
+    if(ConnectionChecks.detectHangingParts(yyparser.connection)){
+        System.out.println("Dont you try to trick me.. I can detect hanging sub graphs..");      
+    }
+    else{
+      System.out.println("Your WoW program doesn't contain any hanging subgraph.. WOW!");
+    }
   }
