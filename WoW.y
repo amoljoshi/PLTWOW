@@ -407,7 +407,7 @@ printline:
     yyparser.printResourcesTable();
     yyparser.printNodesTable();
     System.out.println(yyparser.connection.toString());
-    if(CycleDetection.detectCycles(yyparser.connection)){
+    if(ConnectionChecks.detectCycles(yyparser.connection)){
         System.out.println("Dont you try to trick me.. I can detect cycles..");      
     }
     else{

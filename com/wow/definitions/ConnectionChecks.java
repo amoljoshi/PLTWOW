@@ -1,7 +1,7 @@
 package com.wow.definitions;
 import java.util.*;
 
-public class CycleDetection
+public class ConnectionChecks
 {
 	//ceck if the workflow entered by the user contains any cycles
 	//returns true if the graph contains a cycle, otherwise false
@@ -19,7 +19,7 @@ public class CycleDetection
 		// System.out.println(connections);
 		// System.out.println("Start Node: "+startNode);
 
-		//use the code below to deep copy in case the constructor doesnt work
+		//use the code below to deep copy in case the copy constructor doesnt work
 		/*connectionsList = new ArrayList<ArrayList<String>>(connections.connection);
 		for(ArrayList<String> connection: connections.connection)
 		{
@@ -32,38 +32,11 @@ public class CycleDetection
 		}*/
 
 		//initialize and create the adjacency list
-		Map<String,ArrayList<String>> adjacencyList = new HashMap<String, ArrayList<String>>();
+		//formation of the adjacency list and formation of node list
+		Map<String,ArrayList<String>> adjacencyList = new HashMap<String, ArrayList<String>>(formAdjacencyList(connectionsList));
 		// Set<String> visitedSet = new HashSet<String>();
 		// List<String> nodeList = new LinkedList<String>();
-		//formation of the adjacency list and formation of node list
-		for(ArrayList<String> connection: connectionsList)
-		{
-			String source = connection.get(0);
-			String destination = connection.get(1);
-
-			/*if(!visitedSet.contains(source))
-			{
-				visitedSet.add(source);
-				nodeList.add(source);
-			}
-
-			if(!visitedSet.contains(destination))
-			{
-				visitedSet.add(destination);
-				nodeList.add(destination);
-			}*/
-
-			if(adjacencyList.containsKey(source))
-			{
-				adjacencyList.get(source).add(destination);
-			}
-			else
-			{
-				ArrayList<String> valueList = new ArrayList<String>();
-				valueList.add(destination);
-				adjacencyList.put(source, valueList);
-			}
-		}
+		
 
 		// printList(adjacencyList);
 
@@ -99,8 +72,43 @@ public class CycleDetection
 		return false;
 	}
 
+	private static Map<String,ArrayList<String>> formAdjacencyList(ArrayList<ArrayList<String>> connectionsList)
+	{
+		Map<String,ArrayList<String>> adjacencyList = new HashMap<String, ArrayList<String>>();
+		for(ArrayList<String> connection: connectionsList)
+		{
+			String source = connection.get(0);
+			String destination = connection.get(1);
+
+			/*if(!visitedSet.contains(source))
+			{
+				visitedSet.add(source);
+				nodeList.add(source);
+			}
+
+			if(!visitedSet.contains(destination))
+			{
+				visitedSet.add(destination);
+				nodeList.add(destination);
+			}*/
+
+			if(adjacencyList.containsKey(source))
+			{
+				adjacencyList.get(source).add(destination);
+			}
+			else
+			{
+				ArrayList<String> valueList = new ArrayList<String>();
+				valueList.add(destination);
+				adjacencyList.put(source, valueList);
+			}
+		}
+		return adjacencyList;
+	} 
+
+
 	//prints the adjacencty list formed - used for debugging
-	static void printList(Map<String,ArrayList<String>> adjacencyList)
+	private static void printList(Map<String,ArrayList<String>> adjacencyList)
 	{
 		for (Map.Entry entry : adjacencyList.entrySet()) {
 			System.out.print("key,val: ");
