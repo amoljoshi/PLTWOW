@@ -205,7 +205,14 @@ public class Node{
     }
 //#############################################################################################################################//    
     
-	
+    public boolean isFinished(){
+    for (String resource: outputResources.keySet()){
+        if (outputResources.get(resource).get(0) != outputResources.get(resource).get(1)) return false;
+        }
+    return true;
+    }
+
+
 	public boolean isFirstInput (){
 		for (String resource : rawInputResources.keySet())
 			if (rawInputResources.get(resource).get(1) != 0) return false;

@@ -9,6 +9,7 @@ import org.w3c.dom.Node;
 public class MainClass {
 	HashMap<String, Node> nodeSet = new HashMap<String, Node>();
 	HashMap <String, NodeThread> nodeThreadSet = new HashMap <String , NodeThread>();
+	HashMap <String , Integer> nodeStatus = new HashMap<String , Integer>();
 	
 	public MainClass() {
 
@@ -69,6 +70,7 @@ public class MainClass {
 							boolean isFirstInput = nodeSet.get(nodeName).isFirstInput();
 							if (isFirstInput && !nodeSet.get(nodeName).isAlive())
 								{
+								nodeStatus.put(nodeName, 1);
 								nodeThreadSet.get(nodeName).start();
 								// add code to start thread
 							}
@@ -87,10 +89,12 @@ public class MainClass {
 	public synchronized void send (String senderNode, String nodeName , String resourceName , int quantity){
 		// add any checks if required - discuss with teammates
 		// add check for final output generation
-		
+		boolean hasFinished = nodeSet.get(nodeName).isFinished();
+		if (hasFinished) nodeStatus.put(senderNode,2);
 		boolean isFirstInput = nodeSet.get(nodeName).isFirstInput();
 		if (isFirstInput && !nodeThreadSet.get(nodeName).isAlive())
 			{
+			nodeStatus.put(nodeName, 1);
 			nodeThreadSet.get(nodeName).start();
 			// code to start thread
 		}
@@ -139,13 +143,14 @@ public class MainClass {
 
 		mc.nodeSet.put(name1, A);
 		mc.nodeThreadSet.put(name1, A_thread);
+		mc.nodeStatus.put(name1, 0);
 		
 		// /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		// /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// initialize connections
 		// /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+		Library_Functions system = new Library_Functions(mc.nodeSet, mc.nodeStatus);
 		mc.start();
 
 	}
