@@ -1,0 +1,30 @@
+Workflow sandwich {
+	Resources { bread 1x; butter 2x; final better_better_sandwich 1x;}
+	Node Amol
+	{
+		input bread 4;
+		output bread_temp 5;
+	}
+	Node Amol2
+	{
+		input bread_temp 10;
+	    input butter 6;
+		output better_sandwich 6;
+	}
+	Node Amol3
+	{
+		input bread 4;
+		output bread_temp 5;
+	}
+	Node Amol4
+	{
+		input bread_temp 3;
+		final output better_better_sandwich 3;
+	}
+	Connection{
+		Node Amol -> Node Amol2 {bread_temp 5;};
+		
+		Node Amol3 -> Node Amol4 {better_sandwich 3;};
+		
+	}
+}
