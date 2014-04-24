@@ -362,13 +362,14 @@ printline:
     // System.exit(0); 
   }
 
-  public ArrayList<String> translateNode(HashMap<String, Node> nodeMapping){
+  public String translateNode(HashMap<String, Node> nodeMapping){
       ArrayList<String>  translatedCodeForNodes = new ArrayList<String>(); 
-      for(int i = 0; i < nodeMapping.size(); i++)
-      {
-        // Calling the translate() method of every node object in the nodeMapping map.
-      }
-      return translatedCodeForNodes;
+      Set<String> s= nodeMapping.keySet();
+      String tc = "";
+    
+      for(String i : s)
+          tc += nodeMapping.get(i).translateNodeCreation();  
+      return tc;
   }
 
 
@@ -408,7 +409,7 @@ printline:
       yyparser = new Parser(new FileReader(args[0]));
     }
     else {
-      // interactive_yacc mode
+      //interactive_yacc mode
       System.out.println("I am compiler. I need a file to compile. Now which part is difficult to understand in this?");
 	    yyparser = new Parser(new InputStreamReader(System.in));
     }
@@ -427,7 +428,8 @@ printline:
     }
     else{
       System.out.println("Your WoW program doesn't contain any hanging subgraph.. WOW!");
-      System.out.println("Called the translateNode method----- yet to implement");
-      ArrayList<String> translatedCodeSets = yyparser.translateNode(yyparser.nodeTable);
+      System.out.println("Called the translateNode method");
+      String x = yyparser.translateNode(yyparser.nodeTable);
+      System.out.println(x);
     }
   }
