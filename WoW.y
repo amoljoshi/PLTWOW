@@ -361,7 +361,8 @@ printline:
     System.err.println ("Error: " + error + " at line: " + lexer.getLineNum() + " at column - " + lexer.getColNum() + "\n");
     // System.exit(0); 
   }
-
+  //  Method which will translate each node into targe code
+  /*
   public String translateNode(HashMap<String, Node> nodeMapping){
       ArrayList<String>  translatedCodeForNodes = new ArrayList<String>(); 
       Set<String> s= nodeMapping.keySet();
@@ -371,7 +372,7 @@ printline:
           tc += nodeMapping.get(i).translateNodeCreation();  
       return tc;
   }
-
+  */
 
   public Parser(Reader r) {
     lexer = new Yylex(r, this);
@@ -429,7 +430,7 @@ printline:
     else{
       System.out.println("Your WoW program doesn't contain any hanging subgraph.. WOW!");
       System.out.println("Called the translateNode method");
-      String x = yyparser.translateNode(yyparser.nodeTable);
-      System.out.println(x);
+      // String x = yyparser.translateNode(yyparser.nodeTable);
+      // System.out.println(x);
     }
   }
