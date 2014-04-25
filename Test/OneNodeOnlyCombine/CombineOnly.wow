@@ -1,0 +1,16 @@
+Workflow sandwich {
+	Resources { bread 2x; butter 1x; final sandwich 1x;}
+	Node A
+	{
+		input bread 8;
+		input butter 4;
+		final output sandwich 4;
+	}
+	Connection{
+		/* No connections here only one node */
+	}
+
+	func A{
+		combine bread(2) butter(1) sandwich { rate 4; quantity 4; print "Sandwich ready";};
+	}
+}
