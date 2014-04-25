@@ -25,4 +25,32 @@ public class Convert extends ComputeFunction{
 		sbuf.append("\t rate = " + rate + " quantity = " + quantity + " printing = " + print_statement + "\n");
 		return sbuf.toString();
 	}
+	public String getOriginal_resource() {
+		return original_resource;
+	}
+	
+	public int getRatio_original_resource() {
+		return ratio_original_resource;
+	}
+	
+	public String getConverted_resource() {
+		return converted_resource;
+	}
+	
+	public int getRatio_converted_resource() {
+		return ratio_converted_resource;
+	}
+	
+	public int getQuantity() {
+		return quantity;
+	}
+	
+	public int getRate() {
+		return rate;
+	}
+	
+	public String getPrint_statement() {
+		return print_statement;
+	}
+
 }

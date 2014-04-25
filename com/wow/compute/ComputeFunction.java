@@ -4,4 +4,8 @@ public class ComputeFunction{
 	public ComputeFunction(String type){
 		this.type = type;
 	}
+
+	public String getComputeType(){
+		return this.type;
+	}
 }

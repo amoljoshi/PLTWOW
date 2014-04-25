@@ -27,4 +27,20 @@ public class Combine extends ComputeFunction{
         sbuf.append("\t Printing " + print_statement);
         return sbuf.toString();
 	}
+
+	public String getTarget_resource() {
+		return target_resource;
+	}
+	public int getTarget_qty() {
+		return target_qty;
+	}
+	public HashMap<String, Integer> getInput_resources_ratio() {
+		return input_resources_ratio;
+	}
+	public int getRate() {
+		return rate;
+	}
+	public String getPrint_statement() {
+		return print_statement;
+	}
 }

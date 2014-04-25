@@ -28,7 +28,18 @@ public class Node{
     //-- new code added by Nimai--
     private HashMap<String, Integer> intermediateCreatedResources = new HashMap<String, Integer>();
     //-- new code added by Nimai--
+    // -- added for convert combine mechanism by dharmen
+    ArrayList <ComputeFunction> computeArray = new ArrayList <ComputeFunction>();
     
+    public void addComputeFunction (ComputeFunction cf){
+        this.computeArray.add(cf);
+    }
+    
+    public Boolean get_generatesFinalOutput(){
+        return this.generatesFinalOutput;
+    }
+    // -- added for convert combine mechanism by dharmen
+
     /*
         the following map has the resource name as a key and a hashmap of node-name to quantity list of initial and 
         current values as value --> [ <Resource_name , < Node_name, qtylist > >] 
@@ -199,8 +210,8 @@ public class Node{
     //  Method to add a new input resource
     public void addOutputResource(String resourceName, Integer quantity){
         ArrayList<Integer> toAddToOutputResources = new ArrayList<Integer>();
-        toAddToOutputResources.set(0,quantity);
-        toAddToOutputResources.set(1,0);
+        toAddToOutputResources.add(quantity);
+        toAddToOutputResources.add(0);
         this.outputResources.put(resourceName, toAddToOutputResources);
     }
 //#############################################################################################################################//    

@@ -17,18 +17,34 @@ public class NodeThread extends Thread {
     			System.out.println("ALL INPUTS RECEIVED. CALLING THE EXECUTION CODE.");
     			node.setAllResourceReceived();	// sets the timestamp for the moment when all input resources are received
     			// ############ call method to start executing combine convert
-    			if (node.name.equals("A")){
-    				this.mc.send("A", "B", "bread1", 20);
-    				this.mc.send("A", "B", "butter1", 10);
-    			}
-    			if (node.name.equals("B")){
-    				this.mc.send("B", "", "sandwich", 10);
-    			}
+                for (ComputeFunction cf: this.node.computeArray){
+                    if(cf instanceof Convert){
+                        Convert con = (Convert) cf;
+                        this.node.convert(con.getOriginal_resource(), con.getRatio_original_resource(), con.getConverted_resource(), con.getRatio_converted_resource(), con.getQuantity(), con.getRate(), con.getPrint_statement());
+                    }
+                    else if (cf instanceof Combine){
+                        Combine com = (Combine) cf;
+                        this.node.combine(com.getTarget_resource(), com.getTarget_qty(), com.getInput_resources_ratio(), com.getRate(), com.getPrint_statement());
+                    }
+                }
+                for (String receiver : this.node.outNodes.keySet())
+                    for (String resourceName : this.node.outNodes.get(receiver).keySet())
+                        this.mc.send(this.node.getNodeName(), receiver, resourceName, this.node.outNodes.get(receiver).get(resourceName).get(0));
+                
+                if (this.node.get_generatesFinalOutput()){
+                    String resourceName = this.node.outputResources.keySet().iterator().next();
+                    this.mc.send(this.node.getNodeName(), "", resourceName ,this.node.outputResources.get(resourceName).get(0));
+                }
     			break;
     		}
     	}
+        stopThread();
     }
-    
+    // add stopping checks in this method
+    public void stopThread(){
+        System.out.println("Stopping thread");
+        stop();
+    }  
     public synchronized void receiveRawInput (String resourceName , int quantity){
 		quantity = Math.min(quantity, node.rawInputResources.get(resourceName).get(0) - node.rawInputResources.get(resourceName).get(1));
 		Integer current = node.rawInputResources.get(resourceName).get(1);

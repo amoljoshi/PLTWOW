@@ -146,7 +146,20 @@ public class MainClass {
 		mc.nodeStatus.put(name1, 0);
 		
 		// /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+		//adding all computations -- SAMPLE CODE
+		Convert convert = new Convert("bread", 1, "bread1", 1, 20, 2, "Converting bread to bread1");
+		Convert convert1 = new Convert("butter", 1, "butter1", 1, 20, 2, "Converting butter to butter1");
+		A.addComputeFunction(convert);
+		A.addComputeFunction(convert1);
+		// NOTE- the following hashmap can be made using copy constructor while translating //  
+		HashMap<String, Integer> ratio = new HashMap<String, Integer>();
+		ratio.put("bread1", 2);
+		ratio.put("butter1", 1);
+		//--//
+		
+		Combine combine = new Combine("sandwich", 10, ratio, 2, "combining bread1 and butter1 to form sandwich");
+		B.addComputeFunction(combine);
+		
 		// /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// initialize connections
 		// /////////////////////////////////////////////////////////////////////////////////////////////////////////////
