@@ -16,7 +16,7 @@ public class DeclaratorListNode extends ASTNode {
 
 	public DeclaratorListNode(DeclaratorNode node1) {
 		children.add(node1);
-		id = noed1.id;
+		id = node1.id;
 		type = node1.type;
 	}
 

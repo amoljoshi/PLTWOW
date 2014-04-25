@@ -2,7 +2,7 @@ package com.wow.ast;
 
 public class ForLineNode extends ASTNode {
 
-  public ForLineNode(LoopInitUpdateNode node1, LoopConditionLineNode node2, LoopInitUpdateNode node3, EntireLineNode node4) {
+  public ForLineNode(LoopInitUpdateLineNode node1, LoopConditionLineNode node2, LoopInitUpdateLineNode node3, EntireLineNode node4) {
 		children.add(node1);
 		children.add(node2);
 		children.add(node3);

@@ -3,8 +3,10 @@
   import java.util.*;
   import com.wow.definitions.*;
   import com.wow.compute.*;
+  import com.wow.ast.*;
 %}
-      
+%nonassoc LOWER_THAN_ELSE
+%nonassoc ELSE
 %token NL
 %token INPUT
 %token OUTPUT
@@ -24,6 +26,15 @@
 %token QUANTITY
 %token PRINT
 %token PRINT_STRING
+%token INT
+%token DOUBLE
+%token STRING_TYPE
+%token BOOLEAN
+%token IF
+%token ELSE
+%token GTEQ
+%token LTEQ
+%token NTEQ, AND, OR, EQ, DECIMAL
 %%
 
 Program : WORKFLOW STRING '{' resources nodes connections computefunctions '}' {
@@ -71,7 +82,8 @@ connectionlines:
 
 connectionline:
           NODE STRING CONNECTOR NODE STRING '{' STRING DIGITS ';' otherconnectionstrings'}' {
-                                            if(Parser.interactive_yacc){ System.out.println("Parsing Connection between " + $2.sval + " to "+ $5.sval);}
+                                            if(Parser.interactive_yacc){ System.out.println("Parsing Connection between "
+                                             + $2.sval + " to "+ $5.sval);}
                                             if(!checkNode($2.sval)){
                                               yyerror("Node " + $2.sval + " used in connection line not found!");
                                             }
@@ -107,7 +119,8 @@ computefunctions:  computefunction computefunctions {}
 
 computefunction:
              FUNC STRING '{' computelines '}'       {
-                                                  if(Parser.interactive_yacc) { System.out.println("Computation of " + $2.sval);}
+                                                  if(Parser.interactive_yacc) { System.out.println("Computation of " 
+                                                    + $2.sval);}
                                                   if(!checkNode($2.sval)){
                                                     yyerror("Node " + $2.sval + " used to define compute function is not found!");
                                                   }
@@ -128,13 +141,14 @@ computeline:
             | reduceline                    {}
 mapline:
         CONVERT STRING '(' DIGITS ')' STRING '(' DIGITS ')' computeblock ';'  {
-                                                  if(Parser.interactive_yacc) { System.out.println("Convert from " + $2.sval);}
+                                                  if(Parser.interactive_yacc) { System.out.println("Convert from " 
+                                                    + $2.sval);}
                                                   originalResource = $2.sval;
                                                   ratioOriginalResource = $4.ival;
                                                   convertedResource = $6.sval;
                                                   ratioConvertedResource = $8.ival;
-                                                  convert = new Convert(originalResource, ratioOriginalResource, convertedResource, 
-                                                    ratioConvertedResource, quantity, rate, print_string);
+                                                  convert = new Convert(originalResource, ratioOriginalResource, 
+                                                  convertedResource, ratioConvertedResource, quantity, rate, print_string);
                                                   refreshConvertVariables();
                                                   computeArray.add(convert);
                                                   convert = null;
@@ -151,7 +165,8 @@ reduceline:
                                                 else{
                                                   inputResourcesRatio.put($6.sval, lastRatio);
                                                 }
-                                                combine = new Combine(convertedResource, quantity, inputResourcesRatio, rate, print_string);
+                                                combine = new Combine(convertedResource, quantity, inputResourcesRatio, 
+                                                  rate, print_string);
                                                 // System.out.println(combine.toString());
                                                 refreshConvertVariables();
                                                 computeArray.add(combine);
@@ -177,6 +192,60 @@ printlines:
  
 printline:
             PRINT '"' STRING '"' ';'       { print_string = $3.sval;}
+
+lineblock: lineblock entireline             {$$ = new ParserVal(new LineBlockNode((EntireLineNode) $2.obj, (LineBlockNode) $1.obj));
+              if ($2.obj != null) System.out.println($2.obj.toString());}
+          |                                 {}
+
+multiline: '{'  multilineblock '}'          { $$ = new ParserVal(new MultiLineNode((LineBlockNode) $2.obj));}
+
+multilineblock: entireline multilineblock   {if ($1.obj.toString().equals($2.obj.toString()))
+                $$ = new ParserVal(new LineBlockNode((EntireLineNode) $1.obj));
+                else
+                $$ = new ParserVal(new LineBlockNode((EntireLineNode) $1.obj, (LineBlockNode) $2.obj)); }
+                |                           {}
+
+entireline: line ';'                        {$$ = new ParserVal(new EntireLineNode((LineNode) $1.obj));}
+            | ifline                        { $$ = new ParserVal(new EntireLineNode((IfLineNode) $1.obj));}
+
+line:       declaration                     {$$ = new ParserVal(new LineNode((DeclarationNode) $1.obj)); }
+            | expression                    {$$ = new ParserVal(new LineNode((ExpressionNode) $1.obj)); }
+
+
+typeofvariable:   INT                        {  $$ = new ParserVal($1.obj);}
+      | DOUBLE                               {  $$ = new ParserVal($1.obj);}
+      | STRING_TYPE                          {  $$ = new ParserVal($1.obj);}
+      | BOOLEAN                              {  $$ = new ParserVal($1.obj);}
+
+variabledeclarations:   variabledeclaration { $$ = new ParserVal (new DeclaratorListNode((DeclaratorNode) $1.obj)); }
+      | variabledeclarations ',' variabledeclaration {$$ = new ParserVal (new DeclaratorListNode((DeclaratorListNode) $1.obj, (DeclaratorNode) $3.obj)); }
+
+declaration: typeofvariable variabledeclarations      {$$ = new ParserVal (new DeclarationNode((TypeNode) $1.obj, (DeclaratorListNode) $2.obj));}
+
+variabledeclaration: STRING                 {$$ = new ParserVal (new DeclaratorNode(new IdentifierNode($1.sval))); }
+                    | STRING '=' expression {$$ = new ParserVal(new DeclaratorNode(new IdentifierNode($1.sval), (ExpressionNode) $3.obj));}
+
+expression: expression '+' expression       { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "+", (ExpressionNode) $3.obj));}
+            | expression '-' expression     { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "-", (ExpressionNode) $3.obj));}
+            | expression  '*' expression    { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "*", (ExpressionNode) $3.obj));}
+            | expression '/'  expression    { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "/", (ExpressionNode) $3.obj));}
+            | expression '%'  expression    { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "%", (ExpressionNode) $3.obj));}
+            | expression AND  expression    { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "&&", (ExpressionNode) $3.obj));}
+            | expression OR  expression     { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "||", (ExpressionNode) $3.obj));}
+            | expression '<'  expression    { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "<", (ExpressionNode) $3.obj));}
+            | expression '>'  expression    { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, ">", (ExpressionNode) $3.obj));}
+            | expression LTEQ expression    { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "<=", (ExpressionNode) $3.obj));}
+            | expression GTEQ expression    { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, ">=", (ExpressionNode) $3.obj));}
+            | expression EQ expression      { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "=", (ExpressionNode) $3.obj));}
+            | expression NTEQ expression   { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "!=", (ExpressionNode) $3.obj));}
+            | STRING                        { $$ = new ParserVal(new ExpressionNode(new IdentifierNode($1.sval)));}
+            | DIGITS                        { $$ = new ParserVal(new ExpressionNode(new IntegerNode($1.ival)));}
+            | '"' STRING '"'                 { $$ = new ParserVal(new ExpressionNode(new StringNode($3.sval)));}
+            | DECIMAL                       { $$ = new ParserVal(new ExpressionNode(new DoubleNode($1.dval)));}
+ifline: IF '(' expression ')' entireline ELSE entireline        { $$ = new ParserVal(new IfLineNode((ExpressionNode) $3.obj, (EntireLineNode) $5.obj, (EntireLineNode) $7.obj));}
+      | IF '(' expression ')' entireline %prec LOWER_THAN_ELSE  { $$ = new ParserVal(new IfLineNode((ExpressionNode)$3.obj, (EntireLineNode) $5.obj)); }
+
+
 %%
   //  Data structures used in actions of the grammar
   //  You MUST create these objects in the constructor of the Parser class
@@ -251,7 +320,8 @@ printline:
   private void addNewNode(String name){
       assert nodeTable != null;
       Node n = new Node(name, generatesFinalOutput);
-      assert (rawInputResources != null && !rawInputResources.isEmpty()) || (intermediateInputResources!=null && !intermediateInputResources.isEmpty());
+      assert (rawInputResources != null && !rawInputResources.isEmpty()) || (intermediateInputResources!=null 
+            && !intermediateInputResources.isEmpty());
       assert outputResources!= null && !outputResources.isEmpty();      
       n.setRawInputResources(rawInputResources);
       n.setIntermediateInputResources(intermediateInputResources);
@@ -358,7 +428,8 @@ printline:
 
 
   public void yyerror (String error) {
-    System.err.println ("Error: " + error + " at line: " + lexer.getLineNum() + " at column - " + lexer.getColNum() + "\n");
+    System.err.println ("Error: " + error + " at line: " + lexer.getLineNum() + " at column - " + 
+      lexer.getColNum() + "\n");
     // System.exit(0); 
   }
   //  Method which will translate each node into targe code

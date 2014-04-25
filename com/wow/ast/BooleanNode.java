@@ -11,7 +11,7 @@ public class BooleanNode extends ASTNode {
 	}
 
 	public String toString() {
-		return (new String(value));
+		return new Boolean(value).toString();
 	}
 
 }

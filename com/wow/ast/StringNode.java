@@ -5,13 +5,13 @@ public class StringNode extends ASTNode {
 	public String str;
 	public String type;
 
-	public IntegerNode(String str) {
+	public StringNode(String str) {
 		this.str = str;
 		type = "String";
 	}
 
 	public String toString() {
-		return Integer.toString(str);
+		return str;
 	}
 
 }

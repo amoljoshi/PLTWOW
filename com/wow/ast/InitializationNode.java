@@ -39,13 +39,11 @@ public class InitializationNode extends ASTNode{
 				//initialiaztion is put into parentheses
 				return ("("+children.get(0)+")");
 			else if (children.get(0) instanceof TypeNode) 
-				
 				return ("new " + children.get(0)+"()");
 			else
-				
 				return (children.get(0).toString());
 		}
-		else if (children.size() == 2) {
+		else{ // if (children.size() == 2) {
 			//filename or an identifier
 			return ("new "+children.get(0)+"("+children.get(1)+")");
 		}

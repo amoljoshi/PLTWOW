@@ -2,11 +2,11 @@ package com.wow.ast;
 
 public class LoopInitUpdateLineNode extends ASTNode{
 
-  public LoopInitUpdateNode(LineNode n) {
+  public LoopInitUpdateLineNode(LineNode n) {
 		children.add(n);
 	}
 
-	public LoopInitUpdateNode() {
+	public LoopInitUpdateLineNode() {
 
 	}
 

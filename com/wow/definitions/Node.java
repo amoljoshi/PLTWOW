@@ -29,6 +29,7 @@ public class Node{
     private HashMap<String, Integer> intermediateCreatedResources = new HashMap<String, Integer>();
     //-- new code added by Nimai--
     // -- added for convert combine mechanism by dharmen
+    //  ArrayList of computations
     ArrayList <ComputeFunction> computeArray = new ArrayList <ComputeFunction>();
     
     public void addComputeFunction (ComputeFunction cf){
@@ -61,9 +62,6 @@ public class Node{
 	//synchronized versions below
     Map<String, HashMap <String , ArrayList<Integer>>> inNodes = Collections.synchronizedMap(UnsyncInNodes);
     Map<String, HashMap <String , ArrayList<Integer>>> outNodes = Collections.synchronizedMap(UnsyncOutNodes);
-
-    //  ArrayList of computations
-    private ArrayList<ComputeFunction> computeArray = new ArrayList<ComputeFunction> ();
 	
     public Node(String name, boolean generatesFinalOutput){
     	this.name = name;
