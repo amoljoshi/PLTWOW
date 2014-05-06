@@ -34,10 +34,10 @@
 %token ELSE
 %token GTEQ
 %token LTEQ
-%token NTEQ, AND, OR, EQ, DECIMAL
+%token NTEQ, AND, OR, EQ, DECIMAL, END
 %%
 
-Program : WORKFLOW STRING '{' resources nodes connections computefunctions '}' {
+Program : WORKFLOW STRING '{' resources nodes connections computefunctions endblock'}' {
                                                     if(Parser.interactive_yacc){System.out.println("Inside workflow program");}
                                             }
 resources : RESOURCES '{' resourcelines FINAL STRING DIGITS TIMES ';' '}' {
@@ -193,6 +193,9 @@ printlines:
 printline:
             PRINT '"' STRING '"' ';'       { print_string = $3.sval;}
 
+endblock: END '{' lineblock  '}'               {//System.out.println($3.obj.toString());
+                                              }
+
 lineblock: lineblock entireline             {$$ = new ParserVal(new LineBlockNode((EntireLineNode) $2.obj, (LineBlockNode) $1.obj));
               if ($2.obj != null) System.out.println($2.obj.toString());}
           |                                 {}
@@ -205,7 +208,9 @@ multilineblock: entireline multilineblock   {if ($1.obj.toString().equals($2.obj
                 $$ = new ParserVal(new LineBlockNode((EntireLineNode) $1.obj, (LineBlockNode) $2.obj)); }
                 |                           {}
 
-entireline: line ';'                        {$$ = new ParserVal(new EntireLineNode((LineNode) $1.obj));}
+entireline: line ';'                        {
+                                              $$ = new ParserVal(new EntireLineNode((LineNode) $1.obj));
+                                            }
             | ifline                        { $$ = new ParserVal(new EntireLineNode((IfLineNode) $1.obj));}
 
 line:       declaration                     {$$ = new ParserVal(new LineNode((DeclarationNode) $1.obj)); }
@@ -223,9 +228,10 @@ variabledeclarations:   variabledeclaration { $$ = new ParserVal (new Declarator
 declaration: typeofvariable variabledeclarations      {$$ = new ParserVal (new DeclarationNode((TypeNode) $1.obj, (DeclaratorListNode) $2.obj));}
 
 variabledeclaration: STRING                 {$$ = new ParserVal (new DeclaratorNode(new IdentifierNode($1.sval))); }
-                    | STRING '=' expression {$$ = new ParserVal(new DeclaratorNode(new IdentifierNode($1.sval), (ExpressionNode) $3.obj));}
+                    | STRING EQ expression {$$ = new ParserVal(new DeclaratorNode(new IdentifierNode($1.sval), (ExpressionNode) $3.obj));}
 
-expression: expression '+' expression       { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "+", (ExpressionNode) $3.obj));}
+expression: expression '+' expression       { //System.out.println("Adding two expressions");
+                                              $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "+", (ExpressionNode) $3.obj));}
             | expression '-' expression     { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "-", (ExpressionNode) $3.obj));}
             | expression  '*' expression    { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "*", (ExpressionNode) $3.obj));}
             | expression '/'  expression    { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "/", (ExpressionNode) $3.obj));}
@@ -239,7 +245,8 @@ expression: expression '+' expression       { $$ = new ParserVal(new ExpressionN
             | expression EQ expression      { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "=", (ExpressionNode) $3.obj));}
             | expression NTEQ expression   { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "!=", (ExpressionNode) $3.obj));}
             | STRING                        { $$ = new ParserVal(new ExpressionNode(new IdentifierNode($1.sval)));}
-            | DIGITS                        { $$ = new ParserVal(new ExpressionNode(new IntegerNode($1.ival)));}
+            | DIGITS                        { //System.out.println("DIGITS in expression found");
+                                              $$ = new ParserVal(new ExpressionNode(new IntegerNode($1.ival)));}
             | '"' STRING '"'                 { $$ = new ParserVal(new ExpressionNode(new StringNode($3.sval)));}
             | DECIMAL                       { $$ = new ParserVal(new ExpressionNode(new DoubleNode($1.dval)));}
 ifline: IF '(' expression ')' entireline ELSE entireline        { $$ = new ParserVal(new IfLineNode((ExpressionNode) $3.obj, (EntireLineNode) $5.obj, (EntireLineNode) $7.obj));}
@@ -469,12 +476,13 @@ ifline: IF '(' expression ')' entireline ELSE entireline        { $$ = new Parse
     lastResourceInCombine = false;
     inputResourcesRatio = new HashMap<String, Integer> ();
   }
-  static boolean interactive_yacc, interactive_lex;
+  static boolean interactive_yacc, interactive_lex, interactive_endblock;
 
   public static void main(String args[]) throws IOException {
-    System.out.println("WoW program starter");
+    //System.out.println("WoW program starter");
     interactive_yacc = false;
     interactive_lex = false;
+    interactive_endblock = false;
     Parser yyparser;  
     if ( args.length > 0 ) {
       // parse a file
@@ -486,21 +494,21 @@ ifline: IF '(' expression ')' entireline ELSE entireline        { $$ = new Parse
 	    yyparser = new Parser(new InputStreamReader(System.in));
     }
     yyparser.yyparse();
-    yyparser.printResourcesTable();
-    yyparser.printNodesTable();
-    System.out.println(yyparser.connection.toString());
+    // yyparser.printResourcesTable();
+    // yyparser.printNodesTable();
+    // System.out.println(yyparser.connection.toString());
     if(ConnectionChecks.detectCycles(yyparser.connection)){
         System.out.println("Dont you try to trick me.. I can detect cycles..");      
     }
     else{
-      System.out.println("Your WoW program doesn't contain any cycle.. WOW!");
+      //System.out.println("Your WoW program doesn't contain any cycle.. WOW!");
     }
     if(ConnectionChecks.detectHangingParts(yyparser.connection)){
         System.out.println("Dont you try to trick me.. I can detect hanging sub graphs..");      
     }
     else{
-      System.out.println("Your WoW program doesn't contain any hanging subgraph.. WOW!");
-      System.out.println("Called the translateNode method");
+      //System.out.println("Your WoW program doesn't contain any hanging subgraph.. WOW!");
+      //System.out.println("Called the translateNode method");
        String x = yyparser.translateNode(yyparser.nodeTable);
        System.out.println(x);
     }

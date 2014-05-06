@@ -17,5 +17,10 @@ Workflow sandwitch {
 	func Amol{
 		convert bread(1) bread_temp(1) { rate 5; quantity 5; print "amok";};
 	}
+	end {int aj = 9;
+		int temp = 10;
+		aj + temp;
+		boolean hello;
+	}
 }
 

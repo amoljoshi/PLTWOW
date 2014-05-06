@@ -1,3 +1,5 @@
+package com.wow.target;
+import com.wow.definitions.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 

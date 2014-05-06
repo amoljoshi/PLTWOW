@@ -1,3 +1,7 @@
+package com.wow.target;
+import com.wow.target.*;
+import com.wow.definitions.*;
+import com.wow.compute.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -32,12 +36,13 @@ public class MainClass {
 
 	private void start() throws IOException {
 		System.out.println("start");
-		for (String s : nodeSet.keySet()) {
+		/*for (String s : nodeSet.keySet()) {
 			nodeThreadSet.get(s).setMainClass(this);
 		}
 		for (String s : nodeSet.get("A").rawInputResources.keySet()) {
 			System.out.println("Resouece " + s);
 		}
+		*/
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String line;
 		while (currentOutputQuantity < totalOutputQuantity) {

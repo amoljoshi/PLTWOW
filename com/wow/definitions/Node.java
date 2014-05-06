@@ -6,27 +6,27 @@ import com.wow.compute.*;
 //  Class representing each Node in the Workflow
 public class Node{
     String name;
-    private HashMap<String, ArrayList<Integer>> UnsyncRawInputResources = new HashMap <String, ArrayList<Integer>>();
-    private HashMap<String, ArrayList<Integer>> UnsyncIntermediateInputResources = new HashMap <String, ArrayList<Integer>>();
-    private HashMap<String, ArrayList<Integer>> UnsyncOutputResources = new HashMap <String, ArrayList<Integer>>();
+    public HashMap<String, ArrayList<Integer>> UnsyncRawInputResources = new HashMap <String, ArrayList<Integer>>();
+    public HashMap<String, ArrayList<Integer>> UnsyncIntermediateInputResources = new HashMap <String, ArrayList<Integer>>();
+    public HashMap<String, ArrayList<Integer>> UnsyncOutputResources = new HashMap <String, ArrayList<Integer>>();
     
 
-    private Date firstResourceReceived ;
-    private Date allResourceReceived ;
-    private Date allOutputGenerated ;
-    private boolean generatesFinalOutput;
+    public Date firstResourceReceived ;
+    public Date allResourceReceived ;
+    public Date allOutputGenerated ;
+    public boolean generatesFinalOutput;
     
     
     //making the maps synchronized now --
-    Map<String, ArrayList<Integer>> rawInputResources = Collections.synchronizedMap(UnsyncRawInputResources);
-    Map<String, ArrayList<Integer>> intermediateInputResources = Collections.synchronizedMap(UnsyncIntermediateInputResources);
-    Map<String, ArrayList<Integer>> outputResources = Collections.synchronizedMap(UnsyncOutputResources);
+    public Map<String, ArrayList<Integer>> rawInputResources = Collections.synchronizedMap(UnsyncRawInputResources);
+    public Map<String, ArrayList<Integer>> intermediateInputResources = Collections.synchronizedMap(UnsyncIntermediateInputResources);
+    public Map<String, ArrayList<Integer>> outputResources = Collections.synchronizedMap(UnsyncOutputResources);
     
     //-- new code added by Nimai--
-    private HashMap<String, Integer> intermediateCreatedResources = new HashMap<String, Integer>();
+    public HashMap<String, Integer> intermediateCreatedResources = new HashMap<String, Integer>();
     //-- new code added by Nimai--
     // -- added for convert combine mechanism by dharmen
-    ArrayList <ComputeFunction> computeArray = new ArrayList <ComputeFunction>();
+    public ArrayList <ComputeFunction> computeArray = new ArrayList <ComputeFunction>();
     
     public void addComputeFunction (ComputeFunction cf){
         this.computeArray.add(cf);
@@ -42,22 +42,22 @@ public class Node{
         current values as value --> [ <Resource_name , < Node_name, qtylist > >] 
         -- one each for input & output--
     */
-    private HashMap <String , HashMap <String , ArrayList<Integer>>> UnsyncInResources = new HashMap <String, HashMap<String, ArrayList<Integer>>>();
-    private HashMap <String , HashMap <String , ArrayList<Integer>>> UnsyncOutResources = new HashMap <String, HashMap<String, ArrayList<Integer>>>();
+    public HashMap <String , HashMap <String , ArrayList<Integer>>> UnsyncInResources = new HashMap <String, HashMap<String, ArrayList<Integer>>>();
+    public HashMap <String , HashMap <String , ArrayList<Integer>>> UnsyncOutResources = new HashMap <String, HashMap<String, ArrayList<Integer>>>();
     //synchronized versions below
-    Map<String, HashMap <String , ArrayList<Integer>>> inResources = Collections.synchronizedMap(UnsyncInResources);
-    Map<String, HashMap <String , ArrayList<Integer>>> outResources = Collections.synchronizedMap(UnsyncOutResources);
+    public Map<String, HashMap <String , ArrayList<Integer>>> inResources = Collections.synchronizedMap(UnsyncInResources);
+    public Map<String, HashMap <String , ArrayList<Integer>>> outResources = Collections.synchronizedMap(UnsyncOutResources);
     
     /*
         the following map has the node name as a key and a hashmap of resource name to quantity list of initial and 
         current values as value --> [ <Node_name , < Resource_name, qtylist > >] 
         -- one each for input & output--
     */
-    private HashMap <String , HashMap <String , ArrayList<Integer>>> UnsyncInNodes = new HashMap <String, HashMap<String, ArrayList<Integer>>>();
-    private HashMap <String , HashMap <String , ArrayList<Integer>>> UnsyncOutNodes = new HashMap <String, HashMap<String, ArrayList<Integer>>>();
+    public HashMap <String , HashMap <String , ArrayList<Integer>>> UnsyncInNodes = new HashMap <String, HashMap<String, ArrayList<Integer>>>();
+    public HashMap <String , HashMap <String , ArrayList<Integer>>> UnsyncOutNodes = new HashMap <String, HashMap<String, ArrayList<Integer>>>();
     //synchronized versions below
-    Map<String, HashMap <String , ArrayList<Integer>>> inNodes = Collections.synchronizedMap(UnsyncInNodes);
-    Map<String, HashMap <String , ArrayList<Integer>>> outNodes = Collections.synchronizedMap(UnsyncOutNodes);
+    public Map<String, HashMap <String , ArrayList<Integer>>> inNodes = Collections.synchronizedMap(UnsyncInNodes);
+    public Map<String, HashMap <String , ArrayList<Integer>>> outNodes = Collections.synchronizedMap(UnsyncOutNodes);
 
     public Node(String name, boolean generatesFinalOutput){
         this.name = name;
@@ -191,8 +191,8 @@ public class Node{
             //  which user can't create and pass it to this node
             //  which means this node depends on the other node for getting this resource
            ArrayList<Integer> toAddToIntermediateInputResources = new ArrayList<Integer>();
-           toAddToIntermediateInputResources.set(0,quantity);
-           toAddToIntermediateInputResources.set(1,quantity);
+           toAddToIntermediateInputResources.add(0,quantity);
+           toAddToIntermediateInputResources.add(1,quantity);
            this.intermediateInputResources.put(resourceName, toAddToIntermediateInputResources);
            return;
         }
@@ -526,13 +526,13 @@ public String translateNodeCreation(){
         tc += "NodeThread "+ this.getNodeName() + "_thread = new NodeThread("+this.getNodeName()+");\n";
         
         // Add node to nodeSet
-        tc += "nodeSet.put(\""+this.getNodeName()+"\","+this.getNodeName()+");\n";
+        tc += "mc.nodeSet.put(\""+this.getNodeName()+"\","+this.getNodeName()+");\n";
 
         // add node thread created above to nodeThreadSet
-        tc += "nodeThreadSet.put(\""+this.getNodeName()+"\","+ this.getNodeName()+"_thread);\n";
+        tc += "mc.nodeThreadSet.put(\""+this.getNodeName()+"\","+ this.getNodeName()+"_thread);\n";
         
         // add node status to nodeStatus map
-        tc += "nodeStatus.put(\""+this.getNodeName()+"\","+0+");\n";
+        tc += "mc.nodeStatus.put(\""+this.getNodeName()+"\","+0+");\n";
 
 
         // compute translation
@@ -546,12 +546,12 @@ public String translateNodeCreation(){
                 for (String res : resource_ratio.keySet()){
                     tc += "resource_ratio.put("+ res + " , Integer.parseInt(" + resource_ratio.get(res).toString() + ")\n";
                 }
-                tc += "Combine compute_function" + String.valueOf(compute_counter) + " = new Combine( \"" + com.getTarget_resource()+"\" , " + String.valueOf(com.getTarget_qty()) + ", resource_ratio , " + String.valueOf(com.getRate())+ " , \"" + com.getPrint_statement() + "\" )\n";
+                tc += "Combine compute_function" + String.valueOf(compute_counter) + " = new Combine( \"" + com.getTarget_resource()+"\" , " + String.valueOf(com.getTarget_qty()) + ", resource_ratio , " + String.valueOf(com.getRate())+ " , \"" + com.getPrint_statement() + "\" );\n";
                 tc += this.getNodeName()+".addComputeFunction(compute_function" + String.valueOf(compute_counter) + ");\n";
             }
             if (cf instanceof Convert){
                 Convert con = (Convert) cf;
-                tc += "Convert compute_function" + String.valueOf(compute_counter) + " = new Convert(\"" + con.getOriginal_resource()+"\" , " + String.valueOf(con.getRatio_original_resource()) + ", \"" + con.getConverted_resource() + "\", " + String.valueOf(con.getRatio_converted_resource())+ " , " + String.valueOf(con.getQuantity()) + " , " + String.valueOf(con.getRate()) +  " , \"" + con.getPrint_statement() + "\" )\n";
+                tc += "Convert compute_function" + String.valueOf(compute_counter) + " = new Convert(\"" + con.getOriginal_resource()+"\" , " + String.valueOf(con.getRatio_original_resource()) + ", \"" + con.getConverted_resource() + "\", " + String.valueOf(con.getRatio_converted_resource())+ " , " + String.valueOf(con.getQuantity()) + " , " + String.valueOf(con.getRate()) +  " , \"" + con.getPrint_statement() + "\" );\n";
                 tc += this.getNodeName()+".addComputeFunction(compute_function" + String.valueOf(compute_counter) + ");\n";
             }
         }

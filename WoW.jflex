@@ -53,33 +53,35 @@ PRINTSTRING	=	[a-zA-Z_][_a-zA-Z0-9 ]+
 			return Parser.QUANTITY;}
 "print"	{if(Parser.interactive_lex) {System.out.println("print found!");}
 			return Parser.PRINT;}			
-"int"	{if(Parser.interactive_lex) {System.out.println("int variable found!");}
+"int"	{if(Parser.interactive_endblock) {System.out.println("int variable found!");}
 			yyparser.yylval = new ParserVal(new TypeNode(yytext()));
 			return Parser.INT;}
-"double"	{if(Parser.interactive_lex) {System.out.println("double variable found!");}
+"double"	{if(Parser.interactive_endblock) {System.out.println("double variable found!");}
 			yyparser.yylval = new ParserVal(new TypeNode(yytext()));
 			return Parser.DOUBLE;}
-"string"	{if(Parser.interactive_lex) {System.out.println("string variable found!");}
+"string"	{if(Parser.interactive_endblock) {System.out.println("string variable found!");}
 			yyparser.yylval = new ParserVal(new TypeNode(yytext()));
 			return Parser.STRING_TYPE;}
-"boolean"	{if(Parser.interactive_lex) {System.out.println("bollean variable found!");}
+"boolean"	{if(Parser.interactive_endblock) {System.out.println("bolean variable found!");}
 			yyparser.yylval = new ParserVal(new TypeNode(yytext()));
 			return Parser.BOOLEAN;}
+"end"		{if(Parser.interactive_endblock) {System.out.println("end block found!");}
+			return Parser.END;}
 "x"	{if(Parser.interactive_lex){System.out.println("x found"); }
 			return Parser.TIMES;}
 "->"	{ if(Parser.interactive_lex) {System.out.println("Connector found");}
 		return Parser.CONNECTOR;}
-"&&"	{if(Parser.interactive_lex) {System.out.println("AND expression found");}
+"&&"	{if(Parser.interactive_endblock) {System.out.println("AND expression found");}
 		return Parser.AND;}
-"||"	{if(Parser.interactive_lex) {System.out.println("OR expression found");}
+"||"	{if(Parser.interactive_endblock) {System.out.println("OR expression found");}
 		return Parser.OR;}
-">="	{if(Parser.interactive_lex) {System.out.println("Greater-than-equal-to expression found");}
+">="	{if(Parser.interactive_endblock) {System.out.println("Greater-than-equal-to expression found");}
 		return Parser.GTEQ;}
-"<="	{if(Parser.interactive_lex) {System.out.println("Less-than-equal-to expression found");}
+"<="	{if(Parser.interactive_endblock) {System.out.println("Less-than-equal-to expression found");}
 		return Parser.LTEQ;}
-"="	{if(Parser.interactive_lex) {System.out.println("Equal-to expression found");}
+"="	{if(Parser.interactive_endblock) {System.out.println("Equal-to expression found");}
 		return Parser.EQ;}
-"!="	{if(Parser.interactive_lex) {System.out.println("Not-equal-to expression found");}
+"!="	{if(Parser.interactive_endblock) {System.out.println("Not-equal-to expression found");}
 		return Parser.NTEQ;}
 {STRING}	{if(Parser.interactive_lex){System.out.println("String found!"); }
 			yyparser.yylval = new ParserVal(yytext()); return Parser.STRING;}

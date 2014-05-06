@@ -1,5 +1,6 @@
+package com.wow.target;
 import com.wow.definitions.*;
-
+import com.wow.compute.*;
 public class NodeThread extends Thread {
 	private MainClass mc;
 	Node node ;
@@ -10,7 +11,7 @@ public class NodeThread extends Thread {
     	this.mc = m;
     }
     public void run() {
-    	System.out.println("Node " + node.name + " running now");
+    	System.out.println("Node " + this.node.getNodeName() + " running now");
     	node.setFirstResourceReceived(); 		// sets the timestamp for start of node --- node now waits for all inputs to be received
     	while (true){
     		if (node.canExecute()){
