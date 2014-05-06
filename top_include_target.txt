@@ -17,8 +17,8 @@ public class MainClass {
 
 	}
 
-	final String finalOutputResource = "sandwich";
-	final int totalOutputQuantity = 10; // add value from parser again
+	String finalOutputResource = "";
+	int totalOutputQuantity = 0; // add value from parser again
 	int currentOutputQuantity = 0;
 	ArrayList<String> rawInputResources = new ArrayList<String>();
 
@@ -35,14 +35,22 @@ public class MainClass {
 	}
 
 	private void start() throws IOException {
+		for (String name : nodeSet.keySet()){
+			if (nodeSet.get(name).generatesFinalOutput){
+				for (String s : nodeSet.get(name).outputResources.keySet()){
+					finalOutputResource = s;
+					totalOutputQuantity += nodeSet.get(name).outputResources.get(s).get(0);
+				}
+			}
+
+		}
 		System.out.println("start");
-		/*for (String s : nodeSet.keySet()) {
+		for (String s : nodeSet.keySet()) {
 			nodeThreadSet.get(s).setMainClass(this);
 		}
-		for (String s : nodeSet.get("A").rawInputResources.keySet()) {
+		for (String s : nodeSet.get("Amol").rawInputResources.keySet()) {
 			System.out.println("Resouece " + s);
 		}
-		*/
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String line;
 		while (currentOutputQuantity < totalOutputQuantity) {
@@ -54,6 +62,7 @@ public class MainClass {
 				if (arguments.length != 3) {
 					System.out.println("Illegal command");
 				}
+				// System.out.println("Argument 0 = " + arguments[0] + ", Argument 1 =" + arguments[1]);
 				if (!nodeSet.containsKey(arguments[0]))
 					System.out
 							.println("Node does not exist in the workflow. Please try again.");
@@ -77,7 +86,7 @@ public class MainClass {
 							boolean isFirstInput = nodeSet.get(nodeName)
 									.isFirstInput();
 							System.out.println(isFirstInput);
-							if (isFirstInput) {
+							if (isFirstInput && !nodeThreadSet.get(nodeName).isAlive()) {
 								nodeStatus.put(nodeName, 1);
 								nodeThreadSet.get(nodeName).start();
 								// add code to start thread

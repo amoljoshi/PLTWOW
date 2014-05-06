@@ -103,8 +103,8 @@ connectionline:
                                             {
                                               yyerror(errorString);
                                             }                                            
-                                            addNodeInResources($5.sval, connectionResources);
-                                            addNodeOutResources($2.sval, connectionResources);
+                                            addNodeInResources($5.sval, connectionResources, $2.sval);
+                                            addNodeOutResources($2.sval, connectionResources , $5.sval);
                                             addNewConnection($2.sval, $5.sval);
                                             //  Refreshing resources defined in the connection line
                                             connectionResources = new HashMap<String, Integer> ();}
@@ -349,7 +349,7 @@ ifline: IF '(' expression ')' entireline ELSE entireline        { $$ = new Parse
     connectionResources.put(name, quantity);
   }
   //  Method to set inResources and inNodes of a node
-  private void addNodeInResources(String nodeName, HashMap<String, Integer> resources){
+  private void addNodeInResources(String nodeName, HashMap<String, Integer> resources, String senderNode){
     // System.out.println("Adding in resources for node = " + nodeName);
     if(nodeTable.containsKey(nodeName)){
       Node n = nodeTable.get(nodeName);
@@ -357,7 +357,7 @@ ifline: IF '(' expression ')' entireline ELSE entireline        { $$ = new Parse
       while (it.hasNext()) {
           Map.Entry pair = (Map.Entry)it.next();
           // System.out.println(pair.getKey() + " = " + pair.getValue());
-          n.addNewInResource((String)pair.getKey(), nodeName, (Integer)pair.getValue());
+          n.addNewInResource((String)pair.getKey(), senderNode, (Integer)pair.getValue());
       }
     }
     else{
@@ -366,7 +366,7 @@ ifline: IF '(' expression ')' entireline ELSE entireline        { $$ = new Parse
     }
   }
   //  Method to set outResources and outNodes of a node
-  private void addNodeOutResources(String nodeName, HashMap<String, Integer> resources){
+  private void addNodeOutResources(String nodeName, HashMap<String, Integer> resources, String receiverNode){
     // System.out.println("Adding out resources for node = " + nodeName);
     if(nodeTable.containsKey(nodeName)){
       Node n = nodeTable.get(nodeName);
@@ -374,7 +374,7 @@ ifline: IF '(' expression ')' entireline ELSE entireline        { $$ = new Parse
       while (it.hasNext()) {
           Map.Entry pair = (Map.Entry)it.next();
           // System.out.println(pair.getKey() + " = " + pair.getValue());
-          n.addNewOutResource((String)pair.getKey(), nodeName, (Integer)pair.getValue());
+          n.addNewOutResource((String)pair.getKey(), receiverNode, (Integer)pair.getValue());
       }
     }
     else{
@@ -486,7 +486,7 @@ ifline: IF '(' expression ')' entireline ELSE entireline        { $$ = new Parse
     //System.out.println("WoW program starter");
     interactive_yacc = false;
     interactive_lex = false;
-    interactive_endblock = true;
+    interactive_endblock = false;
     Parser yyparser;  
     if ( args.length > 0 ) {
       // parse a file

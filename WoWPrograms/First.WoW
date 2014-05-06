@@ -1,21 +1,24 @@
 Workflow sandwitch {
-	Resources { bread 1x; butter 2x; final sandwich 1x;}
+	Resources { bread 2x; butter 1x; final sandwich 1x;}
 	Node Amol
 	{
 		input bread 4;
-		output bread_temp 5;
+		output bread_temp 4;
 	}
 	Node Amol2
 	{
-		input bread_temp 5;
-	    input butter 3;
-		final output sandwich 3;
+		input bread_temp 4;
+	    input butter 2;
+		final output sandwich 2;
 	}
 	Connection{
-		Node Amol -> Node Amol2 {bread_temp 5;};
+		Node Amol -> Node Amol2 {bread_temp 4;};
 	}
 	func Amol{
-		convert bread(1) bread_temp(1) { rate 5; quantity 5; print "amok";};
+		convert bread(1) bread_temp(1) { rate 100; quantity 4; print "amol";};
+	}
+	func Amol2{
+		combine bread_temp(2) butter(1) sandwich {rate 1000; quantity 2 ; print "hurray"; };
 	}
 	end {int aj = 9;
 		int temp = 10;

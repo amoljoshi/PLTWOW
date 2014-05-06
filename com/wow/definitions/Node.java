@@ -482,6 +482,7 @@ public String translateNodeCreation(){
         // Add data to rawInputResources table
         for (String i : rawIpResKeys)
         {
+            tc += "mc.rawInputResources.add(\""+i+"\");\n";
             int qty = rawInputResources.get(i).get(0);
             tc+= this.getNodeName() +".addInputResource(\""+i + "\"," + qty + ",false);\n";
         }
@@ -541,18 +542,18 @@ public String translateNodeCreation(){
             compute_counter+=1;
             if (cf instanceof Combine){
                 Combine com = (Combine) cf;
-                tc+= "HashMap <String, Integer> resource_ratio" + String.valueOf(compute_counter) + " = new HashMap<String, Integer> ();\n";
+                tc+= "HashMap <String, Integer> resource_ratio_" + this.getNodeName() + String.valueOf(compute_counter) + " = new HashMap<String, Integer> ();\n";
                 HashMap <String, Integer> resource_ratio = new HashMap <String,Integer> (com.getInput_resources_ratio());
                 for (String res : resource_ratio.keySet()){
-                    tc += "resource_ratio.put("+ res + " , Integer.parseInt(" + resource_ratio.get(res).toString() + ")\n";
+                    tc += "resource_ratio_"+this.getNodeName()+String.valueOf(compute_counter)+".put(\""+ res + "\" , " + resource_ratio.get(res).toString() + ");\n";
                 }
-                tc += "Combine compute_function" + String.valueOf(compute_counter) + " = new Combine( \"" + com.getTarget_resource()+"\" , " + String.valueOf(com.getTarget_qty()) + ", resource_ratio , " + String.valueOf(com.getRate())+ " , \"" + com.getPrint_statement() + "\" );\n";
-                tc += this.getNodeName()+".addComputeFunction(compute_function" + String.valueOf(compute_counter) + ");\n";
+                tc += "Combine compute_function_"+this.getNodeName() + String.valueOf(compute_counter) + " = new Combine( \"" + com.getTarget_resource()+"\" , " + String.valueOf(com.getTarget_qty()) + ", resource_ratio_" + this.getNodeName() + String.valueOf(compute_counter)+ " , " + String.valueOf(com.getRate())+ " , \"" + com.getPrint_statement() + "\" );\n";
+                tc += this.getNodeName()+".addComputeFunction(compute_function_"+this.getNodeName() + String.valueOf(compute_counter) + ");\n";
             }
             if (cf instanceof Convert){
                 Convert con = (Convert) cf;
-                tc += "Convert compute_function" + String.valueOf(compute_counter) + " = new Convert(\"" + con.getOriginal_resource()+"\" , " + String.valueOf(con.getRatio_original_resource()) + ", \"" + con.getConverted_resource() + "\", " + String.valueOf(con.getRatio_converted_resource())+ " , " + String.valueOf(con.getQuantity()) + " , " + String.valueOf(con.getRate()) +  " , \"" + con.getPrint_statement() + "\" );\n";
-                tc += this.getNodeName()+".addComputeFunction(compute_function" + String.valueOf(compute_counter) + ");\n";
+                tc += "Convert compute_function_"+this.getNodeName() + String.valueOf(compute_counter) + " = new Convert(\"" + con.getOriginal_resource()+"\" , " + String.valueOf(con.getRatio_original_resource()) + ", \"" + con.getConverted_resource() + "\", " + String.valueOf(con.getRatio_converted_resource())+ " , " + String.valueOf(con.getQuantity()) + " , " + String.valueOf(con.getRate()) +  " , \"" + con.getPrint_statement() + "\" );\n";
+                tc += this.getNodeName()+".addComputeFunction(compute_function_"+this.getNodeName() + String.valueOf(compute_counter) + ");\n";
             }
         }
         // compute translation
