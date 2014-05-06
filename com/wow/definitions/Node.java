@@ -62,9 +62,6 @@ public class Node{
     Map<String, HashMap <String , ArrayList<Integer>>> inNodes = Collections.synchronizedMap(UnsyncInNodes);
     Map<String, HashMap <String , ArrayList<Integer>>> outNodes = Collections.synchronizedMap(UnsyncOutNodes);
 
-    //  ArrayList of computations
-    private ArrayList<ComputeFunction> computeArray = new ArrayList<ComputeFunction> ();
-    
     public Node(String name, boolean generatesFinalOutput){
         this.name = name;
         /*this.rawInputResources = new HashMap<String, ArrayList<Integer>> ();
@@ -565,7 +562,7 @@ public class Node{
 
 public String translateNodeCreation(){
         String tc = "";
-        tc += "Node " + this.getNodeName() + " = new Node(\""+this.getNodeName()+"\","+this.generatesFinalOutput+");";
+        tc += "Node " + this.getNodeName() + " = new Node(\""+this.getNodeName()+"\","+this.generatesFinalOutput+");\n";
         // Code to create objects of rawIpRes, intIpRes, opRes, inRes, outRes
         tc += "rawIpRes = new HashMap<String, ArrayList<Integer>>();\n"; 
         tc += "intIpRes = new HashMap<String,ArrayList<Integer>>();\n";
@@ -585,11 +582,11 @@ public String translateNodeCreation(){
         tc += this.getNodeName()+".setoutNodes(outNodes);\n";
 
         // Get all the keys for the hash maps and probe and start inserting
-        Set<String> rawIpResKeys = getAllRawInputResources.keySet();
-        Set<String> intIpResKeys = getAllIntermediateInputResources.keySet();
-        Set<String> opResKeys = getAllOutputResources.keySet();
-        Set<String> inResKeys = getAllInResources.keySet();
-        Set<String> outResKeys = getAllOutResources.keySet();
+        Set<String> rawIpResKeys = getAllRawInputResources().keySet();
+        Set<String> intIpResKeys = getAllIntermediateInputResources().keySet();
+        Set<String> opResKeys = getAllOutputResources().keySet();
+        Set<String> inResKeys = getAllInResources().keySet();
+        Set<String> outResKeys = getAllOutResources().keySet();
 
         // Add data to rawInputResources table
         for (String i : rawIpResKeys)
@@ -608,29 +605,29 @@ public String translateNodeCreation(){
         // Add data to outputResKeys table
         for (String i : opResKeys)
         {
-            int qty = intermediateInputResources.get(i).get(0);
-            tc+= this.getNodeName() +".addInputResource(\""+i + "\" ," + qty + ",true);\n";
+            int qty = outputResources.get(i).get(0);
+            tc+= this.getNodeName() +".addOutputResource(\""+i + "\" ," + qty + ");\n";
         }
 
         // Add data to inResources table
         for (String i : inResKeys)
         {
-            Set<String> temp_keys = inResources.get(i);
+            Set<String> temp_keys = inResources.get(i).keySet();
             for (String j: temp_keys)
             {
                 int qty = inResources.get(i).get(j).get(0);
-                tc += this.getNodeName() + ".addNewInResource(\"" + i + "\",\"" + j + "\"," + qty");\n";
+                tc += this.getNodeName() + ".addNewInResource(\"" + i + "\",\"" + j + "\", "+ qty +");\n";
             }
         }
 
         // Add data to outResources table
         for (String i : outResKeys)
         {
-            Set<String> temp_keys = outResources.get(i);
+            Set<String> temp_keys = outResources.get(i).keySet();
             for (String j: temp_keys)
             {
                 int qty = outResources.get(i).get(j).get(0);
-                tc += this.getNodeName() + ".addNewOutResource(\"" + i + "\",\"" + j + "\"," + qty");\n";
+                tc += this.getNodeName() + ".addNewOutResource(\"" + i + "\",\"" + j + "\", "+ qty +");\n";
             }
         }
         System.out.println(tc);
