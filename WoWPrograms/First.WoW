@@ -19,8 +19,8 @@ Workflow sandwitch {
 	}
 	end {int aj = 9;
 		int temp = 10;
-		aj + temp;
-		boolean hello;
+		aj = aj + temp;
+		boolean hello = true;
+		if(hello) aj = aj +temp;
 	}
 }
-
