@@ -30,6 +30,8 @@
 %token DOUBLE
 %token STRING_TYPE
 %token BOOLEAN
+%token TRUE
+%token FALSE
 %token IF
 %token ELSE
 %token GTEQ
@@ -249,6 +251,8 @@ expression: expression '+' expression       { //System.out.println("Adding two e
                                               $$ = new ParserVal(new ExpressionNode(new IntegerNode($1.ival)));}
             | '"' STRING '"'                 { $$ = new ParserVal(new ExpressionNode(new StringNode($3.sval)));}
             | DECIMAL                       { $$ = new ParserVal(new ExpressionNode(new DoubleNode($1.dval)));}
+            | TRUE                          { $$ = new ParserVal(new ExpressionNode((BooleanNode) $1.obj)); }
+            | FALSE                         { $$ = new ParserVal(new ExpressionNode((BooleanNode) $1.obj)); }
 ifline: IF '(' expression ')' entireline ELSE entireline        { $$ = new ParserVal(new IfLineNode((ExpressionNode) $3.obj, (EntireLineNode) $5.obj, (EntireLineNode) $7.obj));}
       | IF '(' expression ')' entireline %prec LOWER_THAN_ELSE  { $$ = new ParserVal(new IfLineNode((ExpressionNode)$3.obj, (EntireLineNode) $5.obj)); }
 
@@ -482,7 +486,7 @@ ifline: IF '(' expression ')' entireline ELSE entireline        { $$ = new Parse
     //System.out.println("WoW program starter");
     interactive_yacc = false;
     interactive_lex = false;
-    interactive_endblock = false;
+    interactive_endblock = true;
     Parser yyparser;  
     if ( args.length > 0 ) {
       // parse a file

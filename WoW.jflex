@@ -62,11 +62,19 @@ PRINTSTRING	=	[a-zA-Z_][_a-zA-Z0-9 ]+
 "string"	{if(Parser.interactive_endblock) {System.out.println("string variable found!");}
 			yyparser.yylval = new ParserVal(new TypeNode(yytext()));
 			return Parser.STRING_TYPE;}
-"boolean"	{if(Parser.interactive_endblock) {System.out.println("bolean variable found!");}
+"boolean"	{if(Parser.interactive_endblock) {System.out.println("boolean variable found!");}
 			yyparser.yylval = new ParserVal(new TypeNode(yytext()));
 			return Parser.BOOLEAN;}
+"true"	{if(Parser.interactive_endblock) {System.out.println("boolean true variable found!");}
+			yyparser.yylval = new ParserVal(new BooleanNode(Boolean.parseBoolean(yytext())));
+			return Parser.TRUE;}
+"false"	{if(Parser.interactive_endblock) {System.out.println("boolean false variable found!");}
+			yyparser.yylval = new ParserVal(new BooleanNode(Boolean.parseBoolean(yytext())));
+			return Parser.FALSE;}
 "end"		{if(Parser.interactive_endblock) {System.out.println("end block found!");}
 			return Parser.END;}
+"if"		{if(Parser.interactive_endblock) {System.out.println("if condition found!");}
+			return Parser.IF;}
 "x"	{if(Parser.interactive_lex){System.out.println("x found"); }
 			return Parser.TIMES;}
 "->"	{ if(Parser.interactive_lex) {System.out.println("Connector found");}
