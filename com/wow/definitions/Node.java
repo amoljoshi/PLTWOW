@@ -9,10 +9,7 @@ public class Node{
     private HashMap<String, ArrayList<Integer>> UnsyncRawInputResources = new HashMap <String, ArrayList<Integer>>();
     private HashMap<String, ArrayList<Integer>> UnsyncIntermediateInputResources = new HashMap <String, ArrayList<Integer>>();
     private HashMap<String, ArrayList<Integer>> UnsyncOutputResources = new HashMap <String, ArrayList<Integer>>();
-    // edits
-    private HashMap<String, ArrayList<Integer>> UnsyncintermediateInputResources = new HashMap <String, ArrayList<Integer>>(); // --------------------- CHANGE THIS. MAKE VALUE AN ARRAY LIST OF ORIGINAL AND UPDATED VALUES
-    private HashMap<String, ArrayList<Integer>> UnsyncoutputResources = new HashMap <String, ArrayList<Integer>>(); // --------------------- CHANGE THIS. MAKE VALUE AN ARRAY LIST OF ORIGINAL AND UPDATED values
-    // edits
+    
 
     private Date firstResourceReceived ;
     private Date allResourceReceived ;
@@ -439,132 +436,24 @@ public class Node{
         return s;
     }
   
-    /*public String translateTarget() {
-        
-        String targetCode = "";
-        
-        Iterator rawIter;
-        Iterator outIter;
-        Iterator interIter;
-        Iterator inResIter;
-        Iterator outResIter;
-        Iterator tempIter;
-        
-        
-        //copying all rawInputResources for this node
-        targetCode = "HashMap<String, ArrayList<Integer>> rawInputResources = new HashMap <String, ArrayList<Integer>>();"
-                + "\n";
-        targetCode += "ArrayList<Integer> quantities = new ArrayList<Integer> ();"
-                + "\n";
-        rawIter = this.rawInputResources.entrySet().iterator();
-        while (rawIter.hasNext()) {
-            Map.Entry pair = (Map.Entry) rawIter.next();
-            
-            for (Integer i : (ArrayList<Integer>) pair.getValue()) {
-                targetCode += "quantities.add(" + i + ");" + "\n";
-            }
 
-            targetCode += "rawInputResources.put(" + (String) pair.getKey()
-                    + ", " + "quantities);" + "\n";
-            targetCode += "quantities = new ArrayList<Integer> ();" + "\n";
-        }
-        
-        //copying all outputResources for this node
-        targetCode += "HashMap<String, Integer> outputResources = new HashMap <String, Integer>();"
-                + "\n";
-        outIter = this.outputResources.entrySet().iterator();
-        while (outIter.hasNext()) {
-            Map.Entry pair = (Map.Entry) outIter.next();
 
-            targetCode += "outputResources.put(" + (String) pair.getKey()
-                    + ", " + (Integer) pair.getValue() + ");" + "\n";
-        }
-        
-        //copying all intermediateInputResources for this node
-        targetCode += "HashMap<String, Integer> intermediateInputResources = new HashMap <String, Integer>();"
-                + "\n";
-        interIter = this.intermediateInputResources.entrySet()
-                .iterator();
-        while (interIter.hasNext()) {
-            Map.Entry pair = (Map.Entry) interIter.next();
-
-            targetCode += "intermediateInputResources.put("
-                    + (String) pair.getKey() + ", " + (Integer) pair.getValue()
-                    + ");" + "\n";
-        }
-
-        //copying all inResources for this node
-        
-        targetCode += "HashMap <String , HashMap <String , ArrayList<Integer>>> inResources = new HashMap <String, HashMap<String, ArrayList<Integer>>>();"
-                + "\n";
-        
-        inResIter = this.inResources.entrySet().iterator();
-        while (inResIter.hasNext()) {
-            Map.Entry pair = (Map.Entry) inResIter.next();
-            
-            HashMap<String, ArrayList<Integer>> value = (HashMap<String, ArrayList<Integer>>) pair.getValue();
-            targetCode += "HashMap<String, ArrayList<Integer>> value = new HashMap <String, ArrayList<Integer>>()"+"\n";
-            
-            tempIter = value.entrySet().iterator();
-            
-            targetCode += "ArrayList<Integer> quantities = new ArrayList<Integer> ();"+"\n"; 
-            
-            while(tempIter.hasNext()){
-                Map.Entry tempPair = (Map.Entry) tempIter.next();
-                
-                for (Integer i : (ArrayList<Integer>) tempPair.getValue()) {
-                    targetCode += "quantities.add(" + i + ");" + "\n";
-                }
-                
-                targetCode += "value.put("+(String) tempPair.getKey()+", quantities);";
-                targetCode += "quantities = new ArrayList<Integer> ();" + "\n";
-            }
-            
-            
-            targetCode += "inResources.put(" + (String) pair.getKey() + ", value);" + "\n";
-        }
-        
-        //copying all outResources for this node
-        targetCode += "HashMap <String , HashMap <String , ArrayList<Integer>>> outResources = new HashMap <String, HashMap<String, ArrayList<Integer>>>();"
-                + "\n";
-        
-        outResIter = this.outResources.entrySet().iterator();
-        while (inResIter.hasNext()) {
-            Map.Entry pair = (Map.Entry) outResIter.next();
-            
-            HashMap<String, ArrayList<Integer>> value = (HashMap<String, ArrayList<Integer>>) pair.getValue();
-            targetCode += "HashMap<String, ArrayList<Integer>> value = new HashMap <String, ArrayList<Integer>>()"+"\n";
-            
-            tempIter = value.entrySet().iterator();
-            
-            targetCode += "ArrayList<Integer> quantities = new ArrayList<Integer> ();"+"\n"; 
-            
-            while(tempIter.hasNext()){
-                Map.Entry tempPair = (Map.Entry) tempIter.next();
-                
-                for (Integer i : (ArrayList<Integer>) tempPair.getValue()) {
-                    targetCode += "quantities.add(" + i + ");" + "\n";
-                }
-                
-                targetCode += "value.put("+(String) tempPair.getKey()+", quantities);";
-                targetCode += "quantities = new ArrayList<Integer> ();" + "\n";
-            }
-            
-            
-            targetCode += "outResources.put(" + (String) pair.getKey() + ", value);" + "\n";
-        }
-        
-        
-        return targetCode;
-
-    }*/
-
+/*
+Yet to add to translateNodeCreation()
+- Creating threads for each node
+- add threads to the nodeThreadSet
+- add data to nodeStatus
+- Create an object for LibrayFunciton class
+*/
 
 public String translateNodeCreation(){
         String tc = "";
         tc += "Node " + this.getNodeName() + " = new Node(\""+this.getNodeName()+"\","+this.generatesFinalOutput+");\n";
         // Code to create objects of rawIpRes, intIpRes, opRes, inRes, outRes
-        tc += "rawIpRes = new HashMap<String, ArrayList<Integer>>();\n"; 
+        
+        // ==== comment this code. May not be needed
+
+        /*tc += "rawIpRes = new HashMap<String, ArrayList<Integer>>();\n"; 
         tc += "intIpRes = new HashMap<String,ArrayList<Integer>>();\n";
         tc += "opRes = new HashMap<String, ArrayList<Integer>>();\n";
         tc += "inRes = new HashMap<String, HashMap<String, ArrayList<Integer>>>();\n";
@@ -579,7 +468,7 @@ public String translateNodeCreation(){
         tc += this.getNodeName()+".setInResources(inRes);\n";
         tc += this.getNodeName()+".setOutResources(outRes);\n";
         tc += this.getNodeName()+".setInNodes(inNodes);\n";
-        tc += this.getNodeName()+".setoutNodes(outNodes);\n";
+        tc += this.getNodeName()+".setoutNodes(outNodes);\n";*/
 
         // Get all the keys for the hash maps and probe and start inserting
         Set<String> rawIpResKeys = getAllRawInputResources().keySet();
@@ -588,11 +477,13 @@ public String translateNodeCreation(){
         Set<String> inResKeys = getAllInResources().keySet();
         Set<String> outResKeys = getAllOutResources().keySet();
 
+        // === Comment this code. May not be needed
+
         // Add data to rawInputResources table
         for (String i : rawIpResKeys)
         {
             int qty = rawInputResources.get(i).get(0);
-            tc+= this.getNodeName() +".addInputResource(\""+i + "\" ," + qty + ",false);\n";
+            tc+= this.getNodeName() +".addInputResource(\""+i + "\"," + qty + ",false);\n";
         }
 
         // Add data to intermediateInputResources table
@@ -606,7 +497,7 @@ public String translateNodeCreation(){
         for (String i : opResKeys)
         {
             int qty = outputResources.get(i).get(0);
-            tc+= this.getNodeName() +".addOutputResource(\""+i + "\" ," + qty + ");\n";
+            tc+= this.getNodeName() +".addOutputResource(\""+i+"\" ,"+ qty +");\n";
         }
 
         // Add data to inResources table
@@ -630,7 +521,44 @@ public String translateNodeCreation(){
                 tc += this.getNodeName() + ".addNewOutResource(\"" + i + "\",\"" + j + "\", "+ qty +");\n";
             }
         }
-        System.out.println(tc);
+
+        // -- Create a thread for the node. 
+        tc += "NodeThread "+ this.getNodeName() + "_thread = new NodeThread("+this.getNodeName()+");\n";
+        
+        // Add node to nodeSet
+        tc += "nodeSet.put(\""+this.getNodeName()+"\","+this.getNodeName()+");\n";
+
+        // add node thread created above to nodeThreadSet
+        tc += "nodeThreadSet.put(\""+this.getNodeName()+"\","+ this.getNodeName()+"_thread);\n";
+        
+        // add node status to nodeStatus map
+        tc += "nodeStatus.put(\""+this.getNodeName()+"\","+0+");\n";
+
+
+        // compute translation
+        int compute_counter = 0;
+        for (ComputeFunction cf : this.computeArray){
+            compute_counter+=1;
+            if (cf instanceof Combine){
+                Combine com = (Combine) cf;
+                tc+= "HashMap <String, Integer> resource_ratio" + String.valueOf(compute_counter) + " = new HashMap<String, Integer> ();\n";
+                HashMap <String, Integer> resource_ratio = new HashMap <String,Integer> (com.getInput_resources_ratio());
+                for (String res : resource_ratio.keySet()){
+                    tc += "resource_ratio.put("+ res + " , Integer.parseInt(" + resource_ratio.get(res).toString() + ")\n";
+                }
+                tc += "Combine compute_function" + String.valueOf(compute_counter) + " = new Combine( \"" + com.getTarget_resource()+"\" , " + String.valueOf(com.getTarget_qty()) + ", resource_ratio , " + String.valueOf(com.getRate())+ " , \"" + com.getPrint_statement() + "\" )\n";
+                tc += this.getNodeName()+".addComputeFunction(compute_function" + String.valueOf(compute_counter) + ");\n";
+            }
+            if (cf instanceof Convert){
+                Convert con = (Convert) cf;
+                tc += "Convert compute_function" + String.valueOf(compute_counter) + " = new Convert(\"" + con.getOriginal_resource()+"\" , " + String.valueOf(con.getRatio_original_resource()) + ", \"" + con.getConverted_resource() + "\", " + String.valueOf(con.getRatio_converted_resource())+ " , " + String.valueOf(con.getQuantity()) + " , " + String.valueOf(con.getRate()) +  " , \"" + con.getPrint_statement() + "\" )\n";
+                tc += this.getNodeName()+".addComputeFunction(compute_function" + String.valueOf(compute_counter) + ");\n";
+            }
+        }
+        // compute translation
+
+
+        //System.out.println(tc);
         return tc;
     }
 }
