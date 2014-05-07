@@ -25,7 +25,7 @@
 %token RATE
 %token QUANTITY
 %token PRINT
-%token PRINT_STRING
+%token STRINGLITERAL
 %token INT
 %token DOUBLE
 %token STRING_TYPE
@@ -197,7 +197,7 @@ printlines:
             |                               {}
  
 printline:
-            PRINT '"' STRING '"' ';'       { print_string = $3.sval;}
+            PRINT STRINGLITERAL ';'       { print_string = $3.sval;}
 
 endblock: END '{' lineblock  '}'               {//System.out.println($3.obj.toString());
                                               }
@@ -228,6 +228,7 @@ entireline: line ';'                        {
 
 line:       declaration                     {$$ = new ParserVal(new LineNode((DeclarationNode) $1.obj)); }
             | expression                    {$$ = new ParserVal(new LineNode((ExpressionNode) $1.obj)); }
+            | printstatement                { $$ = new ParserVal(new LineNode((PrintLineNode) $1.obj));}            
 
 typeofvariable:   INT                        {  $$ = new ParserVal($1.obj);}
       | DOUBLE                               {  $$ = new ParserVal($1.obj);}
@@ -262,7 +263,7 @@ expression: expression '+' expression       { //System.out.println("Adding two e
             | STRING                        { $$ = new ParserVal(new ExpressionNode(new IdentifierNode($1.sval)));}
             | DIGITS                        { //System.out.println("DIGITS in expression found");
                                               $$ = new ParserVal(new ExpressionNode(new IntegerNode($1.ival)));}
-            | '"' STRING '"'                 { $$ = new ParserVal(new ExpressionNode(new StringNode($2.sval)));}
+            | STRINGLITERAL                { $$ = new ParserVal(new ExpressionNode((StringNode) $1.obj));}
             | DECIMAL                       { $$ = new ParserVal(new ExpressionNode(new DoubleNode($1.dval)));}
             | TRUE                          { $$ = new ParserVal(new ExpressionNode((BooleanNode) $1.obj)); }
             | FALSE                         { $$ = new ParserVal(new ExpressionNode((BooleanNode) $1.obj)); }
@@ -299,6 +300,7 @@ loopinitupdateline :
     line                                    { $$ = new ParserVal(new LoopInitUpdateLineNode((LineNode) $1.obj));}  
     |                                       { $$ = new ParserVal(new LoopInitUpdateLineNode());}
 whileline: WHILE '(' expression ')' entireline { $$ = new ParserVal(new WhileLineNode((ExpressionNode) $3.obj, (EntireLineNode) $5.obj));}
+printstatement: PRINT '(' expression ')'    { $$ = new ParserVal(new PrintLineNode((ExpressionNode) $3.obj));}
 %%
   //  Data structures used in actions of the grammar
   //  You MUST create these objects in the constructor of the Parser class
@@ -559,6 +561,10 @@ whileline: WHILE '(' expression ')' entireline { $$ = new ParserVal(new WhileLin
       //System.out.println("Called the translateNode method");
        String x = yyparser.translateNode(yyparser.nodeTable);
        System.out.println(x);
-       System.out.println(yyparser.endBlockTranslation);
+       // System.out.println(yyparser.endBlockTranslation);
+       yyparser.endBlockTranslation += "}}";
+       PrintWriter writer = new PrintWriter("endBlockTranslation.txt", "UTF-8"); 
+       writer.println(yyparser.endBlockTranslation); 
+       writer.close();
     }
   }

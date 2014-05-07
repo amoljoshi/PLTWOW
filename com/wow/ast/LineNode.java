@@ -14,8 +14,11 @@ public class LineNode extends ASTNode {
 		children.add(n);
 	}
 	
-	public String toString() {
-		
+	public LineNode(PrintLineNode n) {
+		children.add(n);
+	}
+
+	public String toString() {	
 		return (""+children.get(0));
 	}
 

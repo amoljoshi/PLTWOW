@@ -29,7 +29,9 @@ Workflow sandwitch {
 		WoWNodes allNodes = getAllNodes();
 		double a = 10.0;
 		foreach(WoWNode singleNode: allNodes){
-			a = getTime(singleNode);
+			a =  a + getTime(singleNode);
+			print("Waiting_time_iss");		
+			print(a);
 		}
 
 }

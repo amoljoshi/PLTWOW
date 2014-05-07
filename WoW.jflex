@@ -142,7 +142,6 @@ PRINTSTRING	=	[a-zA-Z_][_a-zA-Z0-9 ]+
 "}" |
 "(" |
 ")" |
-"\"" |
 "+"	|
 "-" |
 "*" |
@@ -153,7 +152,7 @@ PRINTSTRING	=	[a-zA-Z_][_a-zA-Z0-9 ]+
 "."
   { 	if(Parser.interactive_lex){System.out.println(yytext());}
 			return yycharat(0);}
-
+\".+\"	{yyparser.yylval = new ParserVal(new StringNode(yytext())); return Parser.STRINGLITERAL;}
 /* newline */
 {NL}   { }
 

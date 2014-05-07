@@ -13,5 +13,4 @@ public class StringNode extends ASTNode {
 	public String toString() {
 		return str;
 	}
-
 }
