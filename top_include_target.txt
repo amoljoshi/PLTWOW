@@ -63,9 +63,10 @@ public class MainClass {
 		for (String s : nodeSet.keySet()) {
 			nodeThreadSet.get(s).setMainClass(this);
 		}
-		for (String s : nodeSet.get("Amol").rawInputResources.keySet()) {
-			System.out.println("Resouece " + s);
-		}
+		// Commented below code as it had hardcoded node name
+		// for (String s : nodeSet.get("Amol").rawInputResources.keySet()) {
+		// 	System.out.println("Resouece " + s);
+		// }
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String line;
 		while (currentOutputQuantity < totalOutputQuantity) {
