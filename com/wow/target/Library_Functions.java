@@ -62,8 +62,15 @@ public class Library_Functions {
 		return 0;
 	}
 
-	double getResourceWaitingTime(String resource){
-		return 0;
+	// returns -1 if node does not exist
+	//returns -1 if resource does not exist
+	double getResourceWaitingTime(String nodeName, String resourceName){
+		if (!nodeSet.containsKey(nodeName)) return -1;
+		Node node = nodeSet.get(nodeName);
+		if (!node.resourceWaitingTime.containsKey(resourceName)) return -1;
+		double time = 0;
+		time = node.getResourceWaitingTime(resourceName);
+		return time;
 	}
 	
 	//returns a set of all nodes who sends resources to current node
