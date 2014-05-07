@@ -47,11 +47,21 @@ public class Library_Functions {
 	}
 
 	String getLastNode(){
-		return "";
-	}
-
+		String last="";
+		for(String s : nodeSet.keySet())
+			if(nodeSet.get(s).generatesFinalOutput)
+				last = s;
+		return last;
+		}
+	
 	String[] getAllFirstNodes(){
-		return null;
+		ArrayList<String> returnValues = new ArrayList<String>();
+		for (String s : nodeSet.keySet()){
+			if(nodeSet.get(s).rawInputResources.size() != 0)
+				returnValues.add(s);
+		}
+		String[] result = returnValues.toArray(new String[returnValues.size()]);
+		return result;
 	}
 
 	double getTotalWaitingTime(){
