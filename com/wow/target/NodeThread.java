@@ -31,6 +31,7 @@ public class NodeThread extends Thread {
                         this.node.combine(com.getTarget_resource(), com.getTarget_qty(), com.getInput_resources_ratio(), com.getRate(), com.getPrint_statement());
                     }
                 }
+                node.setAllOutputGenerated();
                 for (String receiver : this.node.outNodes.keySet())
                     for (String resourceName : this.node.outNodes.get(receiver).keySet())
                         this.mc.send(this.node.getNodeName(), receiver, resourceName, this.node.outNodes.get(receiver).get(resourceName).get(0));
@@ -39,6 +40,7 @@ public class NodeThread extends Thread {
                     String resourceName = this.node.outputResources.keySet().iterator().next();
                     this.mc.send(this.node.getNodeName(), "", resourceName ,this.node.outputResources.get(resourceName).get(0));
                 }
+
     			break;
     		}
     	}
@@ -52,7 +54,9 @@ public class NodeThread extends Thread {
     public synchronized void receiveRawInput (String resourceName , int quantity){
 		quantity = Math.min(quantity, node.rawInputResources.get(resourceName).get(0) - node.rawInputResources.get(resourceName).get(1));
 		Integer current = node.rawInputResources.get(resourceName).get(1);
-		node.rawInputResources.get(resourceName).set(1, current + quantity); 
+		node.rawInputResources.get(resourceName).set(1, current + quantity);
+        if (node.getFirstResourceReceived() == null)node.setFirstResourceReceived();
+        node.setResourceWaitingTime(resourceName); 
 	}
     
     public synchronized void receiveIntermediate (String nodeName , String resourceName , int quantity ){
@@ -62,6 +66,8 @@ public class NodeThread extends Thread {
     	//updating tables now
     	node.inResources.get(resourceName).get(nodeName).set(1, current + quantity);
     	node.inNodes.get(nodeName).get(resourceName).set(1, current + quantity);
+        if (node.getFirstResourceReceived() == null)node.setFirstResourceReceived();
+        node.setResourceWaitingTime(resourceName);
     }
 	
 }
