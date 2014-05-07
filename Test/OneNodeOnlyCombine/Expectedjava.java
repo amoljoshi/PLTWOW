@@ -176,20 +176,16 @@ public class MainClass {
 		mc.nodeStatus.put(name1, 0);
 
 		// adding all computations
-		Convert convert = new Convert("bread", 1, "bread_temp", 1, 8, 4,
-				"Converting bread to bread_temp");
-		
-		A.addComputeFunction(convert);
 		
 		// NOTE- the following hashmap can be made using copy constructor while
 		// translating //
 		HashMap<String, Integer> ratio = new HashMap<String, Integer>();
-		ratio.put("bread_temp", 2);
+		ratio.put("bread", 2);
 		ratio.put("butter", 1);
 		// --//
 
 		Combine combine = new Combine("sandwich", 4, ratio, 4,
-				"combining bread_temp and butter to form sandwich");
+				"combining bread and butter to form sandwich");
 		A.addComputeFunction(combine);
 
 		Library_Functions system = new Library_Functions(mc.nodeSet,

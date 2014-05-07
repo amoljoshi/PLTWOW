@@ -119,89 +119,48 @@ public class MainClass {
 
 	public static void main(String[] args) throws IOException {
 
-		// Node name retrieved after parsing
+		/*// Node name retrieved after parsing
 		String name1 = "A";
-
+		String name2 = "B";*/
 		// TODO Auto-generated method stub
 		MainClass mc = new MainClass();
-		ArrayList<String> temp = new ArrayList<String>();
 
-		// resource names retrieved after parsing
-		temp.add("bread");
-		temp.add("butter");
-		mc.setRawInputResources(temp); // resources is hashmap of raw input
-										// resources
-
-		// declarations for creating nodes
-		// for each node do the following
-		// ////////////////////////////////////////////////////////////////////////////////////////////////
-		Node A = new Node(name1, true);
-
+		Node A = new Node("A",false);
+		mc.rawInputResources.add("bread");
+		
+		A.addInputResource("bread",8,false);
+		A.addOutputResource("bread_temp" ,8);
+		A.addNewOutResource("bread_temp","B", 8);
+		
 		NodeThread A_thread = new NodeThread(A);
-
-		// arraylist for every input resource
-
-		// bread
-		ArrayList<Integer> q = new ArrayList<Integer>();
-		q.add(8);
-		q.add(0);
-		HashMap<String, ArrayList<Integer>> w = new HashMap<String, ArrayList<Integer>>();
-		w.put("bread", q);
-
-		// butter
-		ArrayList<Integer> q1 = new ArrayList<Integer>();
-		q1.add(4);
-		q1.add(0);
-		w.put("butter", q1);
-
-		for (String d : w.keySet()) {
-			System.out.println(d + " " + w.get(d) + "===========");
-		}
-
-		// for each node do the following
-		A.setRawInputResources(w); // para1 = Hashmap of raw input resources
-									// (String Resource : integer qty)
-		w.remove("bread");
-		w.remove("butter");
-
-		HashMap<String, Integer> e = new HashMap<String, Integer>();
-		e.put("sandwich", 4);
-		A.setOutputResources(e); // para1 = Hashmap of output resources (String
-									// Resource : integer qty)
-
-		e.remove("sandwich");
-
-		mc.nodeSet.put(name1, A);
-		mc.nodeThreadSet.put(name1, A_thread);
-		mc.nodeStatus.put(name1, 0);
-
-		// adding all computations
-		Convert convert = new Convert("bread", 1, "bread_temp", 1, 8, 4,
-				"Converting bread to bread_temp");
+		mc.nodeSet.put("A",A);
+		mc.nodeThreadSet.put("A",A_thread);
+		mc.nodeStatus.put("A",0);
+		Convert compute_function_A1 = new Convert("bread" , 1, "bread_temp", 1 , 8 , 4 , "converting bread to bread_Temp" );
+		A.addComputeFunction(compute_function_A1);
 		
-		A.addComputeFunction(convert);
+		Node B = new Node("B",true);
+		mc.rawInputResources.add("butter");
 		
-		// NOTE- the following hashmap can be made using copy constructor while
-		// translating //
-		HashMap<String, Integer> ratio = new HashMap<String, Integer>();
-		ratio.put("bread_temp", 2);
-		ratio.put("butter", 1);
-		// --//
+		B.addInputResource("butter",4,false);
+		B.addInputResource("bread_temp" ,8,true);
+		B.addOutputResource("sandwich" ,4);
+		B.addNewInResource("bread_temp","A", 8);
+		
+		NodeThread B_thread = new NodeThread(B);
+		mc.nodeSet.put("B",B);
+		mc.nodeThreadSet.put("B",B_thread);
+		mc.nodeStatus.put("B",0);
+		
+		HashMap <String, Integer> resource_ratio_B1 = new HashMap<String, Integer> ();
+		resource_ratio_B1.put("bread_temp" , 2);
+		resource_ratio_B1.put("butter" , 1);
+		
+		Combine compute_function_B1 = new Combine( "sandwich" , 4, resource_ratio_B1 , 10 , "sandwich ready" );
+		B.addComputeFunction(compute_function_B1);
 
-		Combine combine = new Combine("sandwich", 4, ratio, 4,
-				"combining bread_temp and butter to form sandwich");
-		A.addComputeFunction(combine);
-
-		Library_Functions system = new Library_Functions(mc.nodeSet,
-				mc.nodeStatus);
-
-		// /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-		// /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		// initialize connections
-		// /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-		mc.start();
+				Library_Functions syslib = new Library_Functions(mc.nodeSet, mc.nodeStatus);
+				mc.start();
 
 	}
 
