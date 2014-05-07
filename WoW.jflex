@@ -23,7 +23,7 @@ import com.wow.ast.*;
 
 DIGITS = [0-9]+
 NL  = \n | \r | \r\n
-STRING	=	[a-zA-Z_][_a-zA-Z0-9]+
+STRING	=	[a-zA-Z_][_a-zA-Z0-9]*
 PRINTSTRING	=	[a-zA-Z_][_a-zA-Z0-9 ]+
 %%
 
@@ -100,6 +100,31 @@ PRINTSTRING	=	[a-zA-Z_][_a-zA-Z0-9 ]+
 "getAllNodes"	{if(Parser.interactive_endblock) {System.out.println("Library function getAllNodes found");}
 				 yyparser.yylval = new ParserVal(new LibraryFunctionsNode(yytext())); 
 				 return Parser.GETALLNODES; }
+"getTime"	{if(Parser.interactive_endblock) {System.out.println("Library function getTime found");}
+				 yyparser.yylval = new ParserVal(yytext()); 
+				 return Parser.GETTIME; }
+"getNodeWaitingTime"	{if(Parser.interactive_endblock) {System.out.println("Library function getNodeWaitingTime found");}
+				 yyparser.yylval = new ParserVal(yytext()); 
+				 return Parser.GETNODEWAITINGTIME; }
+"getLastNode"	{if(Parser.interactive_endblock) {System.out.println("Library function getLastNode found");}
+				 yyparser.yylval = new ParserVal(yytext()); 
+				 return Parser.GETLASTNODE; }
+"getAllFirstNodes"	{if(Parser.interactive_endblock) {System.out.println("Library function getAllFirstNodes found");}
+				 yyparser.yylval = new ParserVal(yytext()); 
+				 return Parser.GETALLFIRSTNODE; }
+"getTotalWaitingTime"	{if(Parser.interactive_endblock) {System.out.println("Library function getTotalWaitingTime found");}
+				 yyparser.yylval = new ParserVal(yytext()); 
+				 return Parser.GETTOTALWAITINGTIME; }
+"getTotalTime"	{if(Parser.interactive_endblock) {System.out.println("Library function getTotalTime found");}
+				 yyparser.yylval = new ParserVal(yytext()); 
+				 return Parser.GETTOTALTIME; }
+"getPrevious"	{if(Parser.interactive_endblock) {System.out.println("Library function getPrevious found");}
+				 yyparser.yylval = new ParserVal(yytext()); 
+				 return Parser.GETPREVIOUS;}
+"getNext"		{if(Parser.interactive_endblock) {System.out.println("Library function getNext found");}
+				 yyparser.yylval = new ParserVal(yytext()); 
+				 return Parser.GETNEXT;}
+
 "WoWNodes"	{if(Parser.interactive_endblock) {System.out.println("WoWNodes variable found");}
 			yyparser.yylval = new ParserVal(new TypeNode(yytext()));
 			return Parser.WOWNODES;}
@@ -108,7 +133,7 @@ PRINTSTRING	=	[a-zA-Z_][_a-zA-Z0-9 ]+
 {DIGITS}	{if(Parser.interactive_lex){System.out.println("digits found! with = " + yytext()); }
 			yyparser.yylval = new ParserVal(Integer.parseInt(yytext()));	return Parser.DIGITS;}
 {DIGITS}"."{DIGITS}*	{if(Parser.interactive_lex){System.out.println("decimal digits found! with = " + yytext()); }
-			yyparser.yylval = new ParserVal(Integer.parseInt(yytext()));	return Parser.DECIMAL;}	
+			yyparser.yylval = new ParserVal(Double.parseDouble(yytext()));	return Parser.DECIMAL;}	
 ";"	|
 ":"	|
 ","	|

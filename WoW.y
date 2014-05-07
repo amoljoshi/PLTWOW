@@ -37,7 +37,8 @@
 %token GTEQ
 %token LTEQ
 %token NTEQ, AND, OR, EQ, DECIMAL, END
-%token GETALLNODES
+%token GETALLNODES, GETTIME, GETNODEWAITINGTIME, GETLASTNODE, GETALLFIRSTNODE, GETTOTALWAITINGTIME
+%token GETTOTALTIME, GETPREVIOUS, GETNEXT
 %token WOWNODES, WOWNODE
 %token FOR, WHILE, FOREACH
 %%
@@ -262,6 +263,21 @@ expression: expression '+' expression       { //System.out.println("Adding two e
             | TRUE                          { $$ = new ParserVal(new ExpressionNode((BooleanNode) $1.obj)); }
             | FALSE                         { $$ = new ParserVal(new ExpressionNode((BooleanNode) $1.obj)); }
             | GETALLNODES '(' ')'           { $$ = new ParserVal(new ExpressionNode((LibraryFunctionsNode) $1.obj)); }
+            | GETLASTNODE '(' ')'           { $$ = new ParserVal(new ExpressionNode((LibraryFunctionsNode) $1.obj)); }
+            | GETTOTALWAITINGTIME '(' ')'           { $$ = new ParserVal(new ExpressionNode((LibraryFunctionsNode) $1.obj)); }
+            | GETTOTALTIME '(' ')'           { $$ = new ParserVal(new ExpressionNode((LibraryFunctionsNode) $1.obj)); }
+            | GETALLFIRSTNODE '(' ')'           { $$ = new ParserVal(new ExpressionNode((LibraryFunctionsNode) $1.obj)); }            
+            | GETTIME '(' STRING ')'           {  LibraryFunctionsNode libraryFunc = new LibraryFunctionsNode($1.sval, $3.sval);
+                                                  $$ = new ParserVal(new ExpressionNode(libraryFunc)); }            
+            | GETNEXT '(' STRING ')'           {  LibraryFunctionsNode libraryFunc = new LibraryFunctionsNode($1.sval, $3.sval);
+                                                  $$ = new ParserVal(new ExpressionNode(libraryFunc)); }
+            | GETPREVIOUS '(' STRING ')'           {  LibraryFunctionsNode libraryFunc = new LibraryFunctionsNode($1.sval, $3.sval);
+                                                  $$ = new ParserVal(new ExpressionNode(libraryFunc)); }            
+
+            | GETNODEWAITINGTIME '(' STRING ')'           {  LibraryFunctionsNode libraryFunc = new LibraryFunctionsNode($1.sval, $3.sval);
+                                                  $$ = new ParserVal(new ExpressionNode(libraryFunc)); }            
+
+
 ifline: IF '(' expression ')' entireline ELSE entireline        { $$ = new ParserVal(new IfLineNode((ExpressionNode) $3.obj, (EntireLineNode) $5.obj, (EntireLineNode) $7.obj));}
       | IF '(' expression ')' entireline %prec LOWER_THAN_ELSE  { $$ = new ParserVal(new IfLineNode((ExpressionNode)$3.obj, (EntireLineNode) $5.obj)); }
 
