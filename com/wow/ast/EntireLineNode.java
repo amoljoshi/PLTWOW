@@ -13,6 +13,11 @@ public class EntireLineNode extends ASTNode{
 	public EntireLineNode(ForLineNode n) {
 		children.add(n);
 	}
+
+	public EntireLineNode(ForeachLineNode n) {
+		children.add(n);
+	}
+
 	public EntireLineNode(WhileLineNode n) {
 		children.add(n);
 	}

@@ -10,7 +10,6 @@ public class ForLineNode extends ASTNode {
 		if (!(node2.type.equals("") || node2.type.equals("boolean")))
 			System.err.println("Error: The condition must evaluate to a boolean value");
 	}
-
 	public String toString() {
 		return ("for (" + children.get(0) + "; " + children.get(1) + "; " + children.get(2) + ") " + children.get(3) +"");
 	}

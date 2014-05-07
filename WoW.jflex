@@ -75,6 +75,10 @@ PRINTSTRING	=	[a-zA-Z_][_a-zA-Z0-9 ]+
 			return Parser.END;}
 "for"		{if(Parser.interactive_endblock) {System.out.println("for statement found!");}
 			return Parser.FOR;}
+"WoWNode"		{if(Parser.interactive_endblock) {System.out.println("for statement found!");}
+			return Parser.WOWNODE;}
+"foreach"		{if(Parser.interactive_endblock) {System.out.println("for statement found!");}
+			return Parser.FOREACH;}
 "if"		{if(Parser.interactive_endblock) {System.out.println("if condition found!");}
 			return Parser.IF;}
 "x"	{if(Parser.interactive_lex){System.out.println("x found"); }
@@ -106,6 +110,7 @@ PRINTSTRING	=	[a-zA-Z_][_a-zA-Z0-9 ]+
 {DIGITS}"."{DIGITS}*	{if(Parser.interactive_lex){System.out.println("decimal digits found! with = " + yytext()); }
 			yyparser.yylval = new ParserVal(Integer.parseInt(yytext()));	return Parser.DECIMAL;}	
 ";"	|
+":"	|
 ","	|
 "{" | 
 "}" |

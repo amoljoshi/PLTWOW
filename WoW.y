@@ -38,8 +38,8 @@
 %token LTEQ
 %token NTEQ, AND, OR, EQ, DECIMAL, END
 %token GETALLNODES
-%token WOWNODES
-%token FOR, WHILE
+%token WOWNODES, WOWNODE
+%token FOR, WHILE, FOREACH
 %%
 
 Program : WORKFLOW STRING '{' resources nodes connections computefunctions endblock'}' {
@@ -218,6 +218,7 @@ entireline: line ';'                        {
                                             }
             | ifline                        { $$ = new ParserVal(new EntireLineNode((IfLineNode) $1.obj));}
             | forline                       { $$ = new ParserVal(new EntireLineNode((ForLineNode) $1.obj));}
+            | foreachline                   { $$ = new ParserVal(new EntireLineNode((ForeachLineNode) $1.obj));}
             | whileline                     { $$ = new ParserVal(new EntireLineNode((WhileLineNode) $1.obj));}
             | multiline                     { $$ = new ParserVal(new EntireLineNode((MultiLineNode) $1.obj));}
 
@@ -267,6 +268,10 @@ ifline: IF '(' expression ')' entireline ELSE entireline        { $$ = new Parse
 forline :
     FOR '(' loopinitupdateline ';' loopconditionline ';' loopinitupdateline ')' entireline
               { $$ = new ParserVal(new ForLineNode((LoopInitUpdateLineNode) $3.obj, (LoopConditionLineNode) $5.obj, (LoopInitUpdateLineNode) $7.obj, (EntireLineNode) $9.obj)); }
+foreachline:
+    FOREACH '(' WOWNODE STRING ':' STRING ')' entireline
+              { $$ = new ParserVal(new ForeachLineNode($4.sval, $6.sval, (EntireLineNode)$8.obj)); }
+
 loopconditionline : expression              { $$ = new ParserVal(new LoopConditionLineNode((ExpressionNode) $1.obj));}
     |                                       { $$ = new ParserVal(new LoopConditionLineNode());}
 
