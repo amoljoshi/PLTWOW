@@ -25,5 +25,6 @@ Workflow sandwitch {
 		aj = aj + temp;
 		boolean hello = true;
 		if(hello) aj = aj +temp;
+		WoWNodes allNodes = getAllNodes();
 	}
 }

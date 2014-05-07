@@ -8,8 +8,16 @@ public class DeclarationNode extends ASTNode {
 		children.add(node1);
 		children.add(node2);
 		id = node2.id;
-		if (!(node2.type.equals(node1.type)) && !node2.type.equals("--")){
-			System.err.println("Error: Identifier "+id+" is defined for type "+node1.type+", but is being assigned to "+node2.type+".");
+
+		if(!node2.type.equals("LibraryFunctions"))
+		{
+			if (!(node2.type.equals(node1.type)) && !node2.type.equals("--")){
+				System.err.println("Error: Identifier "+id+" is defined for type "+node1.type+", but is being assigned to "+node2.type+".");
+			}
+		}
+		else if(node2.type.equals("LibraryFunctions") && (!node1.type.equals("WoWNodes") && !node1.type.equals("WoWNode")))
+		{
+				System.err.println("Library functions give WoWNodes or WoWNode as return type");
 		}
 
 		String[] ids = id.split(",");

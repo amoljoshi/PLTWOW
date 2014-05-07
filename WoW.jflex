@@ -91,6 +91,12 @@ PRINTSTRING	=	[a-zA-Z_][_a-zA-Z0-9 ]+
 		return Parser.EQ;}
 "!="	{if(Parser.interactive_endblock) {System.out.println("Not-equal-to expression found");}
 		return Parser.NTEQ;}
+"getAllNodes"	{if(Parser.interactive_endblock) {System.out.println("Library function getAllNodes found");}
+				 yyparser.yylval = new ParserVal(new LibraryFunctionsNode(yytext())); 
+				 return Parser.GETALLNODES; }
+"WoWNodes"	{if(Parser.interactive_endblock) {System.out.println("WoWNodes variable found");}
+			yyparser.yylval = new ParserVal(new TypeNode(yytext()));
+			return Parser.WOWNODES;}
 {STRING}	{if(Parser.interactive_lex){System.out.println("String found!"); }
 			yyparser.yylval = new ParserVal(yytext()); return Parser.STRING;}
 {DIGITS}	{if(Parser.interactive_lex){System.out.println("digits found! with = " + yytext()); }

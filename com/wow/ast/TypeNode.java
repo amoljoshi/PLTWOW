@@ -9,6 +9,9 @@ public class TypeNode extends ASTNode {
 	}
 
 	public String toString() {
+
+		if(type.equals("WoWNodes"))
+			return "String[]";
 		return type;
 	}
 

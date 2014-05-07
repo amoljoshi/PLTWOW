@@ -16,6 +16,11 @@ public class ExpressionNode extends ASTNode {
 		type = n.type;
 	}
 
+	public ExpressionNode (LibraryFunctionsNode n) {
+		children.add(n);
+		type = n.type;
+	}
+
 	public ExpressionNode (DoubleNode n) {
 		children.add(n);
 		type = n.type;

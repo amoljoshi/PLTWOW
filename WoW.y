@@ -37,6 +37,8 @@
 %token GTEQ
 %token LTEQ
 %token NTEQ, AND, OR, EQ, DECIMAL, END
+%token GETALLNODES
+%token WOWNODES
 %%
 
 Program : WORKFLOW STRING '{' resources nodes connections computefunctions endblock'}' {
@@ -218,11 +220,11 @@ entireline: line ';'                        {
 line:       declaration                     {$$ = new ParserVal(new LineNode((DeclarationNode) $1.obj)); }
             | expression                    {$$ = new ParserVal(new LineNode((ExpressionNode) $1.obj)); }
 
-
 typeofvariable:   INT                        {  $$ = new ParserVal($1.obj);}
       | DOUBLE                               {  $$ = new ParserVal($1.obj);}
       | STRING_TYPE                          {  $$ = new ParserVal($1.obj);}
       | BOOLEAN                              {  $$ = new ParserVal($1.obj);}
+      | WOWNODES                             {  $$ = new ParserVal($1.obj);}
 
 variabledeclarations:   variabledeclaration { $$ = new ParserVal (new DeclaratorListNode((DeclaratorNode) $1.obj)); }
       | variabledeclarations ',' variabledeclaration {$$ = new ParserVal (new DeclaratorListNode((DeclaratorListNode) $1.obj, (DeclaratorNode) $3.obj)); }
@@ -245,7 +247,7 @@ expression: expression '+' expression       { //System.out.println("Adding two e
             | expression LTEQ expression    { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "<=", (ExpressionNode) $3.obj));}
             | expression GTEQ expression    { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, ">=", (ExpressionNode) $3.obj));}
             | expression EQ expression      { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "=", (ExpressionNode) $3.obj));}
-            | expression NTEQ expression   { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "!=", (ExpressionNode) $3.obj));}
+            | expression NTEQ expression    { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "!=", (ExpressionNode) $3.obj));}
             | STRING                        { $$ = new ParserVal(new ExpressionNode(new IdentifierNode($1.sval)));}
             | DIGITS                        { //System.out.println("DIGITS in expression found");
                                               $$ = new ParserVal(new ExpressionNode(new IntegerNode($1.ival)));}
@@ -253,8 +255,10 @@ expression: expression '+' expression       { //System.out.println("Adding two e
             | DECIMAL                       { $$ = new ParserVal(new ExpressionNode(new DoubleNode($1.dval)));}
             | TRUE                          { $$ = new ParserVal(new ExpressionNode((BooleanNode) $1.obj)); }
             | FALSE                         { $$ = new ParserVal(new ExpressionNode((BooleanNode) $1.obj)); }
+            | GETALLNODES '(' ')'           { $$ = new ParserVal(new ExpressionNode((LibraryFunctionsNode) $1.obj)); }
 ifline: IF '(' expression ')' entireline ELSE entireline        { $$ = new ParserVal(new IfLineNode((ExpressionNode) $3.obj, (EntireLineNode) $5.obj, (EntireLineNode) $7.obj));}
       | IF '(' expression ')' entireline %prec LOWER_THAN_ELSE  { $$ = new ParserVal(new IfLineNode((ExpressionNode)$3.obj, (EntireLineNode) $5.obj)); }
+
 
 
 %%
