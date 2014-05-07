@@ -6,7 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 public class MainClass {
 	HashMap<String, Node> nodeSet = new HashMap<String, Node>();
@@ -26,12 +26,12 @@ public class MainClass {
 		rawInputResources = resources;
 	}
 
-	private printStatusTable(){
+	private void printStatusTable(){
 		for(String status_node: nodeSet.keySet()){
-			HashMap<String,ArrayList<Integer>> reference_rawInputResources = nodeSet.get(status_node).rawInputResources;
-			for(String data : reference_rawInputResources,keySet()){
+			Map<String,ArrayList<Integer>> reference_rawInputResources = nodeSet.get(status_node).rawInputResources;
+			for(String data : reference_rawInputResources.keySet()){
 				if(reference_rawInputResources.get(data).get(0) != reference_rawInputResources.get(data).get(1))
-					System.out.println ("Node: "+ status_node.getNodeName() +" , WAITING FOR Resource: "+ data);
+					System.out.println ("Node: "+ status_node +" , WAITING FOR Resource: "+ data);
 			}
 		}
 	}
@@ -65,6 +65,7 @@ public class MainClass {
 		String line;
 		while (currentOutputQuantity < totalOutputQuantity) {
 			line = br.readLine();
+			this.printStatusTable();
 			line = line.trim();
 			if (line.toLowerCase().startsWith("send ")) {
 				line = line.substring(5);
