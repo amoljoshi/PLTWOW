@@ -47,23 +47,23 @@ public class Library_Functions {
 	}
 
 	String getLastNode(){
-
+		return "";
 	}
 
 	String[] getAllFirstNodes(){
-
+		return null;
 	}
 
 	double getTotalWaitingTime(){
-
+		return 0;
 	}
 
 	double getTotalTime(){
-
+		return 0;
 	}
 
 	double getResourceWaitingTime(String resource){
-
+		return 0;
 	}
 	
 	//returns a set of all nodes who sends resources to current node
