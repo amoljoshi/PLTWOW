@@ -26,6 +26,16 @@ public class MainClass {
 		rawInputResources = resources;
 	}
 
+	private printStatusTable(){
+		for(String status_node: nodeSet.keySet()){
+			HashMap<String,ArrayList<Integer>> reference_rawInputResources = nodeSet.get(status_node).rawInputResources;
+			for(String data : reference_rawInputResources,keySet()){
+				if(reference_rawInputResources.get(data).get(0) != reference_rawInputResources.get(data).get(1))
+					System.out.println ("Node: "+ status_node.getNodeName() +" , WAITING FOR Resource: "+ data);
+			}
+		}
+	}
+
 	public boolean isNumber(String s) {
 		char[] c = s.toCharArray();
 		for (char a : c)
