@@ -54,12 +54,12 @@ Workflow Cars
 
 	func Assembler_phase2
 	{
-		combine exteriorBaseBody(1) steeringWheel(1) glassPieces(6) untestedCar {rate 1000; quantity 10; print "Almost there. Next stop -> Testing Stations";};
+combine exteriorBaseBody(1) steeringWheel(1) glassPieces(6) untestedCar {rate 1000; quantity 10; print "Almostthere";};
 	}
 
 	func Testing_Station
 	{
-		convert untestedCar(1) car(1) {rate 1000; quantity 10; print "Drive these home";};
+		convert untestedCar(1) car(1) {rate 1000; quantity 10; print "Drive_these_home";};
 	}
 
 	end 

@@ -186,7 +186,7 @@ moreids:
                                                   else{
                                                     inputResourcesRatio.put($4.sval, lastRatio);
                                                   }
-                                                  lastRatio = Integer.parseInt($2.sval);
+                                                  lastRatio = $2.ival; //Integer.parseInt($2.sval);
                                                 }
             |                                 { lastResourceInCombine = true;}
 
