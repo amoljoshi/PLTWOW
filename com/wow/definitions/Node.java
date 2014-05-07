@@ -59,6 +59,21 @@ public class Node{
     public Map<String, HashMap <String , ArrayList<Integer>>> inNodes = Collections.synchronizedMap(UnsyncInNodes);
     public Map<String, HashMap <String , ArrayList<Integer>>> outNodes = Collections.synchronizedMap(UnsyncOutNodes);
 
+    public HashMap<String, Double> resourceWaitingTime = new HashMap<String , Double>();
+
+    public void setResourceWaitingTime (String resourceName){
+        Date first = getFirstResourceReceived();
+        Date now = new Date();
+        resourceWaitingTime.put(resourceName, (first.getTime() - now.getTime())/1000);
+    }
+
+    public Double getResourceWaitingTime (String resourceName){
+        if (!resourceWaitingTime.containsKey(resourceName))
+            return -1;
+        else return resourceWaitingTime.get(resourceName);
+    }
+
+    
     public Node(String name, boolean generatesFinalOutput){
         this.name = name;
         /*this.rawInputResources = new HashMap<String, ArrayList<Integer>> ();

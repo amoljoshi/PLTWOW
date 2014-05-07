@@ -53,6 +53,7 @@ public class NodeThread extends Thread {
 		quantity = Math.min(quantity, node.rawInputResources.get(resourceName).get(0) - node.rawInputResources.get(resourceName).get(1));
 		Integer current = node.rawInputResources.get(resourceName).get(1);
 		node.rawInputResources.get(resourceName).set(1, current + quantity); 
+        node.setResourceWaiting(resourceName);
 	}
     
     public synchronized void receiveIntermediate (String nodeName , String resourceName , int quantity ){
@@ -62,6 +63,7 @@ public class NodeThread extends Thread {
     	//updating tables now
     	node.inResources.get(resourceName).get(nodeName).set(1, current + quantity);
     	node.inNodes.get(nodeName).get(resourceName).set(1, current + quantity);
+        node.setResourceWaiting(resourceName);
     }
 	
 }
