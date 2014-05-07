@@ -76,6 +76,7 @@ PRINTSTRING	=	[a-zA-Z_][_a-zA-Z0-9 ]+
 "for"		{if(Parser.interactive_endblock) {System.out.println("for statement found!");}
 			return Parser.FOR;}
 "WoWNode"		{if(Parser.interactive_endblock) {System.out.println("for statement found!");}
+			yyparser.yylval = new ParserVal(new TypeNode(yytext()));
 			return Parser.WOWNODE;}
 "foreach"		{if(Parser.interactive_endblock) {System.out.println("for statement found!");}
 			return Parser.FOREACH;}

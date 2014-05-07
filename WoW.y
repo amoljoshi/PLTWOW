@@ -203,7 +203,10 @@ endblock: END '{' lineblock  '}'               {//System.out.println($3.obj.toSt
                                               }
 
 lineblock: lineblock entireline             {$$ = new ParserVal(new LineBlockNode((EntireLineNode) $2.obj, (LineBlockNode) $1.obj));
-              if ($2.obj != null) System.out.println($2.obj.toString());}
+              if ($2.obj != null) {endBlockTranslation += $2.obj.toString();
+                                    endBlockTranslation += "\n";
+                                }
+                              }
           |                                 {}
 
 multiline: '{'  multilineblock '}'          { $$ = new ParserVal(new MultiLineNode((LineBlockNode) $2.obj));}
@@ -231,6 +234,7 @@ typeofvariable:   INT                        {  $$ = new ParserVal($1.obj);}
       | STRING_TYPE                          {  $$ = new ParserVal($1.obj);}
       | BOOLEAN                              {  $$ = new ParserVal($1.obj);}
       | WOWNODES                             {  $$ = new ParserVal($1.obj);}
+      | WOWNODE                             {  $$ = new ParserVal($1.obj);}
       | STRING_TYPE                          {  $$ = new ParserVal($1.obj);}
 
 variabledeclarations:   variabledeclaration { $$ = new ParserVal (new DeclaratorListNode((DeclaratorNode) $1.obj)); }
@@ -320,6 +324,7 @@ whileline: WHILE '(' expression ')' entireline { $$ = new ParserVal(new WhileLin
   private boolean lastResourceInCombine;
   private HashMap<String, Integer> inputResourcesRatio;
   private Yylex lexer;
+  private String endBlockTranslation;
   private boolean checkNode(String name){
     if(nodeTable.containsKey(name)){
       return true;
@@ -517,6 +522,7 @@ whileline: WHILE '(' expression ')' entireline { $$ = new ParserVal(new WhileLin
     combine = null;
     lastResourceInCombine = false;
     inputResourcesRatio = new HashMap<String, Integer> ();
+    endBlockTranslation = new String();
   }
   static boolean interactive_yacc, interactive_lex, interactive_endblock;
 
@@ -553,5 +559,6 @@ whileline: WHILE '(' expression ')' entireline { $$ = new ParserVal(new WhileLin
       //System.out.println("Called the translateNode method");
        String x = yyparser.translateNode(yyparser.nodeTable);
        System.out.println(x);
+       System.out.println(yyparser.endBlockTranslation);
     }
   }

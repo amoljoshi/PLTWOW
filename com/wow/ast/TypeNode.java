@@ -12,6 +12,8 @@ public class TypeNode extends ASTNode {
 
 		if(type.equals("WoWNodes"))
 			return "String[]";
+		else if(type.equals("WoWNode"))
+			return "String";
 		return type;
 	}
 

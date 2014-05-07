@@ -47,6 +47,56 @@ public class ExpressionNode extends ASTNode {
 		children.add(node1);
 		op = operator;
 		children.add(n3);
+		if(n3.type.startsWith("LibraryFunctions")){
+				String splits[] = n3.type.split("-");
+				String functionName = splits[1];
+				if(functionName.equals("getAllNodes")){
+					if(!node1.type.equals("WoWNodes")){
+						System.err.println("Error: Cannot perform the operation " + node1.type + " " + op + " " + functionName);
+					}
+				}					
+				else if(functionName.equals("getTime")){
+					if(!node1.type.equals("double")){
+						System.err.println("Error: Cannot perform the operation " + node1.type + " " + op + " " + functionName);
+					}
+				}					
+				else if(functionName.equals("getNodeWaitingTime")){
+					if(!node1.type.equals("double")){
+						System.err.println("Error: Cannot perform the operation " + node1.type + " " + op + " " + functionName);
+					}
+				}					
+				else if(functionName.equals("getLastNode")){
+					if(!node1.type.equals("WoWNode")){
+						System.err.println("Error: Cannot perform the operation " + node1.type + " " + op + " " + functionName);						
+					}
+				}					
+				else if(functionName.equals("getTotalWaitingTime")){
+					if(!node1.type.equals("double")){
+						System.err.println("Error: Cannot perform the operation " + node1.type + " " + op + " " + functionName);						
+					}
+				}					
+				else if(functionName.equals("getAllFirstNodes")){
+					if(!node1.type.equals("WoWNodes")){
+						System.err.println("Error: Cannot perform the operation " + node1.type + " " + op + " " + functionName);						
+					}
+				}					
+				else if(functionName.equals("getNext()")){
+					if(!node1.type.equals("WoWNodes")){
+						System.err.println("Error: Cannot perform the operation " + node1.type + " " + op + " " + functionName);						
+					}
+				}					
+				else if(functionName.equals("getTotalTime")){
+					if(!node1.type.equals("double")){
+						System.err.println("Error: Cannot perform the operation " + node1.type + " " + op + " " + functionName);						
+					}
+				}					
+				else if(functionName.equals("getPrevious")){
+					if(!node1.type.equals("WoWNodes")){
+						System.err.println("Error: Cannot perform the operation " + node1.type + " " + op + " " + functionName);
+					}
+				}
+				return;
+		}
 		if (!node1.type.equals(n3.type) && (node1.type.equals("int") && n3.type.equals("double") || node1.type.equals("double") && n3.type.equals("int")
 									  || node1.type.equals("string") && n3.type.equals("int") || node1.type.equals("int") && n3.type.equals("string")
 									  || node1.type.equals("string") && n3.type.equals("double") || node1.type.equals("double") && n3.type.equals("string")))

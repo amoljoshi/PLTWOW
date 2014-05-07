@@ -30,7 +30,6 @@ Workflow sandwitch {
 		double a = 10.0;
 		foreach(WoWNode singleNode: allNodes){
 			a = getTime(singleNode);
-			a = a + getNodeWaitingTime(singleNode);
 		}
 
 }

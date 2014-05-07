@@ -8,12 +8,12 @@ public class LibraryFunctionsNode extends ASTNode {
 
 	public LibraryFunctionsNode(String functionName) {
 		this.functionName = functionName;
-		type = "LibraryFunctions";
+		type = "LibraryFunctions-"+functionName;
 	}
 	public LibraryFunctionsNode(String functionName, String parameter) {
 		this.functionName = functionName;
 		this.parameter = parameter;
-		type = "LibraryFunctions";
+		type = "LibraryFunctions-"+functionName;
 	}
 
 	public String toString() {
@@ -23,7 +23,7 @@ public class LibraryFunctionsNode extends ASTNode {
 		else if(functionName.equals("getTime"))
 			return "syslib.getTime(" + parameter + ")";
 		else if(functionName.equals("getNodeWaitingTime"))
-			return "syslib.getTime(" + parameter + ")";
+			return "syslib.getNodeWaitingTime(" + parameter + ")";
 		else if(functionName.equals("getLastNode"))
 			return "syslib.getLastNode()";
 		else if(functionName.equals("getTotalWaitingTime"))

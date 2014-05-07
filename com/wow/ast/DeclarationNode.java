@@ -8,16 +8,65 @@ public class DeclarationNode extends ASTNode {
 		children.add(node1);
 		children.add(node2);
 		id = node2.id;
-
-		if(!node2.type.equals("LibraryFunctions"))
+		// System.out.println(node2.type + " - " + node1.type);
+		if(!node2.type.startsWith("LibraryFunctions"))
 		{
 			if (!(node2.type.equals(node1.type)) && !node2.type.equals("--")){
 				System.err.println("Error: Identifier "+id+" is defined for type "+node1.type+", but is being assigned to "+node2.type+".");
 			}
 		}
-		else if(node2.type.equals("LibraryFunctions") && (!node1.type.equals("WoWNodes") && !node1.type.equals("WoWNode")))
-		{
-				System.err.println("Library functions give WoWNodes or WoWNode as return type");
+		else{
+			String splits[] = node2.type.split("-");
+			String functionName = splits[1];
+			if(functionName.equals("getAllNodes")){
+				// System.out.println("Function = " +functionName + " node1 = " + node1.type);
+				if(!node1.type.equals("WoWNodes")){
+					System.err.println("Error: Function "+ functionName + " returns WoWNodes which can't be assigned to " + node1.type);
+				}
+			}					
+			else if(functionName.equals("getTime")){
+				if(!node1.type.equals("double")){
+					System.err.println("Error: Function "+ functionName + " returns double which can't be assigned to " + node1.type);
+				}
+			}					
+			else if(functionName.equals("getNodeWaitingTime")){
+				if(!node1.type.equals("double")){
+					System.err.println("Error: Function "+ functionName + " returns double which can't be assigned to " + node1.type);						
+				}
+			}					
+			else if(functionName.equals("getLastNode")){
+				if(!node1.type.equals("WoWNode")){
+					System.err.println("Error: Function "+ functionName + " returns WoWNode which can't be assigned to " + node1.type);						
+				}
+			}					
+			else if(functionName.equals("getTotalWaitingTime")){
+				if(!node1.type.equals("double")){
+					System.err.println("Error: Function "+ functionName + " returns double which can't be assigned to " + node1.type);						
+				}
+			}					
+			else if(functionName.equals("getAllFirstNodes")){
+				if(!node1.type.equals("WoWNodes")){
+					System.err.println("Error: Function "+ functionName + " returns WoWNodes which can't be assigned to " + node1.type);						
+				}
+			}					
+			else if(functionName.equals("getNext()")){
+				if(!node1.type.equals("WoWNodes")){
+					System.err.println("Error: Function "+ functionName + " returns WoWNodes which can't be assigned to " + node1.type);						
+				}
+			}					
+			else if(functionName.equals("getTotalTime")){
+				if(!node1.type.equals("double")){
+					System.err.println("Error: Function "+ functionName + " returns double which can't be assigned to " + node1.type);						
+				}
+			}					
+			else if(functionName.equals("getPrevious")){
+				if(!node1.type.equals("WoWNodes")){
+					System.err.println("Error: Function "+ functionName + " returns WoWNodes which can't be assigned to " + node1.type);						
+				}
+			}
+			else{				
+				System.err.println("Library functions give WoWNodes/ WoWNode/ double as return type");
+			}
 		}
 
 		String[] ids = id.split(",");
