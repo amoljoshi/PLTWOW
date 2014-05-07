@@ -54,7 +54,9 @@ public class NodeThread extends Thread {
     public synchronized void receiveRawInput (String resourceName , int quantity){
 		quantity = Math.min(quantity, node.rawInputResources.get(resourceName).get(0) - node.rawInputResources.get(resourceName).get(1));
 		Integer current = node.rawInputResources.get(resourceName).get(1);
-		node.rawInputResources.get(resourceName).set(1, current + quantity); 
+		node.rawInputResources.get(resourceName).set(1, current + quantity);
+        if (node.getFirstResourceReceived() == null)node.setFirstResourceReceived();
+        node.setResourceWaitingTime(resourceName); 
 	}
     
     public synchronized void receiveIntermediate (String nodeName , String resourceName , int quantity ){
@@ -64,6 +66,8 @@ public class NodeThread extends Thread {
     	//updating tables now
     	node.inResources.get(resourceName).get(nodeName).set(1, current + quantity);
     	node.inNodes.get(nodeName).get(resourceName).set(1, current + quantity);
+        if (node.getFirstResourceReceived() == null)node.setFirstResourceReceived();
+        node.setResourceWaitingTime(resourceName);
     }
 	
 }

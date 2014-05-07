@@ -64,11 +64,11 @@ public class Library_Functions {
 
 	// returns -1 if node does not exist
 	//returns -1 if resource does not exist
-	double getResourceWaitingTime(String nodeName, String resourceName){
+	long getResourceWaitingTime(String nodeName, String resourceName){
 		if (!nodeSet.containsKey(nodeName)) return -1;
 		Node node = nodeSet.get(nodeName);
 		if (!node.resourceWaitingTime.containsKey(resourceName)) return -1;
-		double time = 0;
+		long time = 0;
 		time = node.getResourceWaitingTime(resourceName);
 		return time;
 	}

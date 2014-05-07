@@ -59,15 +59,15 @@ public class Node{
     public Map<String, HashMap <String , ArrayList<Integer>>> inNodes = Collections.synchronizedMap(UnsyncInNodes);
     public Map<String, HashMap <String , ArrayList<Integer>>> outNodes = Collections.synchronizedMap(UnsyncOutNodes);
 
-    public HashMap<String, Double> resourceWaitingTime = new HashMap<String , Double>();
+    public HashMap<String, Long> resourceWaitingTime = new HashMap<String , Long>();
 
     public void setResourceWaitingTime (String resourceName){
         Date first = getFirstResourceReceived();
         Date now = new Date();
-        resourceWaitingTime.put(resourceName, (first.getTime() - now.getTime())/1000);
+        resourceWaitingTime.put(resourceName, (now.getTime() - first.getTime())/1000);
     }
 
-    public Double getResourceWaitingTime (String resourceName){
+    public long getResourceWaitingTime (String resourceName){
         if (!resourceWaitingTime.containsKey(resourceName))
             return -1;
         else return resourceWaitingTime.get(resourceName);
