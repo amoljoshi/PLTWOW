@@ -27,13 +27,18 @@ public class MainClass {
 	}
 
 	private void printStatusTable(){
+		System.out.println("Current Waiting Status: ");
+		System.out.println("--------------------------------------------------------------------------------------");
+		System.out.println("|                  NODE                  |                  RESOURCE                 |");
+		System.out.println("--------------------------------------------------------------------------------------");
 		for(String status_node: nodeSet.keySet()){
 			Map<String,ArrayList<Integer>> reference_rawInputResources = nodeSet.get(status_node).rawInputResources;
 			for(String data : reference_rawInputResources.keySet()){
 				if(reference_rawInputResources.get(data).get(0) != reference_rawInputResources.get(data).get(1))
-					System.out.println ("Node: "+ status_node +" , WAITING FOR Resource: "+ data);
+					System.out.println ("|                  "+ status_node +"                  |                  "+ data + "                 |");
 			}
 		}
+		System.out.println("--------------------------------------------------------------------------------------");
 	}
 
 	public boolean isNumber(String s) {
@@ -108,12 +113,9 @@ public class MainClass {
 					} else
 						System.out.println("Node " + nodeName
 								+ " does not require " + resourceName + ".");
-
 				}
-
 			}
 		}
-
 	}
 
 	public synchronized void send(String senderNode, String nodeName, String resourceName,
@@ -136,5 +138,4 @@ public class MainClass {
 	}
 
 	public static void main(String[] args) throws IOException {
-
 	MainClass mc = new MainClass();

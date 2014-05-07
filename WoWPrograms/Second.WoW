@@ -1,0 +1,68 @@
+Workflow Cars 
+{
+	Resources 
+	{ 
+		chassis 1x;
+		wheels 4x;
+		steeringWheel 1x;
+		glassPieces 6x; final car 1x;
+	}
+	
+	Node Chassis_Processor
+	{
+		input chassis 10;
+		output paintedChassis 10;
+	}
+	
+	Node Assembler_phase1
+	{
+		input paintedChassis 10;
+	    input wheels 40;
+		output exteriorBaseBody 10;
+	}
+
+	Node Assembler_phase2
+	{
+		input exteriorBaseBody 10;
+		input steeringWheel 10;
+		input glassPieces 60;
+		output untestedCar 10;
+	}
+
+	Node Testing_Station
+	{
+		input untestedCar 10;
+		final output car 10;
+	}
+
+	Connection
+	{
+		Node Chassis_Processor -> Node Assembler_phase1 {paintedChassis 10;};
+		Node Assembler_phase1 -> Node Assembler_phase2 {exteriorBaseBody 10;};
+		Node Assembler_phase2 -> Node Testing_Station {untestedCar 10;};
+	}
+
+	func Chassis_Processor
+	{
+		convert chassis(1) paintedChassis(1) {rate 100; quantity 10; print "Carsing";};
+	}
+
+	func Assembler_phase1
+	{
+		combine paintedChassis(1) wheels(4) exteriorBaseBody {rate 250; quantity 10; print "Bang";};
+	}
+
+	func Assembler_phase2
+	{
+		combine exteriorBaseBody(1) steeringWheel(1) glassPieces(6) untestedCar {rate 1000; quantity 10; print "Almost there. Next stop -> Testing Stations";};
+	}
+
+	func Testing_Station
+	{
+		convert untestedCar(1) car(1) {rate 1000; quantity 10; print "Drive these home";};
+	}
+
+	end 
+	{
+	}
+}
