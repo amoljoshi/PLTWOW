@@ -13,8 +13,7 @@ public class LibraryFunctionsNode extends ASTNode {
 	public String toString() {
 		
 		if(functionName.equals("getAllNodes"))
-			return "getAllNodes()";
-		
+			return "syslib.getAllNodes()";
 		return "error";
 	}
 

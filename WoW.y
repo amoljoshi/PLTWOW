@@ -39,6 +39,7 @@
 %token NTEQ, AND, OR, EQ, DECIMAL, END
 %token GETALLNODES
 %token WOWNODES
+%token FOR, WHILE
 %%
 
 Program : WORKFLOW STRING '{' resources nodes connections computefunctions endblock'}' {
@@ -216,6 +217,9 @@ entireline: line ';'                        {
                                               $$ = new ParserVal(new EntireLineNode((LineNode) $1.obj));
                                             }
             | ifline                        { $$ = new ParserVal(new EntireLineNode((IfLineNode) $1.obj));}
+            | forline                       { $$ = new ParserVal(new EntireLineNode((ForLineNode) $1.obj));}
+            | whileline                     { $$ = new ParserVal(new EntireLineNode((WhileLineNode) $1.obj));}
+            | multiline                     { $$ = new ParserVal(new EntireLineNode((MultiLineNode) $1.obj));}
 
 line:       declaration                     {$$ = new ParserVal(new LineNode((DeclarationNode) $1.obj)); }
             | expression                    {$$ = new ParserVal(new LineNode((ExpressionNode) $1.obj)); }
@@ -225,6 +229,7 @@ typeofvariable:   INT                        {  $$ = new ParserVal($1.obj);}
       | STRING_TYPE                          {  $$ = new ParserVal($1.obj);}
       | BOOLEAN                              {  $$ = new ParserVal($1.obj);}
       | WOWNODES                             {  $$ = new ParserVal($1.obj);}
+      | STRING_TYPE                          {  $$ = new ParserVal($1.obj);}
 
 variabledeclarations:   variabledeclaration { $$ = new ParserVal (new DeclaratorListNode((DeclaratorNode) $1.obj)); }
       | variabledeclarations ',' variabledeclaration {$$ = new ParserVal (new DeclaratorListNode((DeclaratorListNode) $1.obj, (DeclaratorNode) $3.obj)); }
@@ -251,7 +256,7 @@ expression: expression '+' expression       { //System.out.println("Adding two e
             | STRING                        { $$ = new ParserVal(new ExpressionNode(new IdentifierNode($1.sval)));}
             | DIGITS                        { //System.out.println("DIGITS in expression found");
                                               $$ = new ParserVal(new ExpressionNode(new IntegerNode($1.ival)));}
-            | '"' STRING '"'                 { $$ = new ParserVal(new ExpressionNode(new StringNode($3.sval)));}
+            | '"' STRING '"'                 { $$ = new ParserVal(new ExpressionNode(new StringNode($2.sval)));}
             | DECIMAL                       { $$ = new ParserVal(new ExpressionNode(new DoubleNode($1.dval)));}
             | TRUE                          { $$ = new ParserVal(new ExpressionNode((BooleanNode) $1.obj)); }
             | FALSE                         { $$ = new ParserVal(new ExpressionNode((BooleanNode) $1.obj)); }
@@ -259,8 +264,16 @@ expression: expression '+' expression       { //System.out.println("Adding two e
 ifline: IF '(' expression ')' entireline ELSE entireline        { $$ = new ParserVal(new IfLineNode((ExpressionNode) $3.obj, (EntireLineNode) $5.obj, (EntireLineNode) $7.obj));}
       | IF '(' expression ')' entireline %prec LOWER_THAN_ELSE  { $$ = new ParserVal(new IfLineNode((ExpressionNode)$3.obj, (EntireLineNode) $5.obj)); }
 
+forline :
+    FOR '(' loopinitupdateline ';' loopconditionline ';' loopinitupdateline ')' entireline
+              { $$ = new ParserVal(new ForLineNode((LoopInitUpdateLineNode) $3.obj, (LoopConditionLineNode) $5.obj, (LoopInitUpdateLineNode) $7.obj, (EntireLineNode) $9.obj)); }
+loopconditionline : expression              { $$ = new ParserVal(new LoopConditionLineNode((ExpressionNode) $1.obj));}
+    |                                       { $$ = new ParserVal(new LoopConditionLineNode());}
 
-
+loopinitupdateline :
+    line                                    { $$ = new ParserVal(new LoopInitUpdateLineNode((LineNode) $1.obj));}  
+    |                                       { $$ = new ParserVal(new LoopInitUpdateLineNode());}
+whileline: WHILE '(' expression ')' entireline { $$ = new ParserVal(new WhileLineNode((ExpressionNode) $3.obj, (EntireLineNode) $5.obj));}
 %%
   //  Data structures used in actions of the grammar
   //  You MUST create these objects in the constructor of the Parser class

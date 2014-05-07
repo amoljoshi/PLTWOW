@@ -59,7 +59,7 @@ PRINTSTRING	=	[a-zA-Z_][_a-zA-Z0-9 ]+
 "double"	{if(Parser.interactive_endblock) {System.out.println("double variable found!");}
 			yyparser.yylval = new ParserVal(new TypeNode(yytext()));
 			return Parser.DOUBLE;}
-"string"	{if(Parser.interactive_endblock) {System.out.println("string variable found!");}
+"String"	{if(Parser.interactive_endblock) {System.out.println("string variable found!");}
 			yyparser.yylval = new ParserVal(new TypeNode(yytext()));
 			return Parser.STRING_TYPE;}
 "boolean"	{if(Parser.interactive_endblock) {System.out.println("boolean variable found!");}
@@ -73,6 +73,8 @@ PRINTSTRING	=	[a-zA-Z_][_a-zA-Z0-9 ]+
 			return Parser.FALSE;}
 "end"		{if(Parser.interactive_endblock) {System.out.println("end block found!");}
 			return Parser.END;}
+"for"		{if(Parser.interactive_endblock) {System.out.println("for statement found!");}
+			return Parser.FOR;}
 "if"		{if(Parser.interactive_endblock) {System.out.println("if condition found!");}
 			return Parser.IF;}
 "x"	{if(Parser.interactive_lex){System.out.println("x found"); }
