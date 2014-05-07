@@ -64,5 +64,10 @@ combine exteriorBaseBody(1) steeringWheel(1) glassPieces(6) untestedCar {rate 10
 
 	end 
 	{
+	print "ReachedEndBlock";
+	WoWNodes allnodes = getAllNodes();
+	for(WoWNode each: allnodes)
+		print each
 	}
+
 }
