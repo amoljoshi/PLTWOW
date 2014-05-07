@@ -9,13 +9,13 @@ public class Library_Functions {
 	HashMap<String, Integer> nodeStatus;
 	public Library_Functions (HashMap<String, Node> nodes, HashMap<String,Integer> status){
 		nodeSet = new HashMap<String , Node> (nodes);
-		nodeStatus = status;
+		nodeStatus = new HashMap<String,Integer>(status);
 	}
 	
 	
 	// returns a set of all node names
 	String[] getAllNodes(){
-		ArrayList<String> set = null;
+		ArrayList<String> set = new ArrayList<String>();
 		for (String s :nodeSet.keySet()){
 			set.add(s);
 		}
@@ -44,6 +44,26 @@ public class Library_Functions {
 		double time = 0;
 		time = (node.getAllResourceReceived().getTime() - node.getFirstResourceReceived().getTime())/ (1000);
 		return time;
+	}
+
+	String getLastNode(){
+
+	}
+
+	String[] getAllFirstNodes(){
+
+	}
+
+	double getTotalWaitingTime(){
+
+	}
+
+	double getTotalTime(){
+
+	}
+
+	double getResourceWaitingTime(String resource){
+
 	}
 	
 	//returns a set of all nodes who sends resources to current node
