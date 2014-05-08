@@ -128,6 +128,8 @@ public class MainClass {
 			System.out.println("SUCCESS!!! REJOICE!! CODE WORKS!!!");
 			return;
 		}
+		boolean hasFinished = nodeSet.get(nodeName).isFinished();
+		if (hasFinished) nodeStatus.put(senderNode,2);
 		// add any checks if required - discuss with teammates
 		boolean isFirstInput = nodeSet.get(nodeName).isFirstInput();
 		if (isFirstInput && !nodeThreadSet.get(nodeName).isAlive()) {

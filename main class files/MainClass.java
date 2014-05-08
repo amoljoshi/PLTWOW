@@ -66,6 +66,10 @@ public class MainClass {
 								resourceName).get(1) == nodeSet.get(nodeName).rawInputResources.get(
 										resourceName).get(0))
 							continue;
+						else if (nodeStatus.get(nodeName) == 2){
+							System.out.println("Node does not require any more inputs.");
+							continue;
+						}
 						else {
 							boolean isFirstInput = nodeSet.get(nodeName).isFirstInput();
 							if (isFirstInput && !nodeSet.get(nodeName).isAlive())
