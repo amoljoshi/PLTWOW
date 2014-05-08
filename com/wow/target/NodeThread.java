@@ -40,7 +40,7 @@ public class NodeThread extends Thread {
                     String resourceName = this.node.outputResources.keySet().iterator().next();
                     this.mc.send(this.node.getNodeName(), "", resourceName ,this.node.outputResources.get(resourceName).get(0));
                 }
-
+                this.node.resetValues();
     			break;
     		}
     	}

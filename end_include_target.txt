@@ -1,2 +1,3 @@
-		Library_Functions syslib = new Library_Functions(mc.nodeSet, mc.nodeStatus);
+		mc.syslib = new Library_Functions(mc.nodeSet, mc.nodeStatus);
 		mc.start();
+		}

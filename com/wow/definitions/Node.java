@@ -380,6 +380,17 @@ public class Node{
         }
     }
 
+    public void resetValues (){
+        for (String resource : rawInputResources.keySet()){
+            int quantity = rawInputResources.get(resource).get(0);
+            rawInputResources.get(resource).set(1,quantity);
+        }
+        for (String resource : intermediateInputResources.keySet()){
+            int quantity = intermediateInputResources.get(resource).get(0);
+            intermediateInputResources.get(resource).set(1,quantity);
+        }
+    }
+
     /* dead code! 
     public HashMap <String, ArrayList<Integer>> setUpRuntimeInputResources(){
         HashMap<String, ArrayList<Integer>> result = new HashMap<String, ArrayList<Integer>> ();

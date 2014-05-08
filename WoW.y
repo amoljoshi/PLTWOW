@@ -562,9 +562,12 @@ printstatement: PRINT '(' expression ')'    { $$ = new ParserVal(new PrintLineNo
        String x = yyparser.translateNode(yyparser.nodeTable);
        System.out.println(x);
        // System.out.println(yyparser.endBlockTranslation);
-       yyparser.endBlockTranslation += "}}";
+       yyparser.endBlockTranslation += "System.out.println ( \"Program Terminating successfully.\");System.exit(0);}";
        PrintWriter writer = new PrintWriter("endBlockTranslation.txt", "UTF-8"); 
+       String end_function = "public void end_func(){";
+       writer.println(end_function);
        writer.println(yyparser.endBlockTranslation); 
+       writer.println("}");
        writer.close();
     }
   }

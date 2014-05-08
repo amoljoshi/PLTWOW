@@ -12,6 +12,7 @@ public class MainClass {
 	HashMap<String, Node> nodeSet = new HashMap<String, Node>();
 	HashMap <String, NodeThread> nodeThreadSet = new HashMap <String , NodeThread>();
 	HashMap<String, Integer> nodeStatus = new HashMap<String, Integer>();
+	Library_Functions syslib ;
 	
 	public MainClass() {
 
@@ -27,6 +28,8 @@ public class MainClass {
 	}
 
 	private void printStatusTable(){
+
+		synchronized(System.out){
 		System.out.println("Current Waiting Status: ");
 		System.out.println("--------------------------------------------------------------------------------------");
 		System.out.println("|                  NODE                  |                  RESOURCE                 |");
@@ -39,6 +42,7 @@ public class MainClass {
 			}
 		}
 		System.out.println("--------------------------------------------------------------------------------------");
+	}
 	}
 
 	public boolean isNumber(String s) {
@@ -63,6 +67,7 @@ public class MainClass {
 		for (String s : nodeSet.keySet()) {
 			nodeThreadSet.get(s).setMainClass(this);
 		}
+		this.printStatusTable();
 		// Commented below code as it had hardcoded node name
 		// for (String s : nodeSet.get("Amol").rawInputResources.keySet()) {
 		// 	System.out.println("Resouece " + s);
@@ -71,7 +76,6 @@ public class MainClass {
 		String line;
 		while (currentOutputQuantity < totalOutputQuantity) {
 			line = br.readLine();
-			this.printStatusTable();
 			line = line.trim();
 			if (line.toLowerCase().startsWith("send ")) {
 				line = line.substring(5);
@@ -116,6 +120,7 @@ public class MainClass {
 								+ " does not require " + resourceName + ".");
 				}
 			}
+			this.printStatusTable();
 		}
 	}
 
@@ -126,6 +131,7 @@ public class MainClass {
 			currentOutputQuantity += quantity;
 		if (currentOutputQuantity >= totalOutputQuantity) {
 			System.out.println("SUCCESS!!! REJOICE!! CODE WORKS!!!");
+			end_func();
 			return;
 		}
 		boolean hasFinished = nodeSet.get(nodeName).isFinished();
