@@ -7,14 +7,14 @@ public class IfLineNode extends ASTNode{
 		children.add(node1);
 		children.add(node2);
 		if (!expr.type.equals("boolean"))
-			System.err.println("Error: The condition of an if statement must be of type boolean");
+			System.err.println("Error: The condition of an if statement must be a boolean");
 	}
 
 	public IfLineNode(ExpressionNode expr, EntireLineNode node) {
 		children.add(expr);
 		children.add(node);
 		if (!expr.type.equals("boolean"))
-			System.err.println("Error: The condition of an if statement must be of type boolean");
+			System.err.println("Error: The condition of an if statement must be a boolean");
 	}
 
 	public String toString() {
