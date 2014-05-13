@@ -7,7 +7,7 @@ Workflow sandwich {
 		final output sandwich 4;
 	}
 	Connection{
-		/* No connections here only one node */
+		
 	}
 
 	func A{

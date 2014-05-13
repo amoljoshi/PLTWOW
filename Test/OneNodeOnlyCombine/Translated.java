@@ -162,69 +162,28 @@ public class MainClass {
 
 	public static void main(String[] args) throws IOException {
 		MainClass mc = new MainClass();
-		Node CPU_Maker = new Node("CPU_Maker", false);
-		CPU_Maker.addInputResource("ram", 10, true);
-		CPU_Maker.addInputResource("motherboard", 5, true);
-		CPU_Maker.addOutputResource("cpu", 5);
-		CPU_Maker.addNewOutResource("cpu", "Desktop_Maker", 5);
-		NodeThread CPU_Maker_thread = new NodeThread(CPU_Maker);
-		mc.nodeSet.put("CPU_Maker", CPU_Maker);
-		mc.nodeThreadSet.put("CPU_Maker", CPU_Maker_thread);
-		mc.nodeStatus.put("CPU_Maker", 0);
-		HashMap<String, Integer> resource_ratio_CPU_Maker1 = new HashMap<String, Integer>();
-		resource_ratio_CPU_Maker1.put("ram", 1);
-		resource_ratio_CPU_Maker1.put("motherboard", 1);
-		Combine compute_function_CPU_Maker1 = new Combine("cpu", 5,
-				resource_ratio_CPU_Maker1, 10, "null");
-		CPU_Maker.addComputeFunction(compute_function_CPU_Maker1);
-		Node Monitor_Maker = new Node("Monitor_Maker", false);
-		mc.rawInputResources.add("led");
-		Monitor_Maker.addInputResource("led", 5, false);
-		Monitor_Maker.addInputResource("cabinet", 5, true);
-		Monitor_Maker.addOutputResource("monitor", 5);
-		Monitor_Maker.addNewOutResource("monitor", "Desktop_Maker", 5);
-		NodeThread Monitor_Maker_thread = new NodeThread(Monitor_Maker);
-		mc.nodeSet.put("Monitor_Maker", Monitor_Maker);
-		mc.nodeThreadSet.put("Monitor_Maker", Monitor_Maker_thread);
-		mc.nodeStatus.put("Monitor_Maker", 0);
-		HashMap<String, Integer> resource_ratio_Monitor_Maker1 = new HashMap<String, Integer>();
-		resource_ratio_Monitor_Maker1.put("led", 1);
-		resource_ratio_Monitor_Maker1.put("cabinet", 1);
-		Combine compute_function_Monitor_Maker1 = new Combine("monitor", 5,
-				resource_ratio_Monitor_Maker1, 10, "null");
-		Monitor_Maker.addComputeFunction(compute_function_Monitor_Maker1);
-		Node Desktop_Maker = new Node("Desktop_Maker", true);
-		Desktop_Maker.addInputResource("monitor", 5, true);
-		Desktop_Maker.addInputResource("cpu", 5, true);
-		Desktop_Maker.addOutputResource("desktop", 5);
-		Desktop_Maker.addNewInResource("monitor", "Monitor_Maker", 5);
-		Desktop_Maker.addNewInResource("cpu", "CPU_Maker", 5);
-		NodeThread Desktop_Maker_thread = new NodeThread(Desktop_Maker);
-		mc.nodeSet.put("Desktop_Maker", Desktop_Maker);
-		mc.nodeThreadSet.put("Desktop_Maker", Desktop_Maker_thread);
-		mc.nodeStatus.put("Desktop_Maker", 0);
-		HashMap<String, Integer> resource_ratio_Desktop_Maker1 = new HashMap<String, Integer>();
-		resource_ratio_Desktop_Maker1.put("monitor", 1);
-		resource_ratio_Desktop_Maker1.put("cpu", 1);
-		Combine compute_function_Desktop_Maker1 = new Combine("desktop", 5,
-				resource_ratio_Desktop_Maker1, 5, "null");
-		Desktop_Maker.addComputeFunction(compute_function_Desktop_Maker1);
+		Node A = new Node("A", true);
+		mc.rawInputResources.add("bread");
+		A.addInputResource("bread", 8, false);
+		mc.rawInputResources.add("butter");
+		A.addInputResource("butter", 4, false);
+		A.addOutputResource("sandwich", 4);
+		NodeThread A_thread = new NodeThread(A);
+		mc.nodeSet.put("A", A);
+		mc.nodeThreadSet.put("A", A_thread);
+		mc.nodeStatus.put("A", 0);
+		HashMap<String, Integer> resource_ratio_A1 = new HashMap<String, Integer>();
+		resource_ratio_A1.put("butter", 1);
+		resource_ratio_A1.put("bread", 2);
+		Combine compute_function_A1 = new Combine("sandwich", 4,
+				resource_ratio_A1, 4, "null");
+		A.addComputeFunction(compute_function_A1);
 
 		mc.syslib = new Library_Functions(mc.nodeSet, mc.nodeStatus);
 		mc.start();
 	}
 
 	public void end_func() {
-		double i = 0.0;
-		String[] all = syslib.getAllNodes();
-		for (String node : all) {
-			double d = syslib.getTime(node);
-			if (i < d) {
-				i = d;
-			}
-		}
-		System.out.println("Max time taken by");
-		System.out.println(i);
 		System.out.println("Program Terminating successfully.");
 		System.exit(0);
 	}
