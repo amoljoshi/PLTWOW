@@ -27,8 +27,8 @@ public class Library_Functions {
 	//returns the total time for a node
 	// returns -1 if nodename does not exist ?????????????
 	// returns total number of seconds as of now
-	double getTime (String nodeName){
-		if (!nodeSet.containsKey(nodeName)) return -1;
+	double getTime (String nodeName) throws RuntimeException{
+		if (!nodeSet.containsKey(nodeName)) throw new RuntimeException("Node " + nodeName + " is undefined!");
 		Node node = nodeSet.get(nodeName);
 		double time = 0;
 		time = (node.getAllOutputGenerated().getTime() - node.getFirstResourceReceived().getTime())/ (1000);

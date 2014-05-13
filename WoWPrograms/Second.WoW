@@ -2,6 +2,7 @@ Workflow Cars
 {
 	Resources 
 	{ 
+	//Resources block
 		chassis 1x;
 		wheels 4x;
 		steeringWheel 1x;
@@ -9,13 +10,15 @@ Workflow Cars
 	}
 	
 	Node Chassis_Processor
-	{
+	{	
+		//	Chasis Processor node
 		input chassis 10;
 		output paintedChassis 10;
 	}
 	
 	Node Assembler_phase1
 	{
+		//	Assembler phase 1 node
 		input paintedChassis 10;
 	    input wheels 40;
 		output exteriorBaseBody 10;
@@ -23,6 +26,7 @@ Workflow Cars
 
 	Node Assembler_phase2
 	{
+		//	Assembler phase 2 node
 		input exteriorBaseBody 10;
 		input steeringWheel 10;
 		input glassPieces 60;
@@ -31,12 +35,16 @@ Workflow Cars
 
 	Node Testing_Station
 	{
+		//	Testing station node
 		input untestedCar 10;
 		final output car 10;
 	}
 
 	Connection
 	{
+		/*
+		Connection block
+		*/
 		Node Chassis_Processor -> Node Assembler_phase1 {paintedChassis 10;};
 		Node Assembler_phase1 -> Node Assembler_phase2 {exteriorBaseBody 10;};
 		Node Assembler_phase2 -> Node Testing_Station {untestedCar 10;};
@@ -64,12 +72,19 @@ combine exteriorBaseBody(1) steeringWheel(1) glassPieces(6) untestedCar {rate 10
 
 	end 
 	{
-	print("ReachedEndBlock");
+	//print("ReachedEndBlock");
 	WoWNodes allNodes = getAllNodes();
+	WoWNode each = "abc";
+	String aj = "abc";
 	double a = 10.0;
-	foreach(WoWNode eachNode : allNodes){
-		 a = a + getTime(eachNode);
+	aj = "def";
+	double temp = 0.0;
+	foreach(WoWNode eachNode: allNodes){
+		print(eachNode);
+		temp = getTime(eachNode);
+		a = a + temp;
 	}
+
 	print(a);
 	}
 
