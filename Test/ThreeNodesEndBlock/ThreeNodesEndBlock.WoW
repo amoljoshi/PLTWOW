@@ -1,0 +1,95 @@
+Workflow Desktop
+
+{
+
+Resources
+
+{
+
+
+led 1x;
+
+Cabinet 1x;
+
+Motherboard 1x;
+
+RAM 2x;
+final Desktop 1x;
+}
+
+Node Monitor_Maker
+
+{
+input led 5;
+
+input cabinet 5;
+
+output monitor 5;
+}
+
+Node CPU_Maker
+
+{
+input motherboard 5;
+
+input ram 10;
+
+output cpu 5;
+}
+Node Desktop_Maker
+
+{
+input cpu 5;
+
+input monitor 5;
+
+final output desktop 5;
+}
+
+Connection
+
+ {
+	Node Monitor_Maker -> Node Desktop_Maker {monitor 5;};
+ 	Node CPU_Maker -> Node Desktop_Maker { cpu 5;};
+
+}
+
+func Monitor_Maker
+
+{
+
+ combine led(1) cabinet(1) monitor {rate 10; quantity 5; print "Monitor assembled";};
+
+}
+func CPU_Maker
+
+{
+combine motherboard(1) ram(1) cpu { rate 10; quantity 5; print "CPU assembled";};
+}
+
+func Desktop_Maker
+
+{
+
+combine cpu(1) monitor(1) desktop {rate 5; quantity 5; print "desktop assembled";};
+
+}
+
+
+
+end
+{
+	double i = 0.0;
+	WoWNodes all = getAllNodes();
+ 	foreach (WoWNode node :  all)
+	{
+	double d = getTime(node);
+	if( i < d )
+		{
+		i = d;
+		}
+	}
+	print("Max time taken by");
+	print(i);
+}
+}

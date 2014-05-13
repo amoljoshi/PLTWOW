@@ -1,17 +1,29 @@
 Workflow sandwich {
+	
 	Resources { bread 2x; butter 1x; final sandwich 1x;}
+	
 	Node A
 	{
 		input bread 8;
-		input butter 4;
+		output bread_temp 8;
+	}
+	
+	Node B
+	{
+		input bread_temp 8;
+	    input butter 4;
 		final output sandwich 4;
 	}
 	Connection{
-		
+		Node A -> Node B {bread_temp 8;};
 	}
-
 	func A{
 		convert bread(1) bread_temp(1) { rate 4; quantity 8; print "converting bread to bread_Temp";};
-		combine bread_temp(2) butter(1) sandwich { rate 4; quantity 4; print "Sandwich ready";};
 	}
+	
+	func B{
+		combine bread_temp(2) butter(1) sandwich {rate 10; quantity 4 ; print "sandwich ready"; };
+	}
+	
 }
+

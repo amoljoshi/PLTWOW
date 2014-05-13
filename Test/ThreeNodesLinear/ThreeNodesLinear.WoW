@@ -1,0 +1,86 @@
+Workflow Desktop
+
+{
+
+	Resources{
+
+		led 1x;
+		Cabinet 1x;
+		Motherboard 1x;
+		RAM 2x;
+		peripheral 1x;
+		final Desktop 1x;
+	}
+
+	Node Monitor_Maker
+
+	{
+		input led 5;
+		input cabinet 5;
+		output monitor 5;
+	}
+
+	Node CPU_Attacher
+
+	{	
+		input monitor 5;
+		input motherboard 5;
+		input ram 10;
+		output MonitorCpu 5;
+	}
+
+	Node Desktop_Maker
+
+	{
+	input MonitorCpu 5;
+	input peripheral 5;
+	final output desktop 5;
+	}
+
+	Connection
+
+ 	{
+		Node Monitor_Maker -> Node CPU_Attacher {monitor 5;};
+ 		Node CPU_Attacher -> Node Desktop_Maker { MonitorCpu 5;};
+
+	}	
+
+	func Monitor_Maker
+
+	{
+
+ 	combine led(1) cabinet(1) monitor {rate 10; quantity 5; print "Monitor assembled";};
+
+	}
+	func CPU_Maker
+
+	{
+	combine motherboard(1) ram(1) MonitorCpu { rate 10; quantity 5; print "MonitorCPU assembled";};
+	}
+
+	func Desktop_Maker
+
+	{
+
+	combine MonitorCpu(1) peripheral(1) desktop {rate 5; quantity 5; print "desktop assembled";};
+
+	}
+
+
+
+	end
+	{	
+		double i = 0.0;
+		WoWNodes all = getAllNodes();
+ 		foreach (WoWNode node :  all)
+		{
+		double d = getTime(node);
+		if( i < d )
+		{
+			i = d;
+		}
+	}
+		print("Max time taken by");
+		print(i);
+}
+}
