@@ -214,10 +214,10 @@ public class ConnectionChecks
 	//prints the adjacencty list formed - used for debugging
 	private static void printList(Map<String,ArrayList<String>> adjacencyList)
 	{
-		for (Map.Entry entry : adjacencyList.entrySet()) {
+		for (Map.Entry<String, ArrayList<String>> entry : adjacencyList.entrySet()) {
 			System.out.print("key,val: ");
 			System.out.print(entry.getKey());
-			ArrayList<String> values = (ArrayList<String>)entry.getValue();
+			ArrayList<String> values = entry.getValue();
 			for(int i=0;i<values.size();i++)
 			{
 				System.out.print(", "+values.get(i));
