@@ -1,0 +1,65 @@
+Workflow Sandwich
+{
+
+Resources
+
+{
+dough 10x;
+vegetables 5x;
+final pizza 1x;
+}
+
+Node oven 
+{
+input dough 40;
+output bread 4;
+}
+Node prepare
+
+{
+
+input bread 4;
+
+input vegetables 20;
+
+final output pizza 4;
+
+}
+
+Connection
+
+{
+
+Node oven -> Node prepare {bread 4;};
+
+}
+func oven
+
+{
+convert dough(5) dough_temp(1) {rate 4; quantity 40; print "spread";};
+
+convert dough_temp(2) bread(1) { rate 2; quantity 8; print "bread made";};
+}
+
+func prepare
+
+{
+combine bread(1) vegetables(5) raw_pizza { rate 5; quantity 4; print "prepared raw pizza";};
+
+convert raw_pizza(1) pizza(1) {rate 2; quantity 4; print "pizza prepared";};
+}
+end
+{
+double sum = 0.0;
+
+WoWNodes all = getAllNodes();
+
+foreach( WoWNode node : all ){
+
+sum = sum + getTime(node);
+
+	}
+
+print(sum);
+}
+}

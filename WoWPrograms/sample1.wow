@@ -1,0 +1,34 @@
+Workflow Sandwich
+{
+	Resources
+{
+		bread 2x;
+		butter 1x;
+		final sandwich 1x;
+}
+
+Node A
+{
+		input bread 4;
+		input butter 2;
+		final output sandwich 2;
+}
+Connection 
+{
+}
+
+func A
+{
+convert bread(1) bread_temp(1) {rate 2; quantity 4; print "edge cut";};
+		combine bread_temp(2) butter(1) sandwich{ rate 10; quantity 2; print "sandwich made";};
+}
+
+end
+{
+	WoWNodes all = getAllNodes();
+ foreach (WoWNode node :  all)
+	{
+	print("Printing.");
+	}
+}
+}
