@@ -47,6 +47,7 @@ public class NodeThread extends Thread {
         stopThread();
     }
     // add stopping checks in this method
+    @SuppressWarnings("deprecation")
     public void stopThread(){
         System.out.println("Stopping thread");
         stop();
