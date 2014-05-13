@@ -38,8 +38,8 @@ public class Library_Functions {
 	// returns the total time that a node waits for beginning execution once it receive its first input resource
 	// returns -1 if nodename does not exist ?????????????
 	// returns total number of seconds as of now
-	double getNodeWaitingTime(String nodeName){
-		if (!nodeSet.containsKey(nodeName)) return -1;
+	double getNodeWaitingTime(String nodeName) throws RuntimeException{
+		if (!nodeSet.containsKey(nodeName)) throw new RuntimeException("Node " + nodeName + " is undefined!");
 		Node node = nodeSet.get(nodeName);
 		double time = 0;
 		time = (node.getAllResourceReceived().getTime() - node.getFirstResourceReceived().getTime())/ (1000);
@@ -85,8 +85,8 @@ public class Library_Functions {
 	
 	//returns a set of all nodes who sends resources to current node
 	//returns null if nodename does not exist ????????????????????????????????
-	String [] getPrevious(String nodeName){
-		if (!nodeSet.containsKey(nodeName)) return null;
+	String [] getPrevious(String nodeName) throws RuntimeException{
+		if (!nodeSet.containsKey(nodeName)) throw new RuntimeException("Node " + nodeName + " is undefined!");
 		ArrayList <String> set = new ArrayList<String>();
 		Node node = nodeSet.get(nodeName);
 		for (String s :node.inNodes.keySet())
@@ -98,8 +98,8 @@ public class Library_Functions {
 	
 	//returns a set of all nodes who expect resources from current node
 	//returns null if nodename does not exist
-	String [] getNext(String nodeName){
-		if (!nodeSet.containsKey(nodeName)) return null;
+	String [] getNext(String nodeName) throws RuntimeException{
+		if (!nodeSet.containsKey(nodeName)) throw new RuntimeException("Node " + nodeName + " is undefined!");
 		ArrayList <String> set = new ArrayList<String>();
 		Node node = nodeSet.get(nodeName);
 		for (String s :node.outNodes.keySet())

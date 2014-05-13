@@ -46,6 +46,7 @@
 %left EQEQ NOTEQ
 %left '<' '>' LTEQ GTEQ
 %right EQ
+%start Program
 %%
 
 Program : WORKFLOW STRING '{' resources nodes connections computefunctions endblock'}' {
@@ -576,12 +577,12 @@ printstatement: PRINT '(' expression ')'    { $$ = new ParserVal(new PrintLineNo
        String x = yyparser.translateNode(yyparser.nodeTable);
        System.out.println(x);
        // System.out.println(yyparser.endBlockTranslation);
-       yyparser.endBlockTranslation += "System.out.println ( \"Program Terminating successfully.\");System.exit(0);}";
+       yyparser.endBlockTranslation += "System.out.println ( \"Program Terminating successfully.\");System.exit(0);";
        PrintWriter writer = new PrintWriter("endBlockTranslation.txt", "UTF-8"); 
-       String end_function = "public void end_func(){";
+       String end_function = "public void end_func(){ \n try{ \n";
        writer.println(end_function);
        writer.println(yyparser.endBlockTranslation); 
-       writer.println("}");
+       writer.println("}\ncatch(RuntimeException e){\n System.out.println(e.getMessage().substring(e.getMessage().indexOf(\"Node\")));\nSystem.exit(0);\n}\ncatch(Exception e){\nSystem.out.println(\"Unexpected error in end block.\");\n}\n}\n}");
        writer.close();
     }
   }

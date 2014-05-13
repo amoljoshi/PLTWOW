@@ -26,6 +26,7 @@ convert bread(1) bread_temp(1) {rate 2; quantity 4; print "edge cut";};
 end
 {
 	WoWNodes all = getAllNodes();
+	double A = getTime("XYZ");
  foreach (WoWNode node :  all)
 	{
 	print("Printing." + node);
