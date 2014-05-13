@@ -25,12 +25,10 @@ convert bread(1) bread_temp(1) {rate 2; quantity 4; print "edge cut";};
 
 end
 {
-	double sum = 0.0;
 	WoWNodes all = getAllNodes();
- 	foreach (WoWNode node :  all)
+ foreach (WoWNode node :  all)
 	{
-	sum = sum + getTime(node);
+	print("Printing." + node);
 	}
-
 }
 }

@@ -41,6 +41,11 @@
 %token GETTOTALTIME, GETPREVIOUS, GETNEXT
 %token WOWNODES, WOWNODE
 %token FOR, WHILE, FOREACH
+%left OR
+%left AND
+%left EQEQ NOTEQ
+%left '<' '>' LTEQ GTEQ
+%right EQ
 %%
 
 Program : WORKFLOW STRING '{' resources nodes connections computefunctions endblock'}' {
@@ -143,9 +148,9 @@ computelines:
             |                               {}
  
 computeline:
-            mapline                         {}
-            | reduceline                    {}
-mapline:
+            combineline                         {}
+            | convertline                    {}
+combineline:
         CONVERT STRING '(' DIGITS ')' STRING '(' DIGITS ')' computeblock ';'  {
                                                   if(Parser.interactive_yacc) { System.out.println("Convert from " 
                                                     + $2.sval);}
@@ -160,7 +165,7 @@ mapline:
                                                   convert = null;
                                                   
                                             }
-reduceline:
+convertline:
              COMBINE STRING '(' DIGITS ')' STRING '(' DIGITS ')' STRING moreids computeblock ';'  {
                                                 if(Parser.interactive_yacc) { System.out.println("Combine into " + $10.sval);}
                                                 inputResourcesRatio.put($2.sval, $4.ival);
@@ -228,7 +233,8 @@ entireline: line ';'                        {
 
 line:       declaration                     {$$ = new ParserVal(new LineNode((DeclarationNode) $1.obj)); }
             | expression                    {$$ = new ParserVal(new LineNode((ExpressionNode) $1.obj)); }
-            | printstatement                { $$ = new ParserVal(new LineNode((PrintLineNode) $1.obj));}            
+            | printstatement                {$$ = new ParserVal(new LineNode((PrintLineNode) $1.obj));}
+            | assignment                    {$$ = new ParserVal(new LineNode((AssignmentNode) $1.obj));} 
 
 typeofvariable:   INT                        {  $$ = new ParserVal($1.obj);}
       | DOUBLE                               {  $$ = new ParserVal($1.obj);}
@@ -245,7 +251,7 @@ declaration: typeofvariable variabledeclarations      {$$ = new ParserVal (new D
 
 variabledeclaration: STRING                 {$$ = new ParserVal (new DeclaratorNode(new IdentifierNode($1.sval))); }
                     | STRING EQ expression {$$ = new ParserVal(new DeclaratorNode(new IdentifierNode($1.sval), (ExpressionNode) $3.obj));}
-
+assignment: STRING EQ expression            {$$ = new ParserVal(new AssignmentNode(new IdentifierNode($1.sval), (ExpressionNode) $3.obj));}
 expression: expression '+' expression       { //System.out.println("Adding two expressions");
                                               $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "+", (ExpressionNode) $3.obj));}
             | expression '-' expression     { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "-", (ExpressionNode) $3.obj));}
@@ -258,7 +264,7 @@ expression: expression '+' expression       { //System.out.println("Adding two e
             | expression '>'  expression    { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, ">", (ExpressionNode) $3.obj));}
             | expression LTEQ expression    { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "<=", (ExpressionNode) $3.obj));}
             | expression GTEQ expression    { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, ">=", (ExpressionNode) $3.obj));}
-            | expression EQ expression      { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "=", (ExpressionNode) $3.obj));}
+            | expression EQEQ expression      { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "==", (ExpressionNode) $3.obj));}
             | expression NTEQ expression    { $$ = new ParserVal(new ExpressionNode((ExpressionNode) $1.obj, "!=", (ExpressionNode) $3.obj));}
             | STRING                        { $$ = new ParserVal(new ExpressionNode(new IdentifierNode($1.sval)));}
             | DIGITS                        { //System.out.println("DIGITS in expression found");
@@ -272,14 +278,15 @@ expression: expression '+' expression       { //System.out.println("Adding two e
             | GETTOTALWAITINGTIME '(' ')'           { $$ = new ParserVal(new ExpressionNode((LibraryFunctionsNode) $1.obj)); }
             | GETTOTALTIME '(' ')'           { $$ = new ParserVal(new ExpressionNode((LibraryFunctionsNode) $1.obj)); }
             | GETALLFIRSTNODE '(' ')'           { $$ = new ParserVal(new ExpressionNode((LibraryFunctionsNode) $1.obj)); }            
-            | GETTIME '(' STRING ')'           {  LibraryFunctionsNode libraryFunc = new LibraryFunctionsNode($1.sval, $3.sval);
-                                                  $$ = new ParserVal(new ExpressionNode(libraryFunc)); }            
-            | GETNEXT '(' STRING ')'           {  LibraryFunctionsNode libraryFunc = new LibraryFunctionsNode($1.sval, $3.sval);
+            | GETTIME '(' expression ')'           {  //System.err.println("getTime =" + $3.obj);  
+                                                    LibraryFunctionsNode libraryFunc = new LibraryFunctionsNode($1.sval, (ExpressionNode)$3.obj);
                                                   $$ = new ParserVal(new ExpressionNode(libraryFunc)); }
-            | GETPREVIOUS '(' STRING ')'           {  LibraryFunctionsNode libraryFunc = new LibraryFunctionsNode($1.sval, $3.sval);
+            | GETNEXT '(' expression ')'           {  LibraryFunctionsNode libraryFunc = new LibraryFunctionsNode($1.sval, (ExpressionNode)$3.obj);
+                                                  $$ = new ParserVal(new ExpressionNode(libraryFunc)); }
+            | GETPREVIOUS '(' expression ')'           {  LibraryFunctionsNode libraryFunc = new LibraryFunctionsNode($1.sval, (ExpressionNode)$3.obj);
                                                   $$ = new ParserVal(new ExpressionNode(libraryFunc)); }            
 
-            | GETNODEWAITINGTIME '(' STRING ')'           {  LibraryFunctionsNode libraryFunc = new LibraryFunctionsNode($1.sval, $3.sval);
+            | GETNODEWAITINGTIME '(' expression ')'           {  LibraryFunctionsNode libraryFunc = new LibraryFunctionsNode($1.sval, (ExpressionNode)$3.obj);
                                                   $$ = new ParserVal(new ExpressionNode(libraryFunc)); }            
 
 
@@ -290,9 +297,15 @@ forline :
     FOR '(' loopinitupdateline ';' loopconditionline ';' loopinitupdateline ')' entireline
               { $$ = new ParserVal(new ForLineNode((LoopInitUpdateLineNode) $3.obj, (LoopConditionLineNode) $5.obj, (LoopInitUpdateLineNode) $7.obj, (EntireLineNode) $9.obj)); }
 foreachline:
-    FOREACH '(' WOWNODE STRING ':' STRING ')' entireline
-              { $$ = new ParserVal(new ForeachLineNode($4.sval, $6.sval, (EntireLineNode)$8.obj)); }
-
+    FOREACH '(' foreachdeclare ':' foreachlist ')' entireline
+              {
+                $$ = new ParserVal(new ForeachLineNode((DeclarationNode)$3.obj, (IdentifierNode)$5.obj, (EntireLineNode)$7.obj)); }
+foreachdeclare: WOWNODE STRING              { DeclaratorNode iteratorwownode = 
+  new DeclaratorNode(new IdentifierNode($2.sval));
+  DeclaratorListNode iteratorwownodeList = new DeclaratorListNode(iteratorwownode);
+  $$ = new ParserVal(new DeclarationNode((TypeNode)$1.obj, iteratorwownodeList));
+}
+foreachlist: STRING                         { $$ = new ParserVal(new IdentifierNode($1.sval));}
 loopconditionline : expression              { $$ = new ParserVal(new LoopConditionLineNode((ExpressionNode) $1.obj));}
     |                                       { $$ = new ParserVal(new LoopConditionLineNode());}
 
@@ -407,7 +420,6 @@ printstatement: PRINT '(' expression ')'    { $$ = new ParserVal(new PrintLineNo
     }
     else{
       yyerror("Definition of node " + nodeName + " not found!");
-      System.out.println("Invalid node!"); // CHANGE THIS! The program shouldn't compile
     }
   }
   //  Method to set outResources and outNodes of a node
@@ -424,7 +436,6 @@ printstatement: PRINT '(' expression ')'    { $$ = new ParserVal(new PrintLineNo
     }
     else{
       yyerror("Definition of node " + nodeName + " not found!");
-      System.out.println("Invalid node!"); // CHANGE THIS! The program shouldn't compile
     }
   }
   private void addNewNodeInputResource(String name, Integer quantity){
@@ -495,8 +506,11 @@ printstatement: PRINT '(' expression ')'    { $$ = new ParserVal(new PrintLineNo
       ArrayList<String>  translatedCodeForNodes = new ArrayList<String>(); 
       Set<String> s= nodeMapping.keySet();
       String tc = "";
-      for(String i : s)
+      for(String i : s){
+          if(nodeMapping.get(i).computeArray.size() == 0)
+            System.err.println("Error: Missing compute function for node " + i);
           tc += nodeMapping.get(i).translateNodeCreation();  
+        }
       return tc;
   }
   
@@ -540,7 +554,7 @@ printstatement: PRINT '(' expression ')'    { $$ = new ParserVal(new PrintLineNo
     }
     else {
       //interactive_yacc mode
-      System.out.println("I am compiler. I need a file to compile. Now which part is difficult to understand in this?");
+      System.err.println("I am compiler. I need a file to compile. Now which part is difficult to understand in this?");
 	    yyparser = new Parser(new InputStreamReader(System.in));
     }
     yyparser.yyparse();
@@ -548,15 +562,15 @@ printstatement: PRINT '(' expression ')'    { $$ = new ParserVal(new PrintLineNo
     // yyparser.printNodesTable();
     // System.out.println(yyparser.connection.toString());
     if(ConnectionChecks.detectCycles(yyparser.connection)){
-        System.out.println("Dont you try to trick me.. I can detect cycles..");      
+        System.err.println("Dont you try to trick me.. I can detect cycles..");      
     }
     else{
       //System.out.println("Your WoW program doesn't contain any cycle.. WOW!");
     }
     if(ConnectionChecks.detectHangingParts(yyparser.connection)){
-        System.out.println("Dont you try to trick me.. I can detect hanging sub graphs..");      
+        System.err.println("Dont you try to trick me.. I can detect hanging sub graphs..");      
     }
-    else{
+    else{    
       //System.out.println("Your WoW program doesn't contain any hanging subgraph.. WOW!");
       //System.out.println("Called the translateNode method");
        String x = yyparser.translateNode(yyparser.nodeTable);

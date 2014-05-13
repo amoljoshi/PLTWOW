@@ -25,8 +25,16 @@ DIGITS = [0-9]+
 NL  = \n | \r | \r\n
 STRING	=	[a-zA-Z_][_a-zA-Z0-9]*
 PRINTSTRING	=	[a-zA-Z_][_a-zA-Z0-9 ]+
+InputCharacter = [^\r\n]
+LineTerminator = \r|\n|\r\n
+Comment = {TraditionalComment} | {EndOfLineComment} | {DocumentationComment}
+TraditionalComment   = "/*" [^*] ~"*/" | "/*" "*"+ "/"
+EndOfLineComment     = "//" {InputCharacter}* {LineTerminator}
+DocumentationComment = "/**" {CommentContent} "*"+ "/"
+CommentContent       = ( [^*] | \*+ [^/*] )*
 %%
-
+/* comments */
+{Comment}                      { /* ignore */ }
 "Workflow"	{if(Parser.interactive_lex){System.out.println("workflow found!");} 
 			return Parser.WORKFLOW;}
 "Resources"	{if(Parser.interactive_lex){System.out.println("Resources found!"); }
@@ -96,6 +104,8 @@ PRINTSTRING	=	[a-zA-Z_][_a-zA-Z0-9 ]+
 		return Parser.LTEQ;}
 "="	{if(Parser.interactive_endblock) {System.out.println("Equal-to expression found");}
 		return Parser.EQ;}
+"=="	{if(Parser.interactive_endblock) {System.out.println("Equal-to-Equal-to expression found");}
+		return Parser.EQEQ;}
 "!="	{if(Parser.interactive_endblock) {System.out.println("Not-equal-to expression found");}
 		return Parser.NTEQ;}
 "getAllNodes"	{if(Parser.interactive_endblock) {System.out.println("Library function getAllNodes found");}

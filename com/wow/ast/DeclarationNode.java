@@ -12,7 +12,8 @@ public class DeclarationNode extends ASTNode {
 		if(!node2.type.startsWith("LibraryFunctions"))
 		{
 			if (!(node2.type.equals(node1.type)) && !node2.type.equals("--")){
-				System.err.println("Error: Identifier "+id+" is defined for type "+node1.type+", but is being assigned to "+node2.type+".");
+				if(!"WoWNode".equals(node1.type) && "String".equals(node2.type))
+					System.err.println("Error: Identifier "+id+" is defined for type "+node1.type+", but is being assigned to "+node2.type+".");
 			}
 		}
 		else{

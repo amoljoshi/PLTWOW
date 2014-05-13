@@ -81,15 +81,17 @@ end
 {
 	double i = 0.0;
 	WoWNodes all = getAllNodes();
+	WoWNode maxTime;
  	foreach (WoWNode node :  all)
 	{
 	double d = getTime(node);
 	if( i < d )
 		{
 		i = d;
+		maxTime = node;
 		}
 	}
-	print("Max time taken by");
-	print(i);
+	print("Max time taken by node = " + maxTime);
+	print("Time taken was = " + i);
 }
 }

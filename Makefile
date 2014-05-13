@@ -2,14 +2,14 @@
 
 JFLEX  = jflex 
 BYACCJ = yacc -J
-JAVAC  = javac
+JAVAC  = javac -Xlint:unchecked
 
 # targets:
 
 all: clean Parser.class run
 
 run: Parser.class
-	java -ea Parser WoWPrograms/First.WoW
+	java -ea Parser WoWPrograms/Second.WoW
 
 build: clean Parser.class
 

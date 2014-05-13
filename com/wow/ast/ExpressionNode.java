@@ -18,6 +18,7 @@ public class ExpressionNode extends ASTNode {
 
 	public ExpressionNode (LibraryFunctionsNode n) {
 		children.add(n);
+		// System.err.println("In ExpressionNode " + n.type);
 		type = n.type;
 	}
 
@@ -30,6 +31,7 @@ public class ExpressionNode extends ASTNode {
 		children.add(n);
 		id = n.id;
 		type = SymbolTable.symbolTable.get(n.id);
+		// System.err.println("id " + n.id + " with type = " + type);
 	}
 
 	public ExpressionNode(BooleanNode n) {
@@ -54,67 +56,98 @@ public class ExpressionNode extends ASTNode {
 					if(!node1.type.equals("WoWNodes")){
 						System.err.println("Error: Cannot perform the operation " + node1.type + " " + op + " " + functionName);
 					}
+					else{
+						type = "WoWNodes";
+					}
 				}					
 				else if(functionName.equals("getTime")){
 					if(!node1.type.equals("double")){
 						System.err.println("Error: Cannot perform the operation " + node1.type + " " + op + " " + functionName);
+					}
+					else{
+						type = "double";
 					}
 				}					
 				else if(functionName.equals("getNodeWaitingTime")){
 					if(!node1.type.equals("double")){
 						System.err.println("Error: Cannot perform the operation " + node1.type + " " + op + " " + functionName);
 					}
+					else{
+						type = "double";
+					}				
 				}					
 				else if(functionName.equals("getLastNode")){
 					if(!node1.type.equals("WoWNode")){
 						System.err.println("Error: Cannot perform the operation " + node1.type + " " + op + " " + functionName);						
 					}
+					else{
+						type = "WoWNode";
+					}					
 				}					
 				else if(functionName.equals("getTotalWaitingTime")){
 					if(!node1.type.equals("double")){
 						System.err.println("Error: Cannot perform the operation " + node1.type + " " + op + " " + functionName);						
 					}
+					else{
+						type = "double";
+					}					
 				}					
 				else if(functionName.equals("getAllFirstNodes")){
 					if(!node1.type.equals("WoWNodes")){
 						System.err.println("Error: Cannot perform the operation " + node1.type + " " + op + " " + functionName);						
 					}
+					else{
+						type = "WoWNodes";
+					}					
 				}					
 				else if(functionName.equals("getNext()")){
 					if(!node1.type.equals("WoWNodes")){
 						System.err.println("Error: Cannot perform the operation " + node1.type + " " + op + " " + functionName);						
 					}
+					else{
+						type = "WoWNodes";
+					}					
 				}					
 				else if(functionName.equals("getTotalTime")){
 					if(!node1.type.equals("double")){
 						System.err.println("Error: Cannot perform the operation " + node1.type + " " + op + " " + functionName);						
 					}
+					else{
+						type = "double";
+					}					
 				}					
 				else if(functionName.equals("getPrevious")){
 					if(!node1.type.equals("WoWNodes")){
 						System.err.println("Error: Cannot perform the operation " + node1.type + " " + op + " " + functionName);
 					}
+					else{
+						type = "WoWNodes";
+					}					
 				}
-				return;
 		}
+		/*
 		if (!node1.type.equals(n3.type) && (node1.type.equals("int") && n3.type.equals("double") || node1.type.equals("double") && n3.type.equals("int")
-									  || node1.type.equals("string") && n3.type.equals("int") || node1.type.equals("int") && n3.type.equals("string")
-									  || node1.type.equals("string") && n3.type.equals("double") || node1.type.equals("double") && n3.type.equals("string")))
-			System.err.println("Error: Cannot perform the operation " + node1.type + " " + op + " " + n3.type);
+									  || node1.type.equals("String") && n3.type.equals("int") || node1.type.equals("int") && n3.type.equals("String")
+									  || node1.type.equals("String") && n3.type.equals("double") || node1.type.equals("double") && n3.type.equals("String")))
+			System.err.println("Error11: Cannot perform the operation " + node1.type + " " + op + " " + n3.type); */
 		else {
 			if (op.equals("+")) {
 				if (node1.type.equals("int") && n3.type.equals("int"))
 					type = "int";
+				if (node1.type.equals("double") && n3.type.equals("double"))
+					type = "double";
 				else if((node1.type.equals("double") && n3.type.equals("int")))
 					type = "double";
+				else if((node1.type.equals("String") && n3.type.equals("String")))
+					type = "String";
 				else if((node1.type.equals("int") && n3.type.equals("double")))
-					type = "double";
-				else if ((node1.type.equals("double")||node1.type.equals("int"))&&n3.type.equals("string"))
-					type = "string";
-				else if ((n3.type.equals("double")||n3.type.equals("int"))&&node1.type.equals("string"))
-					type = "string";
+					type = "double";				
+				else if ((node1.type.equals("double")||node1.type.equals("int"))&&n3.type.equals("String"))
+					type = "String";
+				else if ((n3.type.equals("double")||n3.type.equals("int"))&&node1.type.equals("String"))
+					type = "String";
 				else
-					System.err.println("Error: Cannot perform the operation "+node1.type+" "+op+" "+n3.type);
+					System.err.println("Error12: Cannot perform the operation "+node1.type+" "+op+" "+n3.type);
 			}
 
 			if (op.equals("-")||op.equals("*")||op.equals("/")||op.equals("^")||op.equals("%")) {
@@ -126,12 +159,12 @@ public class ExpressionNode extends ASTNode {
 					type = "double";
 				else if((node1.type.equals("double") && n3.type.equals("double"))) type = "double";
 				else
-					System.err.println("Error: Cannot perform the operation "+node1.type+" "+op+" "+n3.type);
+					System.err.println("Error13: Cannot perform the operation "+node1.type+" "+op+" "+n3.type);
 			}
 
 			if (op.equals("<")||op.equals(">")||op.equals("<=")||op.equals(">=")) {
-				if (node1.type.equals("boolean")||node1.type.equals("string")||n3.type.equals("boolean")||n3.type.equals("string")) {
-					System.out.println("Error: Cannot perform the operation "+node1.type+" "+op+" "+n3.type);
+				if (node1.type.equals("boolean")||node1.type.equals("String")||n3.type.equals("boolean")||n3.type.equals("String")) {
+					System.err.println("Error14: Cannot perform the operation "+node1.type+" "+op+" "+n3.type);
 				}
 				else
 					type = "boolean";
@@ -143,15 +176,15 @@ public class ExpressionNode extends ASTNode {
 				else if ((node1.type.equals("double")||node1.type.equals("int"))&&(n3.type.equals("double")||n3.type.equals("int")))
 					type = "boolean";
 				else
-					System.err.println("Error: Cannot perform the operation "+node1.type+" "+op+" "+n3.type);
+					System.err.println("Error15: Cannot perform the operation "+node1.type+" "+op+" "+n3.type);
 
 			}
 
-			if (op.equals ("and") || op.equals("or")) {
+			if (op.equals ("&&") || op.equals("||")) {
 				if (node1.type.equals("boolean") && n3.type.equals("boolean"))
 					type = "boolean";
 			else 
-				System.err.println("Error: Cannot perform the operation "+node1.type+" "+op+" "+n3.type);
+				System.err.println("Error16: Cannot perform the operation "+node1.type+" "+op+" "+n3.type);
 
 			}
 		}

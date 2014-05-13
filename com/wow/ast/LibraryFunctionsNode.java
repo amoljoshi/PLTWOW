@@ -9,11 +9,24 @@ public class LibraryFunctionsNode extends ASTNode {
 	public LibraryFunctionsNode(String functionName) {
 		this.functionName = functionName;
 		type = "LibraryFunctions-"+functionName;
+		// System.out.println("Hello - " + functionName);
+	}
+
+	public LibraryFunctionsNode(String functionName, ExpressionNode expr) {
+		// System.out.println("Type of expression is = " + expr.type + " where function = " + functionName);
+		this.parameter = expr.toString();
+		this.functionName = functionName;
+		type = "LibraryFunctions-"+functionName;
+		if(!"String".equals(expr.type)){
+			System.err.println("Error: You cannot call library function " + functionName + " with parameter of type "+expr.type);
+		}
+		// System.err.println("expr type = " + expr.type + " for function " + functionName);
 	}
 	public LibraryFunctionsNode(String functionName, String parameter) {
 		this.functionName = functionName;
 		this.parameter = parameter;
 		type = "LibraryFunctions-"+functionName;
+		// System.err.println("Hello - " + functionName);
 	}
 
 	public String toString() {
