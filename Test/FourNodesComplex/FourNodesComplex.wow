@@ -1,0 +1,108 @@
+Workflow Car{
+
+Resources 
+
+{
+
+wheel 4x;
+
+axle 2x;
+
+windscreen 1x;
+
+chassis 1x;
+final car 1x;
+}
+
+Node base_assembly
+
+{
+
+input wheel 8;
+
+input axle 4;
+
+output base 2;
+}
+
+Node body_assembly1
+
+{
+input base 1;
+
+input chassis 1;
+
+output body 1;
+}
+
+Node body_assembly2
+
+{
+input base 1;
+
+input chassis 1;
+
+output body 1;
+}
+
+Node car_assembly
+
+{
+input body 2;
+
+input windshield 2;
+
+final output car 2;
+}
+Connection
+
+{
+
+Node base_assembly -> Node body_assembly1 { base 1;};
+
+Node base_assembly -> Node body_assembly2 { base 1;};
+
+Node body_assembly1 -> Node car_assembly {body 1;};
+
+Node body_assembly2 -> Node car_assembly {body 1;};
+
+}
+
+func base_assembly
+
+{
+combine wheel(2) axle(1) base { rate 10; quantity 2;print "wheels fitted to axle";};
+
+}
+
+func body_assembly1
+
+{
+	combine base(1) chassis(1) body {rate 100; quantity 1;print "assembled body";};
+}
+
+func body_assembly2
+
+{
+	combine base(1) chassis(1) body {rate 100; quantity 1; print "assembled body";};
+}
+
+func car_assembly
+
+{
+	combine body(1) windshield(1) car {rate 50; quantity 1; print "assembled car";};
+}
+
+end{
+	double i = 0.0;
+	WoWNodes all = getAllNodes();
+ 	foreach (WoWNode node :  all)
+	{
+double d = getNodeWaitingTime(node);
+	if( d < 10.0)
+		{
+			print(node);
+		}
+	}
+}
+}
