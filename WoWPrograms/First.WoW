@@ -24,11 +24,12 @@ Workflow sandwitch {
 		int temp = 10;
 		aj = aj + temp;
 		String amol2 = "nimai";
+		WoWNode singleNode;
 		boolean hello = true;
 		if(hello) aj = aj +temp;
 		WoWNodes allNodes = getAllNodes();
 		double a = 10.0;
-		foreach(WoWNode singleNode: allNodes){
+		foreach(singleNode: allNodes){
 			a =  a + getTime(singleNode);
 			print("Waiting_time_iss");		
 			print(a);
