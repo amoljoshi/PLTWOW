@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# If no file passed in the arguments to script
+if [ $# -ne 1 ];
+	then echo "No source file found"
+	exit 0
+fi
+
+# Checks if the input file is a .wow file
+if [[ $1 != *.WoW ]];
+	then echo "Please provide a .WoW file."
+	exit 0
+fi
+	
+cat top_include_target.txt >> com/wow/target/MainClass.java
+java -ea Parser $1 1>> com/wow/target/MainClass.java 2> "p_error.txt"
+
+# Check if translation gave out errors. These are potential (syntax)errors in the WoWPrograms itself
+if [[ -s p_error.txt ]];
+	then
+	echo "p_error"
+	cat p_error.txt
+	rm com/wow/target/MainClass.java
+	rm p_error.txt
+	exit 0;
+fi
+
+# Appends the end_include_target and endBlockTranslation (Static pieces of code) to MainClass.java
+cat end_include_target.txt >> com/wow/target/MainClass.java
+cat endBlockTranslation.txt >> com/wow/target/MainClass.java
+
+# Any semantic errors for the program caught here.
+javac com/wow/target/MainClass.java 2> "c_error.txt"
+if [[ -s c_error.txt ]];
+	then
+	echo "c_error"
+	cat c_error.txt
+	rm com/wow/target/MainClass.java
+	rm c_error.txt
+	exit 0;
+fi
+
+# Any runtime erros for the program caught
+java com/wow/target/MainClass 2>"r_error.txt"
+ if [ -s r_error.txt ]; 
+ 	then
+ 	echo "r_error"
+ 	cat r_error.txt
+ 	rm MainClass.class
+ 	rm com/wow/target/MainClass.java
+ 	rm r_error.txt
+ 	exit 0;
+ fi
+
+# remove garbage files
+rm r_error.txt
+rm c_error.txt
+rm p_error.txt
+rm com/wow/target/MainClass.java
