@@ -573,12 +573,12 @@ public String translateNodeCreation(){
                 for (String res : resource_ratio.keySet()){
                     tc += "resource_ratio_"+this.getNodeName()+String.valueOf(compute_counter)+".put(\""+ res + "\" , " + resource_ratio.get(res).toString() + ");\n";
                 }
-                tc += "Combine compute_function_"+this.getNodeName() + String.valueOf(compute_counter) + " = new Combine( \"" + com.getTarget_resource()+"\" , " + String.valueOf(com.getTarget_qty()) + ", resource_ratio_" + this.getNodeName() + String.valueOf(compute_counter)+ " , " + String.valueOf(com.getRate())+ " , \"" + com.getPrint_statement() + "\" );\n";
+                tc += "Combine compute_function_"+this.getNodeName() + String.valueOf(compute_counter) + " = new Combine( \"" + com.getTarget_resource()+"\" , " + String.valueOf(com.getTarget_qty()) + ", resource_ratio_" + this.getNodeName() + String.valueOf(compute_counter)+ " , " + String.valueOf(com.getRate())+ " , " + com.getPrint_statement() + " );\n";
                 tc += this.getNodeName()+".addComputeFunction(compute_function_"+this.getNodeName() + String.valueOf(compute_counter) + ");\n";
             }
             if (cf instanceof Convert){
                 Convert con = (Convert) cf;
-                tc += "Convert compute_function_"+this.getNodeName() + String.valueOf(compute_counter) + " = new Convert(\"" + con.getOriginal_resource()+"\" , " + String.valueOf(con.getRatio_original_resource()) + ", \"" + con.getConverted_resource() + "\", " + String.valueOf(con.getRatio_converted_resource())+ " , " + String.valueOf(con.getQuantity()) + " , " + String.valueOf(con.getRate()) +  " , \"" + con.getPrint_statement() + "\" );\n";
+                tc += "Convert compute_function_"+this.getNodeName() + String.valueOf(compute_counter) + " = new Convert(\"" + con.getOriginal_resource()+"\" , " + String.valueOf(con.getRatio_original_resource()) + ", \"" + con.getConverted_resource() + "\", " + String.valueOf(con.getRatio_converted_resource())+ " , " + String.valueOf(con.getQuantity()) + " , " + String.valueOf(con.getRate()) +  " , " + con.getPrint_statement() + " );\n";
                 tc += this.getNodeName()+".addComputeFunction(compute_function_"+this.getNodeName() + String.valueOf(compute_counter) + ");\n";
             }
         }

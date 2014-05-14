@@ -519,7 +519,7 @@ printstatement: PRINT '(' expression ')'    { $$ = new ParserVal(new PrintLineNo
           if(nodeMapping.get(i).computeArray.size() == 0)
             System.err.println("Error: Missing compute function for node " + i);
           tc += nodeMapping.get(i).translateNodeCreation();  
-          System.out.println(nodeMapping.get(i));
+          //System.out.println(nodeMapping.get(i));
         }
       return tc;
   }
@@ -589,7 +589,7 @@ printstatement: PRINT '(' expression ')'    { $$ = new ParserVal(new PrintLineNo
       //System.out.println("Your WoW program doesn't contain any hanging subgraph.. WOW!");
       //System.out.println("Called the translateNode method");
        String x = yyparser.translateNode(yyparser.nodeTable);
-       //System.out.println(x);
+       System.out.println(x);
        // System.out.println(yyparser.endBlockTranslation);
        yyparser.endBlockTranslation += "System.out.println ( \"Program Terminating successfully.\");System.exit(0);";
        PrintWriter writer = new PrintWriter("endBlockTranslation.txt", "UTF-8"); 
