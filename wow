@@ -1,5 +1,11 @@
 #!/bin/bash
 
+#Delete MainClass.java
+if
+[ -f com/wow/target/MainClass.java ];then
+rm MainClass.java
+fi
+
 # If no file passed in the arguments to script
 if [ $# -ne 1 ];
 	then echo "No source file found"
@@ -18,7 +24,6 @@ java -ea Parser $1 1>> com/wow/target/MainClass.java 2> "p_error.txt"
 # Check if translation gave out errors. These are potential (syntax)errors in the WoWPrograms itself
 if [[ -s p_error.txt ]];
 	then
-	echo "p_error"
 	cat p_error.txt
 	rm com/wow/target/MainClass.java
 	rm p_error.txt
@@ -50,8 +55,15 @@ if [[ -s c_error.txt ]];
 
 	rm com/wow/target/MainClass.java
 	rm c_error.txt
-	rm scopeError.txt
-	rm initError
+	if [ -f scopeError.txt ];
+		then
+		rm scopeError.txt
+	fi
+
+	if [ -f initError.txt ];
+		then
+		rm initError.txt;
+	fi
 	exit 0;
 fi
 
