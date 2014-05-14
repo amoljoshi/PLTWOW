@@ -31,7 +31,6 @@ public class ExpressionNode extends ASTNode {
 		children.add(n);
 		id = n.id;
 		type = SymbolTable.symbolTable.get(n.id);
-		// System.err.println("id " + n.id + " with type = " + type);
 	}
 
 	public ExpressionNode(BooleanNode n) {
@@ -44,13 +43,20 @@ public class ExpressionNode extends ASTNode {
 		type = n.type;
 	}
 
-	public ExpressionNode (ExpressionNode node1, String operator, ExpressionNode n3) {
-		//implementation remaining
+	public ExpressionNode (ExpressionNode node1, String operator, ExpressionNode node3) {
+		//implementation remaining - completed now: Yash, Amol
 		children.add(node1);
 		op = operator;
-		children.add(n3);
-		if(n3.type.startsWith("LibraryFunctions")){
-				String splits[] = n3.type.split("-");
+		children.add(node3);
+		
+		if(node1!= null && SymbolTable.symbolTable.get(node1.toString()) == null)
+			System.err.println("Error: "+node1.toString()+" is not defined.");
+
+		else if(node3!= null && SymbolTable.symbolTable.get(node3.toString()) == null)
+			System.err.println("Error: "+node3.toString()+" is not defined.");
+
+		else if(node3.type.startsWith("LibraryFunctions")){
+				String splits[] = node3.type.split("-");
 				String functionName = splits[1];
 				if(functionName.equals("getAllNodes")){
 					if(!node1.type.equals("WoWNodes")){
@@ -125,66 +131,64 @@ public class ExpressionNode extends ASTNode {
 					}					
 				}
 		}
-		/*
-		if (!node1.type.equals(n3.type) && (node1.type.equals("int") && n3.type.equals("double") || node1.type.equals("double") && n3.type.equals("int")
-									  || node1.type.equals("String") && n3.type.equals("int") || node1.type.equals("int") && n3.type.equals("String")
-									  || node1.type.equals("String") && n3.type.equals("double") || node1.type.equals("double") && n3.type.equals("String")))
-			System.err.println("Error11: Cannot perform the operation " + node1.type + " " + op + " " + n3.type); */
+		
 		else {
 			if (op.equals("+")) {
-				if (node1.type.equals("int") && n3.type.equals("int"))
+				if (node1.type.equals("int") && node3.type.equals("int"))
 					type = "int";
-				if (node1.type.equals("double") && n3.type.equals("double"))
+				if (node1.type.equals("double") && node3.type.equals("double"))
 					type = "double";
-				else if((node1.type.equals("double") && n3.type.equals("int")))
+				else if((node1.type.equals("double") && node3.type.equals("int")))
 					type = "double";
-				else if((node1.type.equals("String") && n3.type.equals("String")))
+				else if((node1.type.equals("String") && node3.type.equals("String")))
 					type = "String";
-				else if((node1.type.equals("int") && n3.type.equals("double")))
+				else if((node1.type.equals("int") && node3.type.equals("double")))
 					type = "double";				
-				else if ((node1.type.equals("double")||node1.type.equals("int"))&&n3.type.equals("String"))
+				else if ((node1.type.equals("double")||node1.type.equals("int"))&&node3.type.equals("String"))
 					type = "String";
-				else if ((n3.type.equals("double")||n3.type.equals("int"))&&node1.type.equals("String"))
+				else if ((node3.type.equals("double")||node3.type.equals("int"))&&node1.type.equals("String"))
 					type = "String";
 				else
-					System.err.println("Error12: Cannot perform the operation "+node1.type+" "+op+" "+n3.type);
+					System.err.println("Error: Cannot perform the operation "+node1.type+" "+op+" "+node3.type);
 			}
 
 			if (op.equals("-")||op.equals("*")||op.equals("/")||op.equals("^")||op.equals("%")) {
-				if (node1.type.equals("int") && n3.type.equals("int"))
+				if (node1.type.equals("int") && node3.type.equals("int"))
 					type = "int";
-				else if((node1.type.equals("double") && n3.type.equals("int")))
+				else if((node1.type.equals("double") && node3.type.equals("int")))
 					type = "double";
-				else if((node1.type.equals("int") && n3.type.equals("double")))
+				else if((node1.type.equals("int") && node3.type.equals("double")))
 					type = "double";
-				else if((node1.type.equals("double") && n3.type.equals("double"))) type = "double";
+				else if((node1.type.equals("double") && node3.type.equals("double"))) type = "double";
 				else
-					System.err.println("Error13: Cannot perform the operation "+node1.type+" "+op+" "+n3.type);
+					System.err.println("Error: Cannot perform the operation "+node1.type+" "+op+" "+node3.type);
 			}
 
 			if (op.equals("<")||op.equals(">")||op.equals("<=")||op.equals(">=")) {
-				if (node1.type.equals("boolean")||node1.type.equals("String")||n3.type.equals("boolean")||n3.type.equals("String")) {
-					System.err.println("Error14: Cannot perform the operation "+node1.type+" "+op+" "+n3.type);
+				if (node1.type.equals("boolean")||node1.type.equals("String")||node3.type.equals("boolean")||node3.type.equals("String")) {
+					System.err.println("Error: Cannot perform the operation "+node1.type+" "+op+" "+node3.type);
 				}
 				else
 					type = "boolean";
 			}
 
 			if (op.equals("!=")||op.equals("==")) {
-				if (node1.type.equals("boolean")&& n3.type.equals("boolean"))
+				if (node1.type.equals("boolean")&& node3.type.equals("boolean"))
 					type = "boolean";
-				else if ((node1.type.equals("double")||node1.type.equals("int"))&&(n3.type.equals("double")||n3.type.equals("int")))
+				else if ((node1.type.equals("double")||node1.type.equals("int"))&&(node3.type.equals("double")||node3.type.equals("int")))
+					type = "boolean";
+				if(node1.type.equals("String") && node3.type.equals("String"))
 					type = "boolean";
 				else
-					System.err.println("Error15: Cannot perform the operation "+node1.type+" "+op+" "+n3.type);
+					System.err.println("Error: Cannot perform the operation "+node1.type+" "+op+" "+node3.type);
 
 			}
 
 			if (op.equals ("&&") || op.equals("||")) {
-				if (node1.type.equals("boolean") && n3.type.equals("boolean"))
+				if (node1.type.equals("boolean") && node3.type.equals("boolean"))
 					type = "boolean";
 			else 
-				System.err.println("Error16: Cannot perform the operation "+node1.type+" "+op+" "+n3.type);
+				System.err.println("Error: Cannot perform the operation "+node1.type+" "+op+" "+node3.type);
 
 			}
 		}
@@ -196,12 +200,20 @@ public class ExpressionNode extends ASTNode {
 			return "";
 		else if (children.size() == 1) {
 			if (children.get(0) instanceof ExpressionNode) 
-				return ("("+children.get(0)+")");
+				return "("+children.get(0)+")";
 			else
 				return ""+children.get(0);
 		}
-		else 
-			return (""+children.get(0) + op + children.get(1));
+		//overloading == operator for Strings (must use IDs, not from String pool)
+		else if("==".equals(op)){
+			String lhsType = SymbolTable.symbolTable.get(children.get(0).toString());
+			String rhsType = SymbolTable.symbolTable.get(children.get(1).toString());
+			String tempOp = "==";
+			if(tempOp.equals(op) && "String".equals(rhsType) && "String".equals(lhsType))
+				return "" + children.get(0) + ".equals(" + children.get(1) + ")";
+		}
+
+		return "" + children.get(0) + op + children.get(1);
 	}
 
 }

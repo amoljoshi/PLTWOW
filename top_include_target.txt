@@ -7,13 +7,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.*;
+import java.lang.Object;
 
 public class MainClass {
 	HashMap<String, Node> nodeSet = new HashMap<String, Node>();
 	HashMap <String, NodeThread> nodeThreadSet = new HashMap <String , NodeThread>();
 	HashMap<String, Integer> nodeStatus = new HashMap<String, Integer>();
 	Library_Functions syslib ;
-	
+	Date startTime =  new Date();
 	public MainClass() {
 
 	}
@@ -27,21 +28,41 @@ public class MainClass {
 		rawInputResources = resources;
 	}
 
-	private void printStatusTable(){
+	private String tableHeader(String s, int length)
+	{   
+		if((length - s.length())/2 == (length - s.length() + 1)/2)
+		return String.format("%" + (length-s.length())/2 + "s", "")+ s + String.format("%" + ((length-s.length())/2-1)  + "s","");
+		else
+			return String.format("%" + (length-s.length())/2 + "s", "")+ s + String.format("%" + (length-s.length())/2  + "s","");
 
+	}
+
+	private void printStatusTable(){
 		synchronized(System.out){
+		// if block to check if waiting for any more inputs	
 		System.out.println("Current Waiting Status: ");
-		System.out.println("--------------------------------------------------------------------------------------");
-		System.out.println("|                  NODE                  |                  RESOURCE                 |");
-		System.out.println("--------------------------------------------------------------------------------------");
+		for(int i = 1; i <= 140; i++)System.out.print("-");System.out.println();
+		System.out.print("|" + tableHeader("NODE", 35));
+		System.out.print("|" + tableHeader("RESOURCE",35));
+		System.out.print("|" + tableHeader("MIN QUANTITY",35));
+		System.out.println("|" + tableHeader("TIME",35) + "|");
+		for(int i = 1; i <= 140; i++)System.out.print("-");System.out.println();
 		for(String status_node: nodeSet.keySet()){
 			Map<String,ArrayList<Integer>> reference_rawInputResources = nodeSet.get(status_node).rawInputResources;
 			for(String data : reference_rawInputResources.keySet()){
 				if(reference_rawInputResources.get(data).get(0) != reference_rawInputResources.get(data).get(1))
-					System.out.println ("|                  "+ status_node +"                  |                  "+ data + "                 |");
+					{				
+					System.out.print("|" + tableHeader(status_node, 35));                  
+					System.out.print("|" + tableHeader(data,35));
+					System.out.print("|" + tableHeader(String.valueOf(reference_rawInputResources.get(data).get(0) - reference_rawInputResources.get(data).get(1)),35));
+					String waitingtime = String.valueOf( (new Date().getTime()-startTime.getTime())/1000);
+					System.out.println("|" + tableHeader(waitingtime+"secs",35) + "|");
+					for(int i = 1; i <= 140; i++)
+						System.out.print("-");
+					System.out.println();						
+					}
 			}
 		}
-		System.out.println("--------------------------------------------------------------------------------------");
 	}
 	}
 
