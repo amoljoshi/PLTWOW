@@ -39,7 +39,11 @@ public class MainClass {
 
 	private void printStatusTable(){
 		synchronized(System.out){
-		// if block to check if waiting for any more inputs	
+		boolean all_received = true;
+		for(String n : nodeSet.keySet())
+			for(String d : nodeSet.get(n).rawInputResources.keySet())
+				all_received = all_received && (nodeSet.get(n).rawInputResources.get(d).get(0).equals(nodeSet.get(n).rawInputResources.get(d).get(1)));
+		if (!all_received){	
 		System.out.println("Current Waiting Status: ");
 		for(int i = 1; i <= 140; i++)System.out.print("-");System.out.println();
 		System.out.print("|" + tableHeader("NODE", 35));
@@ -65,6 +69,9 @@ public class MainClass {
 		}
 	}
 	}
+}
+
+
 
 	public boolean isNumber(String s) {
 		char[] c = s.toCharArray();
