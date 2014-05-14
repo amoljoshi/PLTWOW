@@ -44,6 +44,10 @@
 %left OR
 %left AND
 %left EQEQ NOTEQ
+%left '+' '-'
+%left '*' '/' '%'
+%right '!'
+%right '^'
 %left '<' '>' LTEQ GTEQ
 %right EQ
 %start Program
