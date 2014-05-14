@@ -33,10 +33,25 @@ cat endBlockTranslation.txt >> com/wow/target/MainClass.java
 javac com/wow/target/MainClass.java 2> "c_error.txt"
 if [[ -s c_error.txt ]];
 	then
-	echo "c_error"
-	cat c_error.txt
+	
+	count=`grep "symbol:   variable" c_error.txt|wc -l`
+	if [ $count -ne -0 ];
+	then
+	grep "symbol:   variable" c_error.txt > scopeError.txt
+	grep "symbol:   variable" scopeError.txt| awk '{print $3 " is out of scope"}'
+	fi
+
+	count=`grep "error: variable" c_error.txt|wc -l`
+	if [ $count -ne -0 ];
+	then
+	grep "error: variable" c_error.txt > initError.txt
+	grep "error: variable" initError.txt| awk '{print $4 " is not initialized"}'
+	fi
+
 	rm com/wow/target/MainClass.java
 	rm c_error.txt
+	rm scopeError.txt
+	rm initError
 	exit 0;
 fi
 
