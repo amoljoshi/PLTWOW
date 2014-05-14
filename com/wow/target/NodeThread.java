@@ -13,7 +13,7 @@ public class NodeThread extends Thread {
     public void run() {
     	System.out.println("Node " + this.node.getNodeName() + " running now");
         for(String s : this.node.rawInputResources.keySet()){
-            System.out.println(s);
+            //System.out.println(s);
         }
     	node.setFirstResourceReceived(); 		// sets the timestamp for start of node --- node now waits for all inputs to be received
     	while (true){
@@ -49,7 +49,7 @@ public class NodeThread extends Thread {
     // add stopping checks in this method
     @SuppressWarnings("deprecation")
     public void stopThread(){
-        System.out.println("Stopping thread");
+        //System.out.println("Stopping thread");
         stop();
     }  
     public synchronized void receiveRawInput (String resourceName , int quantity){

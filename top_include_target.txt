@@ -50,7 +50,7 @@ public class MainClass {
 		for(String status_node: nodeSet.keySet()){
 			Map<String,ArrayList<Integer>> reference_rawInputResources = nodeSet.get(status_node).rawInputResources;
 			for(String data : reference_rawInputResources.keySet()){
-				if(reference_rawInputResources.get(data).get(0) != reference_rawInputResources.get(data).get(1))
+				if(!reference_rawInputResources.get(data).get(0).equals(reference_rawInputResources.get(data).get(1)))
 					{				
 					System.out.print("|" + tableHeader(status_node, 35));                  
 					System.out.print("|" + tableHeader(data,35));
@@ -84,7 +84,7 @@ public class MainClass {
 			}
 
 		}
-		System.out.println("start");
+		//System.out.println("start");
 		for (String s : nodeSet.keySet()) {
 			nodeThreadSet.get(s).setMainClass(this);
 		}
@@ -128,7 +128,7 @@ public class MainClass {
 						else {
 							boolean isFirstInput = nodeSet.get(nodeName)
 									.isFirstInput();
-							System.out.println(isFirstInput);
+							//System.out.println(isFirstInput);
 							if (isFirstInput && !nodeThreadSet.get(nodeName).isAlive()) {
 								nodeStatus.put(nodeName, 1);
 								nodeThreadSet.get(nodeName).start();

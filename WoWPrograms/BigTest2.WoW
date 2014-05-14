@@ -14,6 +14,8 @@ Workflow Apple
 	processor 1x;
 	niccard 1x;
 	bluetooth 1x;
+	os 1x;
+	otherstuff 1x;
 	final macpro 1x;
 	}
 
@@ -60,7 +62,7 @@ Workflow Apple
 	input body 100;
 	input audioport 200;
 	input usbport 300;
-	input powerport 100; 
+	input powerport 100;
 	output hardware 100;
 	}
 
@@ -90,7 +92,7 @@ Workflow Apple
 	}
 	func Finish
 	{
-	convert raw_product(1) completeproduct(1) {rate 1000; quantity 100; print "100 Macbooks READY TO ROLL !";};
+	convert rawproduct(1) macpro(1) {rate 1000; quantity 100; print "100 Macbooks READY TO ROLL !";};
 	}
 
 	func Software

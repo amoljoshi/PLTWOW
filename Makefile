@@ -9,13 +9,13 @@ JAVAC  = javac -Xlint:unchecked
 all: clean Parser.class run
 
 run: Parser.class
-	java -ea Parser WoWPrograms/Second.WoW
+	java -ea Parser WoWPrograms/BigTest2.WoW
 
 build: clean Parser.class
 
 translate: clean Parser.class
 	cat top_include_target.txt >> com/wow/target/MainClass.java
-	java -ea Parser WoWPrograms/Second.WoW >> com/wow/target/MainClass.java
+	java -ea Parser WoWPrograms/BigTest2.WoW >> com/wow/target/MainClass.java
 	cat end_include_target.txt >> com/wow/target/MainClass.java
 	cat endBlockTranslation.txt >> com/wow/target/MainClass.java
 
