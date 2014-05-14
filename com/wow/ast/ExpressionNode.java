@@ -50,10 +50,10 @@ public class ExpressionNode extends ASTNode {
 		children.add(node3);
 		
 		if(node1!= null && SymbolTable.symbolTable.get(node1.toString()) == null)
-			System.err.println("Error: "+node1.toString()+" is not defined.");
+			System.err.println("Error21: "+node1.toString()+" is not defined.");
 
-		else if(node3!= null && SymbolTable.symbolTable.get(node3.toString()) == null)
-			System.err.println("Error: "+node3.toString()+" is not defined.");
+		else if(node3!= null && !node3.type.startsWith("LibraryFunctions") && SymbolTable.symbolTable.get(node3.toString()) == null)
+			System.err.println("Error22: "+node3.toString()+" is not defined.");
 
 		else if(node3.type.startsWith("LibraryFunctions")){
 				String splits[] = node3.type.split("-");
@@ -67,15 +67,15 @@ public class ExpressionNode extends ASTNode {
 					}
 				}					
 				else if(functionName.equals("getTime")){
-					if(!node1.type.equals("double")){
-						System.err.println("Error: Cannot perform the operation " + node1.type + " " + op + " " + functionName);
+					if(!node1.type.equals("double") && !node1.type.equals("int")){
+						System.err.println("Error11: Cannot perform the operation " + node1.type + " " + op + " " + functionName);
 					}
 					else{
 						type = "double";
 					}
 				}					
 				else if(functionName.equals("getNodeWaitingTime")){
-					if(!node1.type.equals("double")){
+					if(!node1.type.equals("double") && !node1.type.equals("int")){
 						System.err.println("Error: Cannot perform the operation " + node1.type + " " + op + " " + functionName);
 					}
 					else{
@@ -91,7 +91,7 @@ public class ExpressionNode extends ASTNode {
 					}					
 				}					
 				else if(functionName.equals("getTotalWaitingTime")){
-					if(!node1.type.equals("double")){
+					if(!node1.type.equals("double") && !node1.type.equals("int")){
 						System.err.println("Error: Cannot perform the operation " + node1.type + " " + op + " " + functionName);						
 					}
 					else{
@@ -115,8 +115,16 @@ public class ExpressionNode extends ASTNode {
 					}					
 				}					
 				else if(functionName.equals("getTotalTime")){
-					if(!node1.type.equals("double")){
+					if(!node1.type.equals("double") && !node1.type.equals("int")){
 						System.err.println("Error: Cannot perform the operation " + node1.type + " " + op + " " + functionName);						
+					}
+					else{
+						type = "double";
+					}					
+				}					
+				else if(functionName.equals("getTotalOutputQuantity")){
+					if(!node1.type.equals("double") && !node1.type.equals("int")){
+						System.err.println("Error11: Cannot perform the operation " + node1.type + " " + op + " " + functionName);						
 					}
 					else{
 						type = "double";
@@ -136,7 +144,7 @@ public class ExpressionNode extends ASTNode {
 			if (op.equals("+")) {
 				if (node1.type.equals("int") && node3.type.equals("int"))
 					type = "int";
-				if (node1.type.equals("double") && node3.type.equals("double"))
+				else if (node1.type.equals("double") && node3.type.equals("double"))
 					type = "double";
 				else if((node1.type.equals("double") && node3.type.equals("int")))
 					type = "double";
@@ -149,7 +157,7 @@ public class ExpressionNode extends ASTNode {
 				else if ((node3.type.equals("double")||node3.type.equals("int"))&&node1.type.equals("String"))
 					type = "String";
 				else
-					System.err.println("Error: Cannot perform the operation "+node1.type+" "+op+" "+node3.type);
+					System.err.println("Error12: Cannot perform the operation "+node1.type+" "+op+" "+node3.type);
 			}
 
 			if (op.equals("-")||op.equals("*")||op.equals("/")||op.equals("^")||op.equals("%")) {

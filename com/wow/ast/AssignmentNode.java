@@ -57,6 +57,11 @@ public class AssignmentNode extends ASTNode{
 						System.err.println("Error: cannot assign type " + expr.type  + " to type " + idtype);
 					}
 				}
+				else if(functionName.equals("getTotalOutputQuantity")){
+					if(!idtype.equals("double")){
+						System.err.println("Error: cannot assign type " + expr.type  + " to type " + idtype);
+					}
+				}
 			}
 		else if (SymbolTable.symbolTable.get(identifier.id) != null) {
 			if (!SymbolTable.symbolTable.get(identifier.id).equals(expr.type) && !(SymbolTable.symbolTable.get(identifier.id).equals("double")&&expr.type.equals("int")))

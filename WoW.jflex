@@ -135,6 +135,9 @@ CommentContent       = ( [^*] | \*+ [^/*] )*
 "getNext"		{if(Parser.interactive_endblock) {System.out.println("Library function getNext found");}
 				 yyparser.yylval = new ParserVal(yytext()); 
 				 return Parser.GETNEXT;}
+"getTotalOutputQuantity"		{if(Parser.interactive_endblock) {System.out.println("Library function getTotalOutputQuantity found");}
+				 yyparser.yylval = new ParserVal(yytext()); 
+				 return Parser.GETTOTALOUTPUTQUANTITY;}
 
 "WoWNodes"	{if(Parser.interactive_endblock) {System.out.println("WoWNodes variable found");}
 			yyparser.yylval = new ParserVal(new TypeNode(yytext()));

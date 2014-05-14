@@ -38,6 +38,7 @@
 %token LTEQ
 %token NTEQ, AND, OR, EQ, DECIMAL, END
 %token GETALLNODES, GETTIME, GETNODEWAITINGTIME, GETLASTNODE, GETALLFIRSTNODE, GETTOTALWAITINGTIME
+%token GETTOTALOUTPUTQUANTITY
 %token GETTOTALTIME, GETPREVIOUS, GETNEXT
 %token WOWNODES, WOWNODE
 %token FOR, WHILE, FOREACH
@@ -293,7 +294,8 @@ expression: expression '+' expression       { //System.out.println("Adding two e
 
             | GETNODEWAITINGTIME '(' expression ')'           {  LibraryFunctionsNode libraryFunc = new LibraryFunctionsNode($1.sval, (ExpressionNode)$3.obj);
                                                   $$ = new ParserVal(new ExpressionNode(libraryFunc)); }            
-
+            | GETTOTALOUTPUTQUANTITY '(' expression ')'       {  LibraryFunctionsNode libraryFunc = new LibraryFunctionsNode($1.sval, (ExpressionNode)$3.obj);
+                                                  $$ = new ParserVal(new ExpressionNode(libraryFunc)); }                              
 
 ifline: IF '(' expression ')' entireline ELSE entireline        { $$ = new ParserVal(new IfLineNode((ExpressionNode) $3.obj, (EntireLineNode) $5.obj, (EntireLineNode) $7.obj));}
       | IF '(' expression ')' entireline %prec LOWER_THAN_ELSE  { $$ = new ParserVal(new IfLineNode((ExpressionNode)$3.obj, (EntireLineNode) $5.obj)); }
@@ -367,7 +369,8 @@ printstatement: PRINT '(' expression ')'    { $$ = new ParserVal(new PrintLineNo
       String errorString = "";
       Iterator it = connectionResources.entrySet().iterator();
       Node n = this.nodeTable.get(nodeName);
-      assert n!=null;
+      if(n == null)
+        yyerror("node " + nodeName + " not found");
       while (it.hasNext()) {
           Map.Entry pair = (Map.Entry)it.next();
           String resourceName = (String)pair.getKey();
@@ -381,7 +384,8 @@ printstatement: PRINT '(' expression ')'    { $$ = new ParserVal(new PrintLineNo
       String errorString = "";
       Iterator it = connectionResources.entrySet().iterator();
       Node n = this.nodeTable.get(nodeName);
-      assert n!=null : "node " + nodeName + "not found";
+      if(n == null)
+        yyerror("node " + nodeName + " not found");
       while (it.hasNext()) {
           Map.Entry pair = (Map.Entry)it.next();
           String resourceName = (String)pair.getKey();
@@ -392,11 +396,11 @@ printstatement: PRINT '(' expression ')'    { $$ = new ParserVal(new PrintLineNo
       return errorString;
   }
   private void addNewNode(String name){
-      assert nodeTable != null;
+      // assert nodeTable != null;
       Node n = new Node(name, generatesFinalOutput);
-      assert (rawInputResources != null && !rawInputResources.isEmpty()) || (intermediateInputResources!=null 
+/*      assert (rawInputResources != null && !rawInputResources.isEmpty()) || (intermediateInputResources!=null 
             && !intermediateInputResources.isEmpty());
-      assert outputResources!= null && !outputResources.isEmpty();      
+      assert outputResources!= null && !outputResources.isEmpty();      */
       n.setRawInputResources(rawInputResources);
       n.setIntermediateInputResources(intermediateInputResources);
       n.setOutputResources(outputResources);
@@ -461,7 +465,7 @@ printstatement: PRINT '(' expression ')'    { $$ = new ParserVal(new PrintLineNo
     outputResources.put(name, quantities);
   }  
   private void addNewResource(String resourceName, Integer times){
-    assert resourcesTable!=null;
+    // assert resourcesTable!=null;
     // System.out.println("Adding resource = " + resourceName + " of quantity = " + times.toString());
     resourcesTable.put(resourceName, times);
   }
@@ -469,7 +473,7 @@ printstatement: PRINT '(' expression ')'    { $$ = new ParserVal(new PrintLineNo
     connection.addConnection(from, to);
   }
   private void printResourcesTable(){
-      assert this.resourcesTable != null;
+      // assert this.resourcesTable != null;
       System.out.println("\n---------------------Showing Resources Table---------------------\n");
       List<String> keys = new ArrayList<String> (this.resourcesTable.keySet());
       for (String key : keys){
@@ -477,7 +481,7 @@ printstatement: PRINT '(' expression ')'    { $$ = new ParserVal(new PrintLineNo
       }
   }
   private void printNodesTable(){
-    assert this.nodeTable!=null;
+    // assert this.nodeTable!=null;
       System.out.println("\n---------------------Showing Nodes Table--------------------------\n");
     ArrayList<String> nodes = new ArrayList<String> (this.nodeTable.keySet());
     for(String node : nodes){
@@ -562,7 +566,12 @@ printstatement: PRINT '(' expression ')'    { $$ = new ParserVal(new PrintLineNo
       System.err.println("I am compiler. I need a file to compile. Now which part is difficult to understand in this?");
 	    yyparser = new Parser(new InputStreamReader(System.in));
     }
+    try{
     yyparser.yyparse();
+    }
+    catch(Exception e){
+
+    }
     // yyparser.printResourcesTable();
     // yyparser.printNodesTable();
     // System.out.println(yyparser.connection.toString());

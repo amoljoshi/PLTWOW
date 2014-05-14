@@ -65,6 +65,11 @@ public class DeclarationNode extends ASTNode {
 					System.err.println("Error: Function "+ functionName + " returns WoWNodes which can't be assigned to " + node1.type);						
 				}
 			}
+			else if(functionName.equals("getTotalOutputQuantity")){
+				if(!node1.type.equals("double")){
+					System.err.println("Error: Function "+ functionName + " returns double which can't be assigned to " + node1.type);						
+				}
+			}
 			else{				
 				System.err.println("Library functions give WoWNodes/ WoWNode/ double as return type");
 			}

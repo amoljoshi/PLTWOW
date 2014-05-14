@@ -49,6 +49,8 @@ public class LibraryFunctionsNode extends ASTNode {
 			return "syslib.getTotalTime()";
 		else if(functionName.equals("getPrevious"))
 			return "syslib.getPrevious(" + parameter + ")";
+		else if(functionName.equals("getTotalOutputQuantity"))
+			return "syslib.getTotalOutputQuantity(" + parameter + ")";
 		return "error";
 	}
 
