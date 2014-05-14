@@ -1,19 +1,25 @@
 *************************************
 *************WoW Compiler************
+What is WoW?
+	WoW stands for "Work on Workflow", the programming language implemented in COMS-4115 (Programming Language and Translators) at Columbia 
+	University under guidance of Prof. Al Aho and our mentor Kevin Walters.
+What does WoW model?
+	WoW models design, simulation and analysis of Workflows.
+How can I use it?
+	1. Clone our repository.
+	2. You need to run ./wow <.WoW program> to run WoW Program.
+	3. Have fun WoWing!
+Packages required to run make:
+	1. JFlex - http://jflex.de/
+	2. BYacc/J - http://byaccj.sourceforge.net/
 *************************************
+Important files included in the package - 
 Lexer - WoW.jflex
 Parser - WoW.y
 
-Class definitions - com/wow/definitions/Node.java, com/wow/definitions/Connection.java, com/wow/definitions/NodeTypeEntry.java
-*************************************
-Current functionality - 
-	1.	Parsed Resources, Nodes and Connections block
-	2. 	Maintaining tables of resources, nodes and connections defined
-*************************************
-Missing functionality - 
-	1. Parsing Compute Functions
-	2. Parsing end function
-	3. EXECUTE the first program
+Class definitions in packages 	- com/wow/definitions
+				- com/wow/target
+				- com/wow/ast
+				- com/wow/compute
 
-	i.e. A LOT!
-*************************************
+And lots of WoW Programs!
