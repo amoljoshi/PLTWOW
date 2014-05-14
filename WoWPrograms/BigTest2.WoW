@@ -11,7 +11,6 @@ Workflow Apple
 	audioport 2x;
 	usbport 3x;
 	powerport 1x;
-	body 1x;
 	processor 1x;
 	niccard 1x;
 	bluetooth 1x;
@@ -76,7 +75,7 @@ Workflow Apple
 	Node Finish
 	{
 	input rawproduct 100;
-	output macpro 100;
+	final output macpro 100;
 	}
 	
 	Connection
