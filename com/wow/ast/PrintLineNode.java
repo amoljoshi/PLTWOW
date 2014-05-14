@@ -1,6 +1,8 @@
 package com.wow.ast;
 public class PrintLineNode extends ASTNode{
 	public PrintLineNode(ExpressionNode expr){
+		if(expr.type == null)
+			System.err.println("Undefined variable passed to print statement");
 		// if(!expr.type.startsWith("LibraryFunctions"))
 			children.add(expr);
 		// else{

@@ -74,13 +74,16 @@ combine exteriorBaseBody(1) steeringWheel(1) glassPieces(6) untestedCar {rate 10
 	{
 	//print("ReachedEndBlock");
 	WoWNodes allNodes = getAllNodes();
-	WoWNode each = "abc";
+	WoWNodes i = getAllNodes();
 	String aj = "abc";
 	double a = 10.0;
 	aj = "def";
 	double temp = 0.0;
+	print("amol");
 	foreach(WoWNode eachNode: allNodes){
-		print(eachNode);
+		//String otherNode = "Assembler_phase2";
+		//if(eachNode == )
+		//	print(eachNode);
 		temp = getTime(eachNode);
 		a = a + temp;
 	}
