@@ -103,6 +103,7 @@ public class MainClass {
 				String[] arguments = line.split(" ");
 				if (arguments.length != 3) {
 					System.out.println("Illegal command");
+					continue;
 				}
 				// System.out.println("Argument 0 = " + arguments[0] + ", Argument 1 =" + arguments[1]);
 				if (!nodeSet.containsKey(arguments[0]))
