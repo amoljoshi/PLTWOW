@@ -1,0 +1,137 @@
+Workflow Apple
+{
+	Resources
+	{
+	base 1x;
+	motherboard 1x;
+	flashdrive 1x;
+	memory 1x;
+	keyboard 1x;
+	ledscreen 1x;
+	audioport 2x;
+	usbport 3x;
+	powerport 1x;
+	body 1x;
+	processor 1x;
+	niccard 1x;
+	bluetooth 1x;
+	final macpro 1x;
+	}
+
+	Node BaseAssembler1
+	{
+	input base 100;
+	input keyboard 100;
+	output phase1_base 100;
+	}
+
+	Node CoreAssembler
+	{
+	input motherboard 100;
+	input processor 100;
+	input memory 100;
+	input flashdrive 100;
+	output complete_core 100;
+	} 
+
+	Node NetworkComponents
+	{
+	input phase1_base 100;
+	input niccard 100;
+	input bluetooth 100;
+	output networkassembledbase 100;
+	} 
+
+	Node BaseAssembler2
+	{
+	input networkassembledbase 100;
+	input complete_core 100;
+	output finishedbase 100;
+	}
+
+	Node BodyAssembler
+	{
+	input finishedbase 100;
+	input ledscreen 100;
+	output body 100;
+	}
+
+	Node Ports
+	{
+	input body 100;
+	input audioport 200;
+	input usbport 300;
+	input powerport 100; 
+	output hardware 100;
+	}
+
+	Node Software
+	{
+	input hardware 100;
+	input os 100;
+	input otherstuff 100;
+	output rawproduct 100;
+	}
+
+	Node Finish
+	{
+	input rawproduct 100;
+	output macpro 100;
+	}
+	
+	Connection
+	{
+	Node BaseAssembler1 -> Node NetworkComponents {phase1_base 100;};
+	Node CoreAssembler ->  Node BaseAssembler2 {complete_core 100;};
+	Node NetworkComponents -> Node BaseAssembler2 {networkassembledbase 100;};
+	Node BaseAssembler2 -> Node BodyAssembler {finishedbase 100;};
+	Node BodyAssembler -> Node Ports {body 100;};
+	Node Ports -> Node Software {hardware 100;};
+	Node Software -> Node Finish {rawproduct 100;};
+	}
+	func Finish
+	{
+	convert raw_product(1) completeproduct(1) {rate 1000; quantity 100; print "100 Macbooks READY TO ROLL !";};
+	}
+
+	func Software
+	{
+	combine hardware(1) os(1) otherstuff(1) rawproduct {rate 500; quantity 100; print "Softwares loaded";}; 
+	}
+
+	func Ports
+	{
+	combine body(1) audioport(2) usbport(3) powerport(1) hardware {rate 30; quantity 100; print "Ports installed";}; 
+	}
+	func BodyAssembler
+	{
+	combine finishedbase(1) ledscreen(1) body {rate 50; quantity 100; print "Body ready.";};
+	}
+
+	func BaseAssembler2
+	{
+	combine networkassembledbase(1) complete_core(1) finishedbase{rate 75; quantity 100; print "Network components installed in base";};
+	}
+
+	func NetworkComponents
+	{
+	combine phase1_base(1) niccard(1) bluetooth(1) phase1_base {rate 20; quantity 100; print "Nework components installed in base";};
+	}
+
+	func CoreAssembler
+	{
+	combine motherboard(1) processor(1) memory(1) flashdrive(1) complete_core {rate 210; quantity 100; print "Core assembling complete";};
+	}
+
+	func BaseAssembler1
+	{
+	combine base(1) keyboard(1) phase1_base {rate 100; quantity 100; print "First phase of base asssembling complete";};
+	}
+
+
+	end 
+	{
+
+	}
+
+}
